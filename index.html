@@ -74,7 +74,6 @@ p{margin:0}
 @keyframes shimmer{to{background-position:-200% 0}}
 .view{animation:rise .38s var(--ease) both}
 .stagger>*{animation:rise .45s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
 /* header band */
 header{background:var(--band);color:var(--band-fg)}
@@ -110,6 +109,8 @@ body{font-variant-numeric:tabular-nums}
 .seg.light button{color:var(--muted);font:500 14px var(--f-body);padding:6px 12px}
 .seg.light button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .pb{display:flex;align-items:center;gap:12px}
+.authbox{display:none}
+@media (min-width:1000px){.side .authbox{display:grid;gap:10px;order:4}}
 .pb-text{display:none}
 .pb-text strong{display:block;font:700 16px var(--f-display)}
 .pb-text small{color:var(--band-muted);font-size:13px}
@@ -323,154 +324,133 @@ textarea:focus{outline:none;border-color:var(--accent);outline:3px solid var(--a
 .intro-list li::before{counter-increment:s;content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font:600 13px var(--f-mono)}
 
 /* =========================================================
-   Landing (#home). Direction: colour chapters. One fixed colour world (same in light and dark):
-   each chapter is one flat field; the hero's swatch column links to them in the same colours.
+   Landing (#home): same tokens, type and cards as the app, so it feels like one product
    ========================================================= */
-.lp{--c-paper:#EEF1F7;--c-yellow:#FFD84A;--c-sky:#8FA3FF;--c-blue:#2F4FE0;--c-navy:#121935;--c-night:#0B1020;--c-ink:#121935;--c-white:#FFFFFF;
-  --m:clamp(16px,2.4vw,40px);--h-xl:clamp(52px,8.6vw,132px);--h-l:clamp(40px,5vw,80px);--t-m:clamp(20px,1.7vw,26px);--t-s:18px;--t-xs:15px;
-  background:var(--c-paper);color:var(--c-ink);font-size:var(--t-s);line-height:1.55}
 body.on-home .side,body.on-home main{display:none}
-body.on-home::before{background:var(--c-paper)}
-.lp h1,.lp h2{font-family:var(--f-display);font-weight:800;letter-spacing:-.02em;line-height:1;margin:0;text-wrap:balance}
-.lp p{max-width:60ch}
-.lp a{color:inherit}
-.lp .lp-btn{color:var(--c-navy)}
-.lp .lp-btn.dark{color:var(--c-white)}
-.lp .swatches .sw1,.lp .swatches .sw2{color:var(--c-navy)}
-.lp .swatches .sw3,.lp .swatches .sw4{color:var(--c-white)}
-.lp .swatches .sw5{color:var(--c-yellow)}
-.lp-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 26px;border:0;border-radius:0;font:700 18px var(--f-body);text-decoration:none;background:var(--c-white);color:var(--c-navy);transition:transform .15s var(--ease),background .2s,color .2s}
-.lp-btn:hover{background:var(--c-yellow)}
-.lp-btn:active{transform:scale(.97)}
-.lp-btn.dark{background:var(--c-navy);color:var(--c-white)}
-.lp-btn.dark:hover{background:var(--c-blue)}
-.lp :focus-visible{outline:3px solid var(--c-yellow);outline-offset:3px}
+.lp{background:var(--bg);color:var(--ink);overflow:hidden}
+.lp .wrap{max-width:1160px}
+.lp-bar{position:sticky;top:0;z-index:7;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(1.4) blur(10px)}
+.lp-bar .wrap{display:flex;align-items:center;gap:14px;padding-block:14px}
+.lp-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font:800 24px/1 var(--f-display);white-space:nowrap}
+.lp-brand svg{width:40px;height:40px;border-radius:11px}
+.lp-brand span span{color:var(--accent)}
+.lp-links{display:flex;gap:4px;margin-inline-start:auto}
+.lp-links a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:500;transition:background .2s,color .2s}
+.lp-links a:hover{background:var(--sunk);color:var(--ink)}
+.lp-act{display:flex;gap:8px;align-items:center}
+@media (max-width:860px){.lp-links{display:none}.lp-act{margin-inline-start:auto}}
+@media (max-width:420px){.lp-brand{font-size:20px}.lp-brand svg{width:34px;height:34px}.lp-bar .gbtn{padding:8px 10px;font-size:13px}}
 
-/* hero: photograph panel + swatch column that is also the navigation */
-.lp-hero{display:grid;grid-template-columns:minmax(0,1fr) clamp(170px,16.6vw,260px);gap:10px;padding:10px;min-height:100svh;background:var(--c-paper)}
-.lp-panel{position:relative;border-radius:12px;overflow:hidden;min-height:calc(100svh - 20px);color:var(--c-white);display:grid;grid-template-rows:auto 1fr auto}
-.lp-panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%;animation:drift 24s ease-in-out infinite alternate}
-@keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.1) translateY(-1.5%)}}
-.lp-panel::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(10,14,30,.8),rgba(10,14,30,.32) 40%,rgba(10,14,30,.5))} /* taste-skill-ignore: neutral scrim over the photo */ /* neutral scrim for legibility */
-.lp-panel>*{position:relative;z-index:1}
-.lp-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:28px}
-.lp-mark{display:flex;align-items:center;gap:12px;font:800 26px/1 var(--f-display);text-decoration:none;white-space:nowrap}
-.lp-mark svg{width:44px;height:44px;border-radius:12px}
-.lp-lang{background:transparent;border:2px solid rgba(255,255,255,.7);color:var(--c-white);min-height:40px;padding:0 14px;font:600 15px var(--f-body)}
-.lp-lang:hover{background:var(--c-white);color:var(--c-navy)}
-.lp-head{align-self:start;padding:6vh var(--m) 0;text-align:center}
-.lp-head h1{font-size:var(--h-xl);color:var(--c-white)}
-.lp-head p{margin:32px auto 0;font-size:var(--t-m);max-width:34ch;color:var(--c-white)}
-.lp-foot{display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 var(--m) 36px}
-.lp-foot small{font-size:var(--t-xs);color:rgba(255,255,255,.9)}
-.swatches{display:grid;grid-template-rows:repeat(5,1fr);min-height:calc(100svh - 20px);border-radius:12px;overflow:hidden}
-.swatches a{display:block;padding:20px;font:600 17px/1.3 var(--f-body);text-decoration:none;transition:padding .2s var(--ease)}
-.swatches a:hover{padding-top:28px}
-.sw1{background:#DCE2F0}
-.sw2{background:var(--c-yellow);color:var(--c-navy)} .sw3{background:var(--c-blue);color:var(--c-white)}
-.sw4{background:var(--c-navy);color:var(--c-white)} .sw5{background:var(--c-night);color:var(--c-yellow)}
+/* hero */
+.lp-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center;padding-block:56px 72px}
+.lp-hero h1{font:800 clamp(40px,5.6vw,76px)/1.08 var(--f-display);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.lp-hero h1 em{font-style:normal;color:var(--accent)}
+.lp-sub{font-size:clamp(17px,1.5vw,20px);color:var(--muted);margin:20px 0 28px;max-width:46ch}
+.lp-cta-row{display:flex;gap:10px;flex-wrap:wrap}
+.lp-trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;color:var(--muted);font-size:14px}
+.lp-trust span{display:flex;align-items:center;gap:6px}
+.lp-trust i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.lp-stage{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:28px 22px 22px;min-height:420px;display:grid;grid-template-rows:1fr auto;gap:16px}
+.lp-chips{position:absolute;inset:0;pointer-events:none}
+.lp-chips b{position:absolute;font:700 14px var(--f-display);padding:6px 12px;border-radius:99px;background:var(--marker);color:var(--marker-ink);animation:floaty 6s ease-in-out infinite}
+.lp-chips b:nth-child(2){background:var(--accent);color:var(--surface);animation-delay:-2s}
+.lp-chips b:nth-child(3){background:var(--ok);color:#fff;animation-delay:-4s}
+.lp-chips b:nth-child(4){background:var(--ink);color:var(--bg);animation-delay:-1s}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+.lp-talk{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+.bubble{position:relative;background:var(--sunk);border-radius:18px;padding:12px 14px;font:600 16px/1.4 var(--f-display);direction:ltr;text-align:left;min-height:62px;opacity:.35;transform:scale(.96);transition:opacity .3s,transform .3s var(--ease)}
+.bubble.on{opacity:1;transform:none;background:var(--accent-soft)}
+.lp-play{justify-self:center}
 
-/* showcase: input half, output half (live dictation) */
-.lp-show{display:grid;grid-template-columns:1fr 1fr;min-height:90svh}
-.lp-in,.lp-out{position:relative;padding:18svh var(--m) 120px;display:grid;align-content:start;gap:22px}
-.lp-in{background:var(--c-navy);color:var(--c-white)}
-.lp-out{background:var(--c-paper);color:var(--c-navy)}
-.lp-in label{font-size:var(--t-m);font-weight:600}
-.lp-in textarea{background:#1c2547;border:0;color:var(--c-white);font:500 clamp(20px,1.7vw,24px)/1.45 var(--f-display);max-width:34ch;border-radius:8px;padding:16px 18px}
-.lp-in textarea:focus{box-shadow:none;outline:3px solid var(--c-yellow)}
-.lp-in .row{justify-content:flex-start}
-.lp-split{position:absolute;bottom:32px;font-size:var(--h-l)}
-.lp-in .lp-split{inset-inline-start:var(--m)}
-.lp-out .lp-split{inset-inline-end:var(--m)}
-.lp-frag{background:var(--c-white);border-radius:12px;padding:24px;max-width:500px;display:grid;gap:14px}
-.lp-frag .target{font-size:clamp(20px,1.8vw,26px);text-align:left}
-.lp-frag .target .gapw{color:#6b7591}
-.lp-frag .target .hit{color:#17885A}
-.lp-frag .scorebar{display:flex;align-items:baseline;gap:12px}
-.lp-frag .scorebar b{font:800 44px/1 var(--f-display)}
-.lp-frag p{font-size:var(--t-xs);color:#4c5675}
+/* sections */
+.lp-sec{padding-block:72px}
+.lp-sec h2{font:800 clamp(30px,3.6vw,46px)/1.15 var(--f-display);margin:0 0 10px;text-wrap:balance}
+.lp-sec .lead{color:var(--muted);font-size:18px;margin:0 0 32px;max-width:60ch}
+.lp-feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:10px;align-content:start;transition:transform .25s var(--ease),border-color .25s}
+.feat:hover{transform:translateY(-6px) rotate(-.4deg);border-color:var(--accent)}
+.feat .ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.feat .ico svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.feat h3{margin:0;font:700 19px var(--f-body)}
+.feat p{margin:0;color:var(--muted);font-size:15px}
+.feat .demo{margin-top:6px;background:var(--sunk);border-radius:12px;padding:10px 12px;font:600 15px var(--f-display);direction:ltr;text-align:left}
+.feat .demo .hit{color:var(--ok)}.feat .demo .miss{color:var(--bad)}
+@media (max-width:980px){.lp-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.lp-feats{grid-template-columns:1fr}}
 
-/* how it works: one card, four fields */
-.lp-how{display:grid;grid-template-columns:repeat(4,1fr);min-height:84svh}
-.lp-how>div{position:relative;padding:28px;display:grid;grid-template-rows:auto 1fr auto;gap:24px}
-.lp-how h2{font-size:var(--t-m);line-height:1.2}
-.lp-how .f1{background:var(--c-yellow);color:var(--c-navy)} .lp-how .f2{background:var(--c-sky);color:var(--c-navy)}
-.lp-how .f3{background:var(--c-blue);color:var(--c-white)} .lp-how .f4{background:var(--c-navy);color:var(--c-white)}
-.lp-card{align-self:center;justify-self:center;width:min(100%,260px);background:var(--c-white);color:var(--c-navy);border-radius:12px;padding:18px;display:grid;gap:10px;font-size:15px;transition:transform .15s var(--ease)}
-.lp-how>div:hover .lp-card{transform:translateY(-6px)}
-.lp-card b{font:800 30px/1 var(--f-display)}
-.lp-card .bar{height:8px;background:#e3e7f2;border-radius:99px;overflow:hidden}
-.lp-card .bar i{display:block;height:100%;background:var(--c-blue)}
-.lp-card ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.lp-card li{display:flex;gap:8px;align-items:center}
-.lp-card li i{width:16px;height:16px;border-radius:4px;background:#e3e7f2;flex:none}
-.lp-card li.on i{background:var(--c-blue)}
-.lp-card li.on{color:#4c5675;text-decoration:line-through}
-.lp-clause{font-size:var(--t-m);line-height:1.3;font-weight:600;max-width:16ch}
+/* route: an SVG path that draws itself, with the seven stops on it */
+.lp-route{position:relative;background:var(--band);color:var(--band-fg);border-radius:32px;padding:48px 28px 36px;overflow:hidden}
+.lp-route h2{color:var(--band-fg)}
+.lp-route .lead{color:var(--band-muted)}
+.route-svg{width:100%;height:120px;display:block}
+.route-svg path{fill:none;stroke:var(--marker);stroke-width:6;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 2.2s var(--ease)}
+.lp-route.in .route-svg path{stroke-dashoffset:0}
+.stops{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:-6px}
+.stop{text-align:center;display:grid;gap:4px;justify-items:center}
+.stop b{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--marker);color:var(--marker-ink);font:800 16px var(--f-display);transform:scale(.6);opacity:.001;transition:transform .5s var(--ease),opacity .5s;transition-delay:calc(var(--i)*180ms + .3s)}
+.lp-route.in .stop b{transform:none;opacity:1}
+.stop span{font-size:14px;color:var(--band-fg)}
+.stop small{font-size:12px;color:var(--band-muted)}
+html:not(.motion) .stop b{transform:none;opacity:1}
+html:not(.motion) .route-svg path{stroke-dashoffset:0}
+@media (max-width:760px){.stops{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:18px}.route-svg{height:70px}}
 
-/* list: the seven stops as a poster */
-.lp-list{background:var(--c-blue);color:var(--c-white);padding:80px var(--m)}
-.lp-list h2{font-size:var(--t-m);margin-bottom:28px;color:var(--c-yellow)}
-.lp-list ol{list-style:none;margin:0;padding:0}
-.lp-list li{display:flex;justify-content:space-between;align-items:baseline;gap:24px;transition:color .2s}
-.lp-list li:hover{color:var(--c-yellow)}
-.lp-list .big{font:800 clamp(44px,7.4vw,116px)/1.4 var(--f-display);letter-spacing:-.02em}
-.lp-list .det{font-size:var(--t-s);white-space:nowrap}
+/* steps */
+.lp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.lp-steps li{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:8px}
+.lp-steps li b{font:800 40px/1 var(--f-display);color:var(--accent)}
+.lp-steps li strong{font-size:18px}
+.lp-steps li span{color:var(--muted);font-size:15px}
+@media (max-width:760px){.lp-steps{grid-template-columns:1fr}}
 
-/* cta: the action tile */
-.lp-cta{background:var(--c-navy);padding:120px 0;overflow:hidden}
-.lp-tiles{display:grid;grid-template-columns:2fr 8fr 2fr;gap:12px;margin-inline:-6vw}
-.lp-tiles>*{height:360px;border-radius:12px;overflow:hidden}
-.lp-tiles img{width:100%;height:100%;object-fit:cover}
-.lp-tile{background:var(--c-yellow);color:var(--c-navy);padding:40px;display:grid;align-content:center;gap:16px}
-.lp-tile h2{font-size:40px}
-.lp-tile p{font-size:17px}
-.lp-flat{background:var(--c-blue)}
+.lp-band{background:var(--marker);color:var(--marker-ink);border-radius:32px;padding:44px 32px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.lp-band h2{margin:0;color:var(--marker-ink)}
+.lp-band p{margin:8px 0 0}
+.lp-band .btn{background:var(--marker-ink);color:var(--marker)}
+@media (max-width:700px){.lp-band{grid-template-columns:1fr}}
+.lp-foot{padding-block:40px 56px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lp-foot a{color:var(--muted)}
 
-/* footer: the mark, built large */
-.lp-footer{background:var(--c-night);color:var(--c-white);padding:72px var(--m) 32px}
-.lp-big{display:flex;align-items:flex-end;gap:4vw;flex-wrap:wrap}
-.lp-big svg{width:min(34svh,40vw);height:auto;border-radius:clamp(16px,3vw,40px)}
-.lp-big span{font:800 clamp(56px,11vw,180px)/.9 var(--f-display);letter-spacing:-.03em}
-.lp-big span em{font-style:normal;color:var(--c-yellow)}
-.lp-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:56px;font-size:var(--t-xs)}
-.lp-cols h3{font-size:var(--t-xs);color:var(--c-yellow);margin:0 0 10px}
-.lp-cols a{display:block;text-decoration:none;padding:4px 0;color:#c9d0ea}
-.lp-cols a:hover{color:var(--c-white)}
-.lp-cols p{color:#c9d0ea;font-size:var(--t-xs)}
-.lp-last{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:48px;font-size:var(--t-xs);color:#c9d0ea}
-.lp .lp-last .lp-btn{min-height:42px;font-size:15px;background:var(--c-yellow);color:var(--c-navy)}
+@media (max-width:900px){.lp-hero{grid-template-columns:1fr;gap:28px;padding-block:28px 48px}.lp-stage{min-height:360px}}
 
-/* entrances: content is visible without script; with script it rises in once */
-.js .rv{opacity:.001;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(var(--d,0)*75ms)}
-.js .rv.in{opacity:1;transform:none}
+/* entrances: visible without script; with motion on they rise in once */
+html.motion.js .rv{opacity:.001;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--d,0)*90ms)}
+html.motion.js .rv.in{opacity:1;transform:none}
 
-@media (max-width:860px){
-  .lp-hero{grid-template-columns:1fr;padding:8px;gap:8px;min-height:0}
-  .lp-panel{min-height:64svh}
-  .lp-head h1{font-size:12vw}
-  .lp-head p{display:none}
-  .lp-foot small{display:none}
-  .swatches{grid-template-rows:none;min-height:0}
-  .swatches a{padding:14px 20px;font-size:15px;min-height:52px}
-  .lp-show{grid-template-columns:1fr}
-  .lp-in,.lp-out{min-height:0;padding:40px 20px 110px}
-  .lp-how{grid-template-columns:1fr 1fr;min-height:0}
-  .lp-how>div{min-height:0;grid-template-rows:auto auto auto;padding:28px 20px}
-  .lp-card{align-self:start}
-  .lp-list{padding:56px 16px}
-  .lp-list li{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:22px}
-  .lp-list .big{font-size:12vw}
-  .lp-list .det{font-size:15px}
-  .lp-cta{padding:56px 0}
-  .lp-tiles{grid-template-columns:1fr 1fr;margin-inline:16px;gap:12px}
-  .lp-tile{grid-column:1/-1;grid-row:1;height:auto;min-height:300px;padding:28px}
-  .lp-tile h2{font-size:28px}
-  .lp-tiles>img,.lp-tiles>.lp-flat,.lp-tiles>div:not(.lp-tile){height:120px}
-  .lp-cols{grid-template-columns:1fr 1fr}
-}
-@media (max-width:560px){.lp-how{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none}.lp-panel img{animation:none}}
+/* =========================================================
+   Talking characters (test listening, landing, dialogues)
+   ========================================================= */
+.cast{display:flex;justify-content:center;gap:clamp(16px,6vw,56px);margin:6px 0 14px}
+.chara{display:grid;justify-items:center;gap:6px;transition:transform .3s var(--ease)}
+.chara svg{width:clamp(96px,22vw,130px);height:auto;overflow:visible}
+.chara .nm{font:700 15px var(--f-display);padding:3px 12px;border-radius:99px;background:var(--sunk);color:var(--muted);transition:background .2s,color .2s}
+.chara.talk .nm{background:var(--accent);color:var(--surface)}
+.chara.talk{transform:translateY(-6px)}
+.chara.talk svg{animation:bob .5s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-3px) rotate(-1.5deg)}}
+.chara .eyes{animation:blink 4.5s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.line-now{min-height:1.6em;text-align:center;font:600 17px var(--f-display);color:var(--muted)}
+
+/* test extras */
+.ctest{font:500 clamp(18px,2.2vw,21px)/2.1 var(--f-display);direction:ltr;text-align:left;background:var(--sunk);border-radius:14px;padding:16px 18px}
+.ctest input{font:inherit;color:var(--accent);background:var(--surface);border:0;border-bottom:2px solid var(--accent);border-radius:4px 4px 0 0;padding:0 2px;margin:0 1px;text-align:left}
+.ctest input:focus{outline:2px solid var(--accent-soft)}
+.toast{position:fixed;inset-inline:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:auto;max-width:420px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;z-index:20;text-align:center;animation:rise .3s var(--ease)}
+.gbtn{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 14px;font:600 14px var(--f-body);cursor:pointer;transition:transform .15s,border-color .2s}
+.gbtn:hover{border-color:var(--accent)}
+.gbtn:active{transform:scale(.97)}
+.gbtn svg{width:18px;height:18px}
+.side .gbtn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:var(--band-fg)}
+.who{display:flex;align-items:center;gap:8px;font-size:14px}
+.who img{width:30px;height:30px;border-radius:50%}
+.who button{border:0;background:transparent;color:inherit;opacity:.7;text-decoration:underline;padding:0}
+.motion-tgl{border:0;background:transparent;color:var(--band-muted);font:500 13px var(--f-body);text-decoration:underline;padding:0;justify-self:start}
+canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+@property --p{syntax:'<number>';inherits:false;initial-value:0}
+
+/* motion is on unless the visitor (or their system) turned it off */
+html:not(.motion) *,html:not(.motion) *::before,html:not(.motion) *::after{animation:none!important;transition:none!important}
 </style>
 
 <aside class="side">
@@ -495,6 +475,8 @@ body.on-home::before{background:var(--c-paper)}
 const $=id=>document.getElementById(id);
 document.documentElement.classList.add('js');
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const motionPref=()=>{const m=store.get('fr-motion',null);return m===null?!matchMedia('(prefers-reduced-motion: reduce)').matches:m};
+document.documentElement.classList.toggle('motion',motionPref());
 const S={lang:store.get('fr-lang','ar'),accent:store.get('fr-accent','us')};
 const L=(ar,en)=>S.lang==='ar'?ar:en;          // inline bilingual text
 const tx=p=>Array.isArray(p)?p[S.lang==='ar'?0:1]:p; // [ar,en] pair
@@ -899,6 +881,7 @@ function renderShell(){
    <div class="switches">
     <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">عربي</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
    </div>
+   <div class="authbox">${authHTML()}<button class="motion-tgl" data-motion>${motionPref()?L('وقّف الحركة','Turn motion off'):L('شغّل الحركة','Turn motion on')}</button></div>
    <div class="pb"><div class="ring" style="--p:${p}" aria-label="${p}%"><div><strong class="en">${p}%</strong><em>${LV[currentStage()]}</em></div></div>
     <div class="pb-text"><strong>${L('مستواك','Your level')} <span class="en">${LV[currentStage()]}</span></strong><small>${L(`خلصت ${p}% من المسار`,`${p}% of the route done`)}</small></div></div>`;
   $('nav').innerHTML=NAV.map(([k,ar,en])=>`<a href="#${k}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${L(ar,en)}</a>`).join('');
@@ -942,6 +925,7 @@ function renderToday(){
   const T=tasksFor(lv),n=T.filter(t=>day.done[t.k]).length;
   const v=$('v-today');
   v.innerHTML=`<div class="today-grid"><div class="stack">
+   ${fbUser?'':`<div class="panel" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${L('سجّل بجوجل عشان تقدمك يتحفظ على كل أجهزتك','Sign in with Google to keep your progress on every device')}</span><button class="gbtn" data-auth="in">${G_ICON}${L('دخول بجوجل','Sign in with Google')}</button></div>`}
    ${place?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٣ أجزاء في حوالي ٢٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 3-part placement test, about 20 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
      <div class="lvl"><span class="badge en">${LV[lv]}</span><div><h1 class="st">${L('النهارده','Today')}</h1><p class="muted">${L('انت في مرحلة','Your stage')}: <strong>${tx(s.n)}</strong></p></div></div>
@@ -1176,199 +1160,407 @@ $('v-more').addEventListener('click',e=>{
 });
 
 /* =========================================================
-   placement test
+   talking characters
    ========================================================= */
-const UOE_N=16, LIS_N=8;
+const CHARS={
+  Emma:{skin:'#F3C9A6',hair:'#C9622D',shirt:'#2F4FE0',style:'long',g:'f'},
+  Jack:{skin:'#E2AE86',hair:'#2E2119',shirt:'#17885A',style:'short',g:'m'},
+  Sara:{skin:'#C98B66',hair:'#1D1716',shirt:'#C9373B',style:'bun',g:'f'},
+  Leo:{skin:'#8E5B3C',hair:'#151010',shirt:'#F2B705',style:'curly',g:'m'},
+};
+function charSVG(n){
+  const c=CHARS[n];
+  const hairBack=c.style==='long'?`<path d="M26 56c0-26 14-40 34-40s34 14 34 40v40H26z" fill="${c.hair}"/>`:c.style==='bun'?`<circle cx="60" cy="16" r="13" fill="${c.hair}"/>`:'';
+  const hairTop=c.style==='curly'?`<g fill="${c.hair}">${[30,40,50,60,70,80,90].map((x,i)=>`<circle cx="${x}" cy="${30-(i%2)*5}" r="11"/>`).join('')}</g>`
+    :`<path d="M27 52c0-22 14-34 33-34s33 12 33 34c-8-10-20-15-33-15s-25 5-33 15z" fill="${c.hair}"/>`;
+  return `<svg viewBox="0 0 120 150" aria-hidden="true">${hairBack}
+    <rect x="50" y="88" width="20" height="18" fill="${c.skin}"/>
+    <path d="M14 150c0-30 22-46 46-46s46 16 46 46z" fill="${c.shirt}"/>
+    <ellipse cx="60" cy="60" rx="32" ry="36" fill="${c.skin}"/>${hairTop}
+    <ellipse cx="27" cy="62" rx="5" ry="8" fill="${c.skin}"/><ellipse cx="93" cy="62" rx="5" ry="8" fill="${c.skin}"/>
+    <g class="eyes" fill="#1b1b24"><ellipse cx="47" cy="62" rx="3.6" ry="4.6"/><ellipse cx="73" cy="62" rx="3.6" ry="4.6"/></g>
+    <path d="M40 52q7-4 14 0M66 52q7-4 14 0" stroke="#1b1b24" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="40" cy="74" rx="5" ry="3" fill="#ef8f8f" opacity=".45"/><ellipse cx="80" cy="74" rx="5" ry="3" fill="#ef8f8f" opacity=".45"/>
+    <ellipse class="mouth" cx="60" cy="81" rx="8" ry="2.4" fill="#7a2730"/></svg>`;
+}
+const castHTML=names=>`<div class="cast">${names.map(n=>`<div class="chara" data-char="${n}">${charSVG(n)}<span class="nm en">${n}</span></div>`).join('')}</div>`;
+// one distinct voice per character where the browser has several; otherwise pitch tells them apart
+const F_RE=/female|aria|jenny|zira|samantha|sonia|libby|hazel|susan|emma|ava|michelle|natasha|karen|moira|tessa|fiona|serena|maisie|mia|clara/i;
+const M_RE=/\bmale|guy|david|mark|ryan|daniel|george|alex|fred|thomas|oliver|arthur|christopher|eric|roger|steffan|andrew|brian|liam/i;
+function voiceFor(name){
+  const lang=accentLang(),re=new RegExp(lang.replace('-','[-_]'),'i'),c=CHARS[name];
+  const all=voices.filter(v=>re.test(v.lang));
+  const pool=all.filter(v=>(c.g==='f'?F_RE:M_RE).test(v.name)&&!(c.g==='f'?M_RE:/$^/).test(v.name));
+  const same=Object.keys(CHARS).filter(k=>CHARS[k].g===c.g).indexOf(name);
+  if(pool.length)return {voice:pool[same%pool.length],pitch:1};
+  return {voice:all[0]||null,pitch:c.g==='f'?1.25:.8};
+}
+let talkTimer=null;
+function mouthLoop(el){clearInterval(talkTimer);const m=el?.querySelector('.mouth');document.querySelectorAll('.chara.talk').forEach(x=>{x.classList.remove('talk');x.querySelector('.mouth')?.setAttribute('ry','2.4')});
+  if(!el)return;el.classList.add('talk');talkTimer=setInterval(()=>m.setAttribute('ry',(2+Math.random()*7).toFixed(1)),110)}
+// lines: [[name,text],...]; plays them in order, the speaking character animates and its name lights up
+function playLines(lines,{rate=.95,root=document,onDone,onLine}={}){
+  if(!('speechSynthesis' in window)){onDone&&onDone();return}
+  speechSynthesis.cancel();
+  lines.forEach(([n,t],i)=>{
+    const u=new SpeechSynthesisUtterance(t),vp=voiceFor(n);u.lang=accentLang();u.rate=rate;u.pitch=vp.pitch;if(vp.voice)u.voice=vp.voice;
+    u.onstart=()=>{mouthLoop(root.querySelector(`.chara[data-char="${n}"]`));onLine&&onLine(i)};
+    u.onend=()=>{if(i===lines.length-1){mouthLoop(null);onDone&&onDone()}};
+    speechSynthesis.speak(u);
+  });
+}
+
+/* =========================================================
+   placement test: six parts, like the big computer tests
+   (yes/no vocabulary, C-test word completion, adaptive grammar & reading,
+    adaptive listening with real speakers, listen-and-type, optional read-aloud)
+   ========================================================= */
+UOE.push(
+ [0,'They ___ from Egypt.',null,['are','is','am','be']],[0,'I can ___ English a little.',null,['speak','speaks','speaking','to speak']],[0,'What ___ your phone number?',null,['is','are','do','be']],
+ [1,"There isn't ___ milk in the fridge.",null,['any','some','many','a']],[1,'I ___ never been to London.',null,['have','has','am','did']],[1,'He usually ___ to work by car.',null,['goes','go','going','is go']],
+ [2,"You ___ smoke here. It's not allowed.",null,["mustn't","don't have to","needn't","shouldn't to"]],[2,'If I ___ more money, I would travel more.',null,['had','have','would have','will have']],[2,'She has been working here ___ three years.',null,['for','since','from','during']],
+ [3,'He suggested ___ a taxi.',null,['taking','to take','take','that taking']],[3,'Despite ___ tired, she finished the race.',null,['being','she was','be','of being']],[3,'The more you practise, the ___ you get.',null,['better','best','more good','good']],
+ [4,'Rarely ___ such a talented young player.',null,['have I seen','I have seen','I saw','did I saw']],[4,'She acted as though nothing ___.',null,['had happened','happened','has happened','would happen']],[4,'The project, ___ was delayed twice, is finally complete.',null,['which','that','what','who']],
+ [5,'Were it not for her support, I ___ given up long ago.',null,['would have','will have','had','would']],[5,"His argument doesn't hold ___ under scrutiny.",null,['water','air','ground','weight']],[5,'She has a ___ for languages; she picks them up effortlessly.',null,['flair','flare','flavour','fluke']]
+);
+// dialogues between named speakers: [level, [[name,line],...], question, options (first = correct)]
+const DIALOGS=[
+ [0,[['Emma',"Hi, I'm Emma. What's your name?"],['Jack',"I'm Jack. Nice to meet you."]],"What is the man's name?",['Jack','Emma','John','Sam']],
+ [0,[['Sara','Excuse me, where is the bank?'],['Leo',"It's next to the post office."]],'Where is the bank?',['Next to the post office','Behind the school','In the park','Near the station']],
+ [1,[['Jack','Did you watch the match last night?'],['Emma','No, I was too tired. I went to bed at nine.']],"Why didn't Emma watch the match?",['She was tired','She was working','Her TV was broken',"She doesn't like football"]],
+ [1,[['Leo','How much are these shoes?'],['Sara',"They were sixty dollars, but today they're half price."]],'How much are the shoes today?',['$30','$60','$16','$90']],
+ [2,[['Emma','Shall we take the bus or walk?'],['Jack',"Let's walk. It's only ten minutes, and the bus is always late."]],'Why does Jack want to walk?',["It's close and the bus is unreliable",'He wants exercise','The bus is expensive',"It's raining"]],
+ [2,[['Sara',"I've applied for three jobs this month."],['Leo','Any luck?'],['Sara',"One interview so far. It's on Friday."]],'What happens on Friday?',['Sara has a job interview','Sara starts a new job','Leo has an interview','Sara applies for a job']],
+ [3,[['Jack','I thought the presentation went well.'],['Emma','It did, apart from the bit where the projector died on us.']],'What went wrong?',['The equipment stopped working','Jack forgot his notes','Nobody came','Emma was late']],
+ [3,[['Leo',"You're not seriously thinking of quitting?"],['Sara',"I am. I've been putting it off for months, and it's now or never."]],'What does Sara mean?',["She's decided it's time to quit","She'll stay in the job","She's joking",'She was fired']],
+ [4,[['Emma','Did they agree to the new deadline?'],['Jack',"Grudgingly. They made it pretty clear it's the last extension we'll get."]],'How did they respond?',["They agreed reluctantly and won't extend it again",'They refused','They agreed happily','They offered more time later']],
+ [4,[['Sara','How was the new restaurant?'],['Leo',"Let's just say I won't be rushing back."]],'What does Leo think of the restaurant?',["He didn't enjoy it",'He loved it','He wants to go back soon',"He didn't go"]],
+ [5,[['Jack',"So the merger's off?"],['Emma',"For now. Though I wouldn't put it past them to revive it once the dust settles."]],'What does Emma suggest?',['The merger could come back later','The merger is final','It has already happened','She stopped it herself']],
+ [5,[['Leo','You must be thrilled about the promotion.'],['Sara',"Thrilled is a stretch. It's more responsibility for barely any more money."]],'How does Sara feel about the promotion?',['Not very happy','Delighted','Angry she was passed over','She hasn\'t heard about it']],
+];
+// C-test: in each passage, the second half of some words is missing. wo{rd} = show "wo", learner types "rd"
+const CTESTS={
+ 1:"My name is Tom. I li{ve} in a sm{all} town wi{th} my fam{ily}. Every mor{ning} I wa{lk} to sch{ool} with my lit{tle} sis{ter}.",
+ 2:"Last summer we went to the coast for a week. The wea{ther} was won{derful}, so we sp{ent} most of t{he} time on t{he} beach. In t{he} evenings we a{te} fresh fi{sh} at a sm{all} restaurant.",
+ 3:"Working from home has become normal for many people. Wh{ile} it sa{ves} time on commu{ting}, ma{ny} workers fi{nd} it har{der} to sep{arate} their jo{bs} from th{eir} private lives.",
+ 4:"Social media has transformed the way news spreads. Inform{ation} now trav{els} faster th{an} ever before, b{ut} so do l{ies}, and chec{king} what is acc{urate} has bec{ome} a serious chal{lenge}.",
+ 5:"Few scientific ideas have been as widely misunderstood as evolution. It is freq{uently} portrayed a{s} a ladder of prog{ress}, whe{reas} it is be{tter} understood a{s} a branching bu{sh} shaped by cha{nce} and circ{umstance}.",
+};
+const ctestGaps=t=>[...t.matchAll(/\{([^}]+)\}/g)].map(m=>m[1]);
+// adaptive passage scores -> continuous level (0..6): the best passage you handled, plus how well
+const stepScore=att=>{ // att: [{lvl, pct}]
+  const ok=att.filter(a=>a.pct>=0.5);
+  const s=ok.length?Math.max(...ok.map(a=>a.lvl-0.5+a.pct)):Math.max(0,Math.min(...att.map(a=>a.lvl))-1+Math.max(...att.map(a=>a.pct)));
+  return Math.max(0,Math.min(5.99,s));
+};
+const nextStep=(lvl,pct,maxL=5,minL=1)=>pct>=0.9?Math.min(maxL,lvl+2):pct>=0.7?Math.min(maxL,lvl+1):pct<=0.4?Math.max(minL,lvl-1):null;
+function overall6(parts){ // parts: {name:{score,w}} -> weighted level with confidence
+  const p=Object.values(parts).filter(Boolean),W=p.reduce((a,x)=>a+x.w,0);
+  const s=p.reduce((a,x)=>a+x.score*x.w,0)/W,sc=p.map(x=>x.score);
+  const spread=Math.max(...sc)-Math.min(...sc);
+  return {score:s,level:Math.min(5,Math.floor(s)),spread};
+}
+(function selfCheck2(){
+  console.assert(Math.floor(stepScore([{lvl:2,pct:.8},{lvl:3,pct:.3}]))===2,'step: B1 pass, B2 fail -> B1');
+  console.assert(Math.floor(stepScore([{lvl:3,pct:1},{lvl:5,pct:.9}]))===5,'step: C2 pass -> C2');
+  console.assert(stepScore([{lvl:1,pct:.1}])<1,'step: fails A2 -> A1');
+  console.assert(nextStep(2,.95)===4&&nextStep(2,.75)===3&&nextStep(2,.3)===1&&nextStep(2,.6)===null,'step: routing');
+  console.assert(ctestGaps(CTESTS[1]).length===9,'ctest: gaps parsed');
+  console.assert(overall6({a:{score:3.5,w:1},b:{score:3.5,w:1}}).level===3,'overall: weighted');
+})();
+
+const UOE_N=18, LIS_N=10, DICT_N=4;
 let tst=null;
 function newTest(){
+  const mono=LISTEN.map((x,j)=>({lvl:x[0],lines:[[['Emma','Jack','Sara','Leo'][j%4],x[1]]],q:x[2],opts:x[3],b:bOf(x[0],j*2)}));
+  const dia=DIALOGS.map((x,j)=>({lvl:x[0],lines:x[1],q:x[2],opts:x[3],b:bOf(x[0],j*3+1)}));
   return {step:'intro',wrong:[],
     vocab:shuffle(VOCAB.map(([band,w])=>({band,w}))),vi:0,vans:[],
+    cLvl:2,cAtt:[],
     ubank:UOE.map((x,j)=>({lvl:x[0],q:x[1],p:x[2],opts:x[3],b:bOf(x[0],j)})),uused:new Set(),uresp:[],ucur:null,
-    lbank:LISTEN.map((x,j)=>({lvl:x[0],text:x[1],q:x[2],opts:x[3],b:bOf(x[0],j*2)})),lused:new Set(),lresp:[],lcur:null,plays:0,
+    lbank:mono.concat(dia),lused:new Set(),lresp:[],lcur:null,plays:0,heard:false,
+    dLvl:2,dAtt:[],dSent:null,dTyped:'',
+    sAtt:[],sIdx:0,sHeard:'',sRec:null,
     order:null};
 }
-function testBar(done,total,label){return `<div class="t-top"><span>${label}</span><span class="en">${done} / ${total}</span></div><div class="t-bar"><i style="width:${done/total*100}%"></i></div>`}
+const STEPS=['vocab','ctest','uoe','listen','dict','speak'];
+const STEP_NAMES={vocab:['الكلمات','Vocabulary'],ctest:['كمّل الكلمات','Complete the words'],uoe:['القواعد والقراية','Grammar & reading'],listen:['الاستماع','Listening'],dict:['اسمع واكتب','Listen & type'],speak:['اقرا بصوت عالي','Read aloud']};
+function testBar(done,total){const k=STEPS.indexOf(tst.step);return `<div class="t-top"><span>${k+1} / ${STEPS.length} · ${tx(STEP_NAMES[tst.step])}</span><span class="en">${done} / ${total}</span></div><div class="t-bar"><i style="width:${done/total*100}%"></i></div>`}
 function renderTest(){
   if(!tst)tst=newTest();
   const v=$('v-test');
   if(tst.step==='intro'){
+    const parts=[['vocab','٨٠ كلمة: قول لو عارف معناها. فيه كلمات مش حقيقية بتكشف التخمين.','80 words: say if you know them. Fake words catch guessing.'],
+      ['ctest','فقرات ناقص منها نص حروف بعض الكلمات وانت تكمّلها. ده من أدق الطرق لقياس المستوى.','Short passages with half-words missing that you complete: one of the most accurate level measures.'],
+      ['uoe',`${UOE_N} سؤال قواعد وقراية بيصعبوا ويسهلوا على حسب إجاباتك.`,`${UOE_N} grammar and reading questions that adapt to you.`],
+      ['listen',`${LIS_N} حوارات بين Emma وJack وSara وLeo، كل واحد بصوته.`,`${LIS_N} conversations between Emma, Jack, Sara and Leo, each with their own voice.`],
+      ['dict',`${DICT_N} جمل تسمعها وتكتبها زي ما هي.`,`${DICT_N} sentences you hear and type exactly.`],
+      ['speak','جملتين تقراهم بصوتك بالمايك (لو المتصفح بيدعم).','Two sentences you read aloud with the mic (where supported).']];
     v.innerHTML=`<div class="stack">
-      <div class="sec-head"><h1 class="st">${L('اختبار تحديد المستوى','Placement test')}</h1><small>${L('حوالي ٢٠ دقيقة','About 20 minutes')}</small></div>
-      <p>${L('الاختبار بيتغير على حسب إجاباتك زي الاختبارات الرسمية: لو جاوبت صح السؤال الجاي بيصعب، ولو غلط بيسهل. كده بيوصل لمستواك بأسئلة أقل وبدقة أعلى.','The test adapts like official computer tests: a right answer makes the next question harder, a wrong one makes it easier. This finds your level with fewer questions and more accuracy.')}</p>
-      <ol class="intro-list">
-        <li><span><strong>${L('الكلمات','Vocabulary')}</strong><br><span class="muted">${L('٨٠ كلمة: قول لو عارف معناها. فيه كلمات مش حقيقية متحطوطة عشان تكشف التخمين، فمتقولش "عارفها" غير لو متأكد.','80 words: say if you know the meaning. Some are fake words that catch guessing, so only say yes if you are sure.')}</span></span></li>
-        <li><span><strong>${L('القواعد والقراية','Grammar & reading')}</strong><br><span class="muted">${L(`${UOE_N} سؤال بتتكيّف على مستواك.`,`${UOE_N} questions that adapt to you.`)}</span></span></li>
-        <li><span><strong>${L('الاستماع','Listening')}</strong><br><span class="muted">${L(`${LIS_N} جمل بصوت ${S.accent==='uk'?'بريطاني':'أمريكي'}، تقدر تسمع كل جملة مرتين بس.`,`${LIS_N} clips in a ${S.accent==='uk'?'British':'American'} voice. Each plays twice at most.`)}</span></span></li>
-      </ol>
+      <div class="sec-head"><h1 class="st">${L('اختبار تحديد المستوى','Placement test')}</h1><small>${L('حوالي ٣٠ دقيقة','About 30 minutes')}</small></div>
+      ${castHTML(['Emma','Jack','Sara','Leo'])}
+      <p>${L('الاختبار ده متصمم على نفس أفكار الاختبارات الكبيرة زي Duolingo English Test و EF SET: ٦ أجزاء، ومعظمها بيتكيّف على مستواك. لو جاوبت صح بيصعب، ولو غلط بيسهل، فبيوصل لمستواك الحقيقي بدقة.','Built on the same ideas as the big computer tests like the Duolingo English Test and EF SET: six parts, most of them adapting to you, so it lands on your real level.')}</p>
+      <ol class="intro-list">${parts.map(([k,a,e])=>`<li><span><strong>${tx(STEP_NAMES[k])}</strong><br><span class="muted">${L(a,e)}</span></span></li>`).join('')}</ol>
       <div>${accentPick()}</div>
-      <p class="note">${L('متستخدمش قاموس ولا ترجمة، وجاوب بسرعة. لو مش عارف اختار أقرب إجابة. النتيجة هتكون مستواك في الإطار الأوروبي (CEFR) من A1 لـ C2.','No dictionary or translator, answer fast. If unsure, pick the closest answer. You get a CEFR level from A1 to C2.')}</p>
-      <button class="btn big wide" id="tStart">${L('يلا نبدأ','Start')}</button>
-     </div>`;
+      <p class="note">${L('متستخدمش قاموس ولا ترجمة. لو مش عارف اختار أقرب إجابة. النتيجة بالإطار الأوروبي (CEFR) من A1 لـ C2، ومعاها درجة كل مهارة.','No dictionary or translator. If unsure, pick the closest answer. You get a CEFR level from A1 to C2 with a score for each skill.')}</p>
+      <button class="btn big wide" id="tStart">${L('يلا نبدأ','Start')}</button></div>`;
+    stagger(v.querySelector('.stack'));
   }else if(tst.step==='vocab'){
     const it=tst.vocab[tst.vi];
-    v.innerHTML=testBar(tst.vi,tst.vocab.length,L('١ · الكلمات','1 · Vocabulary'))+`
+    v.innerHTML=testBar(tst.vi,tst.vocab.length)+`
       <p class="muted" style="text-align:center">${L('تعرف معنى الكلمة دي؟','Do you know what this word means?')}</p>
-      <p class="lex" dir="ltr" key="${tst.vi}">${esc(it.w)}</p>
+      <p class="lex" dir="ltr">${esc(it.w)}</p>
       <div class="yn"><button class="btn big ghost" data-yn="0">${L('لأ / مش كلمة','No / not a word')}</button><button class="btn big" data-yn="1">${L('أيوه، عارفها','Yes, I know it')}</button></div>`;
+  }else if(tst.step==='ctest'){
+    const txt=CTESTS[tst.cLvl];let gi=0;
+    const html=esc(txt).replace(/([A-Za-z']*)\{([^}]+)\}/g,(m,pre,ans)=>`${pre}<input data-g="${gi++}" size="${ans.length}" maxlength="${ans.length+2}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="missing letters">`);
+    v.innerHTML=testBar(tst.cAtt.length,3)+`<div class="view stack">
+      <p class="muted">${L('كمّل الحروف الناقصة في كل كلمة. لو مش متأكد سيبها فاضية.','Fill in the missing letters of each word. Leave it empty if unsure.')}</p>
+      <div class="ctest">${html}</div>
+      <button class="btn big wide" id="cDone">${L('التالي','Next')}</button></div>`;
+    v.querySelector('.ctest input')?.focus();
   }else if(tst.step==='uoe'){
-    if(tst.ucur===null){const th=tst.uresp.length?eap(tst.uresp).theta:-0.5;tst.ucur=pickItem(tst.ubank,tst.uused,th);tst.order=shuffle(tst.ubank[tst.ucur].opts.map((o,i)=>i))}
-    const it=tst.ubank[tst.ucur];
-    const q=esc(it.q).replace('___','<span class="gap"></span>');
-    v.innerHTML=testBar(tst.uresp.length,UOE_N,L('٢ · القواعد والقراية','2 · Grammar & reading'))+`<div dir="ltr" class="ltr view">
+    if(tst.ucur===null){const th=tst.uresp.length?eap(tst.uresp).theta:-0.5;tst.ucur=pickItem(tst.ubank,tst.uused,th);tst.order=shuffle([0,1,2,3])}
+    const it=tst.ubank[tst.ucur],q=esc(it.q).replace('___','<span class="gap"></span>');
+    v.innerHTML=testBar(tst.uresp.length,UOE_N)+`<div dir="ltr" class="ltr view">
       ${it.p?`<div class="passage">${esc(it.p)}</div>`:''}<p class="q">${q}</p>
       <div class="opts">${tst.order.map(i=>`<button class="opt" data-opt="${i}">${esc(it.opts[i])}</button>`).join('')}</div></div>`;
   }else if(tst.step==='listen'){
-    if(tst.lcur===null){const th=tst.lresp.length?eap(tst.lresp).theta:-0.5;tst.lcur=pickItem(tst.lbank,tst.lused,th);tst.order=shuffle([0,1,2,3]);tst.plays=0}
-    const it=tst.lbank[tst.lcur];
-    v.innerHTML=testBar(tst.lresp.length,LIS_N,L('٣ · الاستماع','3 · Listening'))+`
-      <button class="play" id="tPlay" aria-label="Play" ${tst.plays>=2?'disabled style="opacity:.4"':''}><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-      <p class="muted" style="text-align:center;margin-bottom:18px">${tst.plays===0?L('دوس واسمع الجملة','Tap to hear the clip'):L(`فاضل ${2-tst.plays} مرة`,`${2-tst.plays} play(s) left`)}</p>
-      <div dir="ltr" class="ltr" ${tst.plays?'':'hidden'}><p class="q">${esc(it.q)}</p>
-      <div class="opts">${tst.order.map(i=>`<button class="opt" data-lopt="${i}">${esc(it.opts[i])}</button>`).join('')}</div></div>
-      ${'speechSynthesis' in window?'':`<p class="note">${L('المتصفح ده مش بيشغّل صوت، فجزء الاستماع مش هينفع.','This browser cannot play speech, so listening will not work.')}</p>`}`;
+    if(tst.lcur===null){const th=tst.lresp.length?eap(tst.lresp).theta:-0.5;tst.lcur=pickItem(tst.lbank,tst.lused,th);tst.order=shuffle([0,1,2,3]);tst.plays=0;tst.heard=false}
+    const it=tst.lbank[tst.lcur],names=[...new Set(it.lines.map(l=>l[0]))];
+    v.innerHTML=testBar(tst.lresp.length,LIS_N)+`<div class="view">
+      ${castHTML(names)}
+      <p class="line-now" id="lineNow">${tst.plays===0?L('دوس تشغيل واسمع','Press play and listen'):''}</p>
+      <div class="row" style="margin-bottom:16px"><button class="btn" id="tPlay" ${tst.plays>=2?'disabled':''}>${tst.plays===0?L('شغّل','Play'):L(`اسمع تاني (فاضل ${2-tst.plays})`,`Play again (${2-tst.plays} left)`)}</button></div>
+      <div dir="ltr" class="ltr" ${tst.heard?'':'hidden'} id="lq"><p class="q">${esc(it.q)}</p>
+      <div class="opts">${tst.order.map(i=>`<button class="opt" data-lopt="${i}">${esc(it.opts[i])}</button>`).join('')}</div></div></div>
+      ${'speechSynthesis' in window?'':`<p class="note">${L('المتصفح ده مش بيشغّل صوت.','This browser cannot play speech.')}</p>`}`;
+  }else if(tst.step==='dict'){
+    if(!tst.dSent){const pool=SENTS[tst.dLvl].filter(s=>!tst.dAtt.some(a=>a.s===s));tst.dSent=pool[Math.floor(Math.random()*pool.length)]||SENTS[tst.dLvl][0];tst.dTyped='';tst.plays=0}
+    v.innerHTML=testBar(tst.dAtt.length,DICT_N)+`<div class="view stack" style="text-align:center">
+      ${castHTML(['Leo'])}
+      <p class="muted">${L('اسمع الجملة واكتبها بالظبط. تقدر تسمعها ٣ مرات.','Listen and type the sentence exactly. You can play it 3 times.')}</p>
+      <div class="row"><button class="btn" id="dtPlay" ${tst.plays>=3?'disabled':''}>${L(`شغّل (فاضل ${3-tst.plays})`,`Play (${3-tst.plays} left)`)}</button></div>
+      <textarea id="dtIn" dir="ltr" rows="2" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${L('اللي سمعته','What you heard')}">${esc(tst.dTyped)}</textarea>
+      <button class="btn big wide" id="dtDone">${L('التالي','Next')}</button></div>`;
+    $('dtIn').addEventListener('input',e=>{tst.dTyped=e.target.value});
+  }else if(tst.step==='speak'){
+    const sents=[SENTS[2][0],SENTS[4][1]],s=sents[tst.sIdx];
+    v.innerHTML=testBar(tst.sAtt.length,2)+`<div class="view panel speak-card">
+      ${SR?'':`<p class="note">${L('المتصفح ده مش بيدعم المايك، فالجزء ده هيتعدّى.','This browser has no speech recognition, so this part is skipped.')}</p>`}
+      <p class="muted">${L('دوس المايك واقرا الجملة دي بصوت عالي:','Tap the mic and read this aloud:')}</p>
+      <p class="target" dir="ltr">${esc(s)}</p>
+      <button class="mic ${tst.sRec?'rec':''}" id="tMic" ${SR?'':'disabled'} aria-label="${L('سجّل','Record')}">${micIcon}</button>
+      <p class="heard" dir="ltr">${esc(tst.sHeard)}</p>
+      <div class="row"><button class="btn ghost" id="sSkip">${L('اتخطى الجزء ده','Skip this part')}</button>${tst.sHeard?`<button class="btn" id="sNext">${L('التالي','Next')}</button>`:''}</div></div>`;
   }else if(tst.step==='result'){
     const r=tst.res,lvl=r.o.level;
-    const bar=(name,score,extra)=>`<div class="b"><div><span>${name}</span><strong class="en">${LV[Math.floor(score)]}</strong></div><div class="line"><i style="width:${Math.max(4,score/6*100)}%;background:var(--accent)"></i></div>${extra?`<small class="muted">${extra}</small>`:''}</div>`;
+    const bar=(name,p,extra)=>p?`<div class="b"><div><span>${name}</span><strong class="en">${LV[Math.floor(p.score)]}</strong></div><div class="line"><i style="width:${Math.max(4,p.score/6*100)}%;background:var(--accent)"></i></div>${extra?`<small class="muted">${extra}</small>`:''}</div>`:'';
+    const conf=r.o.spread<1.2&&r.parts.uoe.sd<0.7&&r.v.fa<0.25?'high':r.o.spread<2&&r.v.fa<0.4?'mid':'low';
     v.innerHTML=`<div class="stack" style="text-align:center">
       <p class="muted">${L('مستواك','Your level')}</p>
       <div class="result-badge en">${LV[lvl]}</div>
       <p style="max-width:52ch;margin:0 auto">${tx(CANDO[lvl])}</p>
-      <p class="muted" style="font-size:14px">${L('دقة النتيجة: ','Confidence: ')}<strong>${{high:L('عالية','high'),mid:L('متوسطة','medium'),low:L('ضعيفة، يُفضل تعيد الاختبار','low, consider retaking')}[r.o.conf]}</strong></p>
-     </div>
+      <p class="muted" style="font-size:14px">${L('دقة النتيجة: ','Confidence: ')}<strong>${{high:L('عالية','high'),mid:L('متوسطة','medium'),low:L('ضعيفة، يُفضل تعيد الاختبار','low, consider retaking')}[conf]}</strong></p></div>
      <div class="panel bars" style="margin-top:18px">
-      ${bar(L('الكلمات','Vocabulary'),r.v.score,L(`حوالي ${r.v.size.toLocaleString()} كلمة من أشهر ٥٠٠٠`,`About ${r.v.size.toLocaleString()} of the 5,000 most common words`)+(r.v.fa>=0.25?L(' · قلت "عارفها" لكلمات مش حقيقية، فالجزء ده أقل دقة',' · you said yes to fake words, so this part is less precise'):''))}
-      ${bar(L('القواعد والقراية','Grammar & reading'),r.u.score)}
-      ${bar(L('الاستماع','Listening'),r.l.score)}
-      <div class="scale en">${LV.slice(0,6).map(l=>`<span>${l}</span>`).join('')}</div>
-     </div>
-     ${tst.wrong.length?`<details class="panel review" style="margin-top:14px"><summary>${L(`راجع أخطائك (${tst.wrong.length})`,`Review your mistakes (${tst.wrong.length})`)}</summary><ul dir="ltr">${tst.wrong.map(w=>`<li><span class="tag">${LV[w.lvl]}</span> ${esc(w.q.replace('___','_____'))}<br><span style="color:var(--bad)">${L('إجابتك','You')}: ${esc(w.you)}</span> · <span style="color:var(--ok)">${L('الصح','Correct')}: ${esc(w.ans)}</span>${w.say?` · <button class="btn ghost" style="padding:2px 10px" data-say="${esc(w.say)}">▶</button>`:''}</li>`).join('')}</ul></details>`:''}
-     <p class="note" style="margin-top:14px">${L('الاختبار ده بيقيس الفهم والقواعد والكلمات. الكلام نفسه اتدرب عليه وقيسه في صفحة "تدريب" بالمايك.','This test measures understanding, grammar and vocabulary. Practise and measure speaking on the Practice page with the mic.')}</p>
+      ${bar(L('الكلمات','Vocabulary'),r.parts.vocab,L(`حوالي ${r.v.size.toLocaleString()} كلمة من أشهر ٥٠٠٠`,`About ${r.v.size.toLocaleString()} of the 5,000 most common words`)+(r.v.fa>=0.25?L(' · قلت "عارفها" لكلمات مش حقيقية',' · you said yes to fake words'):''))}
+      ${bar(L('كمّل الكلمات','Complete the words'),r.parts.ctest)}
+      ${bar(L('القواعد والقراية','Grammar & reading'),r.parts.uoe)}
+      ${bar(L('الاستماع','Listening'),r.parts.listen)}
+      ${bar(L('اسمع واكتب','Listen & type'),r.parts.dict)}
+      ${bar(L('القراية بصوت عالي','Read aloud'),r.parts.speak)}
+      <div class="scale en">${LV.slice(0,6).map(l=>`<span>${l}</span>`).join('')}</div></div>
+     ${tst.wrong.length?`<details class="panel review" style="margin-top:14px"><summary>${L(`راجع أخطائك (${tst.wrong.length})`,`Review your mistakes (${tst.wrong.length})`)}</summary><ul dir="ltr">${tst.wrong.map(w=>`<li><span class="tag">${LV[w.lvl]}</span> ${esc(w.q.replace('___','_____'))}<br><span style="color:var(--bad)">${L('إجابتك','You')}: ${esc(w.you||'—')}</span> · <span style="color:var(--ok)">${L('الصح','Correct')}: ${esc(w.ans)}</span>${w.say?` · <button class="btn ghost" style="padding:2px 10px" data-say="${esc(w.say)}">▶</button>`:''}</li>`).join('')}</ul></details>`:''}
      <div class="row" style="margin-top:14px"><button class="btn ghost" id="tAgain">${L('اعيد الاختبار','Retake')}</button><button class="btn" id="tApply">${L(`ابدأ من مرحلة ${LV[lvl]}`,`Start at ${LV[lvl]}`)}</button></div>`;
   }
 }
 function finishTest(){
-  const v=vocabScore(tst.vans);
-  const ue=eap(tst.uresp),le=eap(tst.lresp);
-  const u={score:thetaScore(ue.theta),sd:ue.sd},l={score:thetaScore(le.theta),sd:le.sd};
-  tst.res={v,u,l,o:overall(v,u,l)};tst.step='result';
-  store.set('fr-lastTest',{date:today(),level:tst.res.o.level,score:+tst.res.o.score.toFixed(2),v:+v.score.toFixed(2),u:+u.score.toFixed(2),l:+l.score.toFixed(2)});
+  const v=vocabScore(tst.vans),ue=eap(tst.uresp),le=eap(tst.lresp);
+  const parts={vocab:{score:v.score,w:.15},ctest:{score:stepScore(tst.cAtt),w:.2},uoe:{score:thetaScore(ue.theta),sd:ue.sd,w:.25},listen:{score:thetaScore(le.theta),sd:le.sd,w:.25},dict:{score:stepScore(tst.dAtt),w:.15}};
+  if(tst.sAtt.length){const a=tst.sAtt;parts.speak={score:Math.min(5.99,a[1]?.pct>=.85?4.6:a[0].pct>=.85?2.8+(a[1]?.pct||0)*1.4:a[0].pct*2.6),w:.1}}
+  tst.res={v,parts,o:overall6(parts)};tst.step='result';
+  store.set('fr-lastTest',{date:today(),level:tst.res.o.level,score:+tst.res.o.score.toFixed(2),parts:Object.fromEntries(Object.entries(parts).map(([k,p])=>[k,+p.score.toFixed(2)]))});
+  confetti();
 }
+function nextAfter(step){tst.step=STEPS[STEPS.indexOf(step)+1]||'result';if(tst.step==='speak'&&!SR){finishTest()}}
 $('v-test').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||!tst)return;
   if(b.id==='tStart'){tst.step='vocab'}
-  else if(b.dataset.yn!==undefined){tst.vans.push({band:tst.vocab[tst.vi].band,yes:b.dataset.yn==='1'});tst.vi++;if(tst.vi>=tst.vocab.length)tst.step='uoe'}
+  else if(b.dataset.yn!==undefined){tst.vans.push({band:tst.vocab[tst.vi].band,yes:b.dataset.yn==='1'});tst.vi++;if(tst.vi>=tst.vocab.length)nextAfter('vocab')}
+  else if(b.id==='cDone'){
+    const gaps=ctestGaps(CTESTS[tst.cLvl]),ins=[...document.querySelectorAll('.ctest input')];
+    let ok=0;gaps.forEach((g,i)=>{const t=(ins[i]?.value||'').trim().toLowerCase();if(t===g.toLowerCase())ok++;else tst.wrong.push({lvl:tst.cLvl,q:CTESTS[tst.cLvl].replace(/\{[^}]+\}/g,'…'),you:ins[i]?.value||'',ans:g})});
+    const pct=ok/gaps.length;tst.cAtt.push({lvl:tst.cLvl,pct});
+    const nx=nextStep(tst.cLvl,pct);
+    if(tst.cAtt.length>=3||nx===null||tst.cAtt.some(a=>a.lvl===nx))nextAfter('ctest');else tst.cLvl=nx;
+  }
   else if(b.dataset.opt!==undefined){const it=tst.ubank[tst.ucur];tst.uused.add(tst.ucur);
-    if(b.dataset.opt!=='0')tst.wrong.push({lvl:it.lvl,q:(it.p?it.p+' ':'')+it.q,you:it.opts[+b.dataset.opt],ans:it.opts[0]});tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)tst.step='listen'}
-  else if(b.id==='tPlay'){if(tst.plays>=2)return;const it=tst.lbank[tst.lcur];tst.plays++;say(it.text,{rate:[.85,.9,.98,1.05,1.1,1.15][it.lvl]})}
+    if(b.dataset.opt!=='0')tst.wrong.push({lvl:it.lvl,q:(it.p?it.p+' ':'')+it.q,you:it.opts[+b.dataset.opt],ans:it.opts[0]});
+    tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)nextAfter('uoe')}
+  else if(b.id==='tPlay'){if(tst.plays>=2)return;const it=tst.lbank[tst.lcur];tst.plays++;b.disabled=true;
+    playLines(it.lines,{rate:[.85,.9,.98,1.03,1.08,1.12][it.lvl],root:testEl(),onLine:i=>{const el=$('lineNow');if(el)el.textContent=it.lines[i][0]+L(' بيتكلم…',' is speaking…')},onDone:()=>{tst.heard=true;renderTest()}});return}
   else if(b.dataset.lopt!==undefined){const it=tst.lbank[tst.lcur];tst.lused.add(tst.lcur);
-    if(b.dataset.lopt!=='0')tst.wrong.push({lvl:it.lvl,q:'"'+it.text+'": '+it.q,you:it.opts[+b.dataset.lopt],ans:it.opts[0],say:it.text});tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();if(tst.lresp.length>=LIS_N)finishTest()}
+    if(b.dataset.lopt!=='0')tst.wrong.push({lvl:it.lvl,q:it.lines.map(l=>l[0]+': '+l[1]).join(' / ')+' — '+it.q,you:it.opts[+b.dataset.lopt],ans:it.opts[0],say:it.lines.map(l=>l[1]).join(' ')});
+    tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();mouthLoop(null);if(tst.lresp.length>=LIS_N)nextAfter('listen')}
+  else if(b.id==='dtPlay'){if(tst.plays>=3)return;tst.plays++;b.textContent=L(`شغّل (فاضل ${3-tst.plays})`,`Play (${3-tst.plays} left)`);if(tst.plays>=3)b.disabled=true;
+    playLines([['Leo',tst.dSent]],{rate:[.85,.9,.95,1,1.05,1.1][tst.dLvl],root:testEl()});return}
+  else if(b.id==='dtDone'){const hit=matchWords(toWords(tst.dSent),toWords(tst.dTyped)),pct=hit.filter(Boolean).length/hit.length;
+    tst.dAtt.push({lvl:tst.dLvl,pct,s:tst.dSent});if(pct<1)tst.wrong.push({lvl:tst.dLvl,q:L('إملاء','Dictation'),you:tst.dTyped,ans:tst.dSent,say:tst.dSent});
+    const nx=pct>=.85?Math.min(5,tst.dLvl+1):pct<.5?Math.max(0,tst.dLvl-1):tst.dLvl;tst.dLvl=nx;tst.dSent=null;
+    if(tst.dAtt.length>=DICT_N)nextAfter('dict')}
+  else if(b.id==='tMic'){if(tst.sRec){try{tst.sRec.stop()}catch(_){}return}window.speechSynthesis?.cancel();tst.sHeard='';
+    tst.sRec=listen({onText:t=>{tst.sHeard=t;const h=testEl().querySelector('.heard');if(h)h.textContent=t},onError:c=>{tst.sHeard='';toast(micMsg(c))},onEnd:t=>{tst.sRec=null;tst.sHeard=t||tst.sHeard;renderTest()}})}
+  else if(b.id==='sNext'){const s=[SENTS[2][0],SENTS[4][1]][tst.sIdx],hit=matchWords(toWords(s),toWords(tst.sHeard));tst.sAtt.push({pct:hit.filter(Boolean).length/hit.length});tst.sHeard='';tst.sIdx++;if(tst.sIdx>=2)finishTest()}
+  else if(b.id==='sSkip'){finishTest()}
   else if(b.id==='tAgain'){tst=newTest()}
   else if(b.id==='tApply'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);fLv=null;location.hash='today';renderAll();return}
   else return;
   renderTest();
 });
+const testEl=()=>$('v-test');
 document.addEventListener('keydown',e=>{if(location.hash!=='#test'||!tst||tst.step!=='vocab')return;const k=e.key.toLowerCase();if(k==='y'||k==='n'){const btn=document.querySelector(`[data-yn="${k==='y'?1:0}"]`);btn&&btn.click()}});
 
-/* =========================================================
-   landing (#home)
-   ========================================================= */
-const LP_SENT="I've been learning English for about six months now.";
-function lpFrag(typed){
-  const tw=toWords(LP_SENT),hit=matchWords(tw,toWords(typed||'')),n=hit.filter(Boolean).length;
-  let wi=0;
-  const shown=LP_SENT.split(/(\s+)/).map(tok=>{if(!tok.trim())return tok;const ok=hit[wi++];return ok?`<span class="hit">${esc(tok)}</span>`:`<span class="gapw">${'_'.repeat(Math.max(3,tok.length))}</span>`}).join('');
-  return `<div class="scorebar"><b class="en">${Math.round(n/tw.length*100)}%</b><span>${L(`${n} من ${tw.length} كلمات`,`${n} of ${tw.length} words`)}</span></div>
-    <p class="target" dir="ltr">${shown}</p>
-    <p>${L('دي نفس طريقة الإملاء في صفحة التدريب، ومعاها ٢٠ جملة لكل مستوى.','The same dictation you get on the Practice page, with 20 sentences per level.')}</p>`;
+/* small helpers: toast, confetti */
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3800)}
+function confetti(){
+  if(!document.documentElement.classList.contains('motion'))return;
+  const c=document.createElement('canvas');c.className='confetti';c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+  const x=c.getContext('2d'),cols=['#FFD84A','#2F4FE0','#17885A','#C9373B','#8FA3FF'];
+  const ps=Array.from({length:140},()=>({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-12-4,r:Math.random()*6+4,c:cols[Math.floor(Math.random()*5)],a:Math.random()*6}));
+  let f=0;(function tick(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++f<150)requestAnimationFrame(tick);else c.remove()})();
 }
+
+/* =========================================================
+   landing (#home): the same cards and tokens as the app
+   ========================================================= */
+const HERO_LINES=[['Emma','Hi! Are you learning English too?'],['Jack',"Yes! And now I'm speaking without translating."]];
+const FEAT_ICONS={
+ test:'<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+ dict:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13 7l4 4"/>',
+ ear:'<path d="M7 9a5 5 0 1 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 0"/><path d="M10 9a2 2 0 1 1 4 0"/>'};
 function renderHome(){
-  const h=$('v-home');
-  const rv=(i)=>`class="rv" style="--d:${i}"`;
+  const h=$('v-home'),rv=i=>`class="rv" style="--d:${i}"`;
   h.innerHTML=`
-  <section class="lp-hero" aria-label="Fluent Route">
-    <div class="lp-panel">
-      <img src="img/hero.jpg" width="2000" height="1250" alt="${L('رحّال واقف فوق جبل بيبص على الطريق اللي قدامه','A hiker on a ridge looking over the valley ahead')}">
-      <div class="lp-top"><a class="lp-mark" href="#home">${LOGO}<span dir="ltr">Fluent Route</span></a><button class="lp-lang" data-lang="${S.lang==='ar'?'en':'ar'}">${S.lang==='ar'?'English':'عربي'}</button></div>
-      <div class="lp-head"><h1 ${rv(0)}>${L('اتكلم إنجليزي<br>من غير ما تترجم','Speak English<br>without translating')}</h1>
-        <p ${rv(1)}>${L('مسار مجاني من الصفر للطلاقة: اختبار يحدد مستواك، وبعده كلام بالمايك وإملاء ونطق كل يوم.','A free route from zero to fluent: a test finds your level, then speaking, dictation and pronunciation every day.')}</p></div>
-      <div class="lp-foot"><a class="lp-btn" ${rv(2)} href="#test">${L('اعرف مستواك في ٢٠ دقيقة','Find your level in 20 minutes')}</a><small>${L('ببلاش ومن غير تسجيل','Free, no sign-up')}</small></div>
-    </div>
-    <div class="swatches" role="navigation" aria-label="${L('أقسام الصفحة','On this page')}">
-      <a class="sw1" href="#home" data-go="lp-show">${L('جرّب الإملاء','Try a dictation')}</a>
-      <a class="sw2" href="#home" data-go="lp-how">${L('ازاي بتمشي','How it works')}</a>
-      <a class="sw3" href="#home" data-go="lp-list">${L('السبع محطات','The seven stops')}</a>
-      <a class="sw4" href="#home" data-go="lp-cta">${L('ابدأ الاختبار','Take the test')}</a>
-      <a class="sw5" href="#today">${L('ادخل على التطبيق','Open the app')}</a>
-    </div>
-  </section>
+  <div class="lp-bar"><div class="wrap">
+    <a class="lp-brand" href="#home">${LOGO}<span dir="ltr">Fluent <span>Route</span></span></a>
+    <div class="lp-links" role="navigation" aria-label="${L('أقسام الصفحة','On this page')}"><a href="#home" data-go="lp-feats">${L('المميزات','Features')}</a><a href="#home" data-go="lp-route">${L('المسار','The route')}</a><a href="#home" data-go="lp-steps">${L('ازاي بتمشي','How it works')}</a></div>
+    <div class="lp-act"><button class="seg-lang gbtn" data-lang="${S.lang==='ar'?'en':'ar'}">${S.lang==='ar'?'EN':'عربي'}</button>${authHTML()}</div>
+  </div></div>
 
-  <section class="lp-show" id="lp-show" aria-labelledby="lpShowH">
-    <div class="lp-in">
-      <p ${rv(0)} style="font-size:var(--t-m)">${L('اسمع الجملة واكتبها. كل كلمة تكتبها صح بتظهر في الكارت.','Listen and type the sentence. Every word you get right appears on the card.')}</p>
-      <div class="row" ${rv(1)}><button class="lp-btn" id="lpPlay">${L('اسمع الجملة','Play the sentence')}</button><button class="lp-btn dark" id="lpSlow" style="background:#24305e">${L('بالبطيء','Slowly')}</button></div>
-      <label for="lpType" ${rv(2)}>${L('اكتب اللي سمعته بالإنجليزي','Type what you heard')}</label>
-      <textarea id="lpType" dir="ltr" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" ${rv(3)}></textarea>
-      <h2 class="lp-split" id="lpShowH">${L('اسمع','Listen')}</h2>
-    </div>
-    <div class="lp-out">
-      <div class="lp-frag rv" data-ui id="lpFrag" aria-live="polite">${lpFrag('')}</div>
-      <span class="lp-split" aria-hidden="true" style="font-family:var(--f-display);font-weight:800;line-height:1">${L('واكتب','and type')}</span>
-    </div>
-  </section>
+  <div class="wrap">
+    <section class="lp-hero" aria-labelledby="lpH">
+      <div>
+        <h1 id="lpH" ${rv(0)}>${L('اتكلم إنجليزي <em>من غير ما تترجم</em>','Speak English <em>without translating</em>')}</h1>
+        <p class="lp-sub" ${rv(1)}>${L('مسار مجاني من A1 للطلاقة: اختبار دقيق يحدد مستواك، وبعدين كل يوم كلام بالمايك وإملاء وتدريب ودن مع شخصيات بتتكلم.','A free route from A1 to fluent: a precise test finds your level, then every day you speak with the mic, take dictation and train your ear with talking characters.')}</p>
+        <div class="lp-cta-row" ${rv(2)}><a class="btn big" href="#test">${L('اعرف مستواك','Find your level')}</a><a class="btn big ghost" href="#today">${L('ابدأ من الصفر','Start from zero')}</a></div>
+        <div class="lp-trust" ${rv(3)}><span><i></i>${L('ببلاش','Free')}</span><span><i></i>${L('عربي وإنجليزي','Arabic & English')}</span><span><i></i>${L('أمريكي أو بريطاني','American or British')}</span></div>
+      </div>
+      <div class="lp-stage" ${rv(2)}>
+        <div class="lp-chips" aria-hidden="true"><b style="top:-14px;inset-inline-start:12%">A1</b><b style="top:-14px;inset-inline-end:14%">B2</b><b style="bottom:22%;inset-inline-end:-12px">C1</b><b style="bottom:34%;inset-inline-start:-12px">B1</b></div>
+        <div style="display:grid;align-content:end;gap:14px">
+          <div class="lp-talk"><div class="bubble" id="bub0">${esc(HERO_LINES[0][1])}</div><div class="bubble" id="bub1">${esc(HERO_LINES[1][1])}</div></div>
+          ${castHTML(['Emma','Jack'])}
+        </div>
+        <button class="btn lp-play" id="heroPlay">${L('اسمعهم بيتكلموا','Hear them talk')}</button>
+      </div>
+    </section>
 
-  <section class="lp-how" id="lp-how" aria-labelledby="lpHowH">
-    <div class="f1"><h2 id="lpHowH">${L('ازاي بتمشي','How it works')}</h2>
-      <div class="lp-card rv" data-ui><span>${L('اختبار تحديد المستوى','Placement test')}</span><b class="en">0 / 3</b><div class="bar"><i style="width:4%"></i></div><span>${L('كلمات · قواعد · استماع','Words · Grammar · Listening')}</span></div>
-      <p class="lp-clause">${L('الأول بتعمل اختبار ٢٠ دقيقة.','First you take a 20-minute test.')}</p></div>
-    <div class="f2"><span></span>
-      <div class="lp-card rv" data-ui style="--d:1"><span>${L('مستواك','Your level')}</span><b class="en">B1</b><span>${L('كلمات B2 · قواعد B1 · استماع B1','Words B2 · Grammar B1 · Listening B1')}</span></div>
-      <p class="lp-clause">${L('بعدها بتعرف مستواك بالظبط.','Then you know your exact level.')}</p></div>
-    <div class="f3"><span></span>
-      <div class="lp-card rv" data-ui style="--d:2"><span>${L('روتين النهارده','Today\'s routine')}</span><ul>${[['كلمات','Words',1],['استماع','Listening',1],['Shadowing','Shadowing',1],['مسلسل','Series',0],['إملاء','Dictation',0],['قراية','Reading',0]].map(([a,e,on])=>`<li class="${on?'on':''}"><i></i>${L(a,e)}</li>`).join('')}</ul></div>
-      <p class="lp-clause">${L('كل يوم ٦ مهام صغيرة.','Six small tasks every day.')}</p></div>
-    <div class="f4"><span></span>
-      <div class="lp-card rv" data-ui style="--d:3"><span>${L('المحطة الجاية','Next stop')}</span><b class="en">B2</b><div class="bar"><i style="width:100%"></i></div><span>${L('B1 خلصت ٥ من ٥','B1 done: 5 of 5')}</span></div>
-      <p class="lp-clause">${L('ولما تخلص بتطلع المحطة الجاية.','Finish, and you move up a stop.')}</p></div>
-  </section>
+    <section class="lp-sec" id="lp-feats" aria-labelledby="lpF">
+      <h2 id="lpF" ${rv(0)}>${L('كل اللي محتاجه عشان تتكلم','Everything you need to speak')}</h2>
+      <p class="lead" ${rv(1)}>${L('مش دروس وخلاص. كل جزء متصمم على طريقة البحث العلمي أثبتت إنها بتفرق.','Not just lessons. Each part follows a method research shows works.')}</p>
+      <div class="lp-feats">
+        <div class="feat" ${rv(0)}><span class="ico"><svg viewBox="0 0 24 24">${FEAT_ICONS.test}</svg></span><h3>${L('اختبار مستوى دقيق','A precise level test')}</h3><p>${L('٦ أجزاء بتتكيّف على إجاباتك، وتطلعلك مستواك في كل مهارة.','Six adaptive parts with a score for every skill.')}</p><div class="demo">B1 → <b>B2</b></div></div>
+        <div class="feat" ${rv(1)}><span class="ico"><svg viewBox="0 0 24 24">${FEAT_ICONS.mic}</svg></span><h3>${L('اتكلم بالمايك','Speak with the mic')}</h3><p>${L('قول الجملة وشوف كل كلمة اتفهمت ولا لأ.','Say it and see which words came through.')}</p><div class="demo"><span class="hit">Nice to</span> <span class="miss">meat</span> <span class="hit">you</span></div></div>
+        <div class="feat" ${rv(2)}><span class="ico"><svg viewBox="0 0 24 24">${FEAT_ICONS.dict}</svg></span><h3>${L('إملاء','Dictation')}</h3><p>${L('اسمع واكتب. بيدرّب ودنك تمسك كل كلمة.','Hear it, type it, catch every word.')}</p><div class="demo">I've been learning…</div></div>
+        <div class="feat" ${rv(3)}><span class="ico"><svg viewBox="0 0 24 24">${FEAT_ICONS.ear}</svg></span><h3>${L('درّب ودنك','Train your ear')}</h3><p>${L('ship ولا sheep؟ الأصوات اللي بتلخبط العرب.','ship or sheep? The sounds Arabic speakers mix up.')}</p><div class="demo">ship · sheep · very · berry</div></div>
+      </div>
+    </section>
 
-  <section class="lp-list" id="lp-list" aria-labelledby="lpListH">
-    <h2 id="lpListH">${L('سبع محطات من الصفر للطلاقة','Seven stops from zero to fluent')}</h2>
-    <ol>${STAGES.map((s,i)=>`<li ${rv(i)}><span class="big">${tx(s.n)}</span><span class="det"><span class="en">${LV[i]}</span> · ${tx(s.d)}</span></li>`).join('')}</ol>
-  </section>
+    <section class="lp-sec" id="lp-route" aria-labelledby="lpR"><div class="lp-route" id="routeBox">
+      <h2 id="lpR">${L('سبع محطات من الصفر للطلاقة','Seven stops from zero to fluent')}</h2>
+      <p class="lead">${L('كل محطة ليها هدف وحاجات تعلّم عليها، ومعاها بودكاست ومسلسلات وكتب على قد مستواك.','Each stop has a goal, a checklist and podcasts, series and books at your level.')}</p>
+      <svg class="route-svg" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true"><path d="M20 90 C 180 10, 320 110, 480 60 S 800 10, 960 70 S 1140 40, 1180 30"/></svg>
+      <div class="stops">${STAGES.map((s,i)=>`<div class="stop" style="--i:${i}"><b class="en">${LV[i]==='Native'?'N':LV[i]}</b><span>${tx(s.n)}</span><small>${tx(s.d)}</small></div>`).join('')}</div>
+    </div></section>
 
-  <section class="lp-cta" id="lp-cta" aria-labelledby="lpCtaH">
-    <div class="lp-tiles">
-      <img src="img/clouds.jpg" width="900" height="1000" loading="lazy" alt="${L('راجل قاعد فوق السحاب','A man sitting above the clouds')}">
-      <div class="lp-tile"><h2 id="lpCtaH" ${rv(0)}>${L('ابدأ من مستواك الحقيقي','Start at your real level')}</h2>
-        <p ${rv(1)}>${L('عشرين دقيقة بيوفّروا عليك شهور. الاختبار بيتغير على حسب إجاباتك، وفي الآخر بيوريك أخطاءك.','Twenty minutes that save you months. The test adapts to your answers and shows your mistakes at the end.')}</p>
-        <div class="row" style="justify-content:flex-start" ${rv(2)}><a class="lp-btn dark" href="#test">${L('ابدأ الاختبار','Take the test')}</a><a class="lp-btn" href="#today" style="background:transparent">${L('أو ابدأ من الصفر','Or start from zero')}</a></div></div>
-      <img src="img/jetty.jpg" width="1200" height="900" loading="lazy" alt="${L('حد واقف على رصيف قدام جبال','Someone on a jetty facing the mountains')}">
-    </div>
-  </section>
+    <section class="lp-sec" id="lp-steps" aria-labelledby="lpS">
+      <h2 id="lpS" ${rv(0)}>${L('ازاي بتمشي','How it works')}</h2>
+      <p class="lead" ${rv(1)}>${L('٣ خطوات، وبعدها ساعة كل يوم.','Three steps, then about an hour a day.')}</p>
+      <ol class="lp-steps">
+        <li ${rv(0)}><b class="en">1</b><strong>${L('اعمل الاختبار','Take the test')}</strong><span>${L('حوالي ٣٠ دقيقة، وتعرف مستواك الحقيقي.','About 30 minutes to find your real level.')}</span></li>
+        <li ${rv(1)}><b class="en">2</b><strong>${L('اتبع روتين اليوم','Follow the daily routine')}</strong><span>${L('٦ مهام صغيرة: كلمات، استماع، كلام، إملاء، مسلسل، قراية.','Six small tasks: words, listening, speaking, dictation, a series, reading.')}</span></li>
+        <li ${rv(2)}><b class="en">3</b><strong>${L('اطلع المحطة الجاية','Move up a stop')}</strong><span>${L('لما تخلص حاجات المرحلة بتنتقل للي بعدها.','Finish a stage checklist and you move on.')}</span></li>
+      </ol>
+    </section>
 
-  <footer class="lp-footer">
-    <div class="lp-big">${LOGO}<span dir="ltr">Fluent <em>Route</em></span></div>
-    <div class="lp-cols">
-      <div><h3>${L('اتعلم','Learn')}</h3><a href="#today">${L('النهارده','Today')}</a><a href="#path">${L('المسار','Path')}</a><a href="#words">${L('الكلمات','Words')}</a></div>
-      <div><h3>${L('اتدرب','Practise')}</h3><a href="#speak">${L('كلام بالمايك','Speaking')}</a><a href="#speak">${L('إملاء وودنك','Dictation & ear')}</a><a href="#test">${L('اختبار المستوى','Placement test')}</a></div>
-      <div><h3>${L('المكتبة','Library')}</h3><a href="#more">${L('بودكاست ويوتيوب','Podcasts & YouTube')}</a><a href="#more">${L('مسلسلات وأفلام','Series & films')}</a><a href="#more">${L('كتب وأدوات','Books & tools')}</a></div>
-      <div><h3>${L('الصور','Photos')}</h3><p>Danka &amp; Peter, Joshua Earle, Todd Quackenbush ${L('على','on')} Unsplash</p></div>
-    </div>
-    <div class="lp-last"><span>© 2026 Fluent Route</span><a class="lp-btn" href="#test">${L('ابدأ','Start')}</a></div>
-  </footer>`;
-  const ta=$('lpType');ta.addEventListener('input',()=>{$('lpFrag').innerHTML=lpFrag(ta.value)});
-  // entrances, once per element
+    <section class="lp-sec" aria-labelledby="lpC"><div class="lp-band" ${rv(0)}>
+      <div><h2 id="lpC">${L('ابدأ من مستواك الحقيقي','Start at your real level')}</h2><p>${L('سجّل بجوجل عشان تقدمك يتحفظ على الموبايل واللابتوب.','Sign in with Google to keep your progress on phone and laptop.')}</p></div>
+      <a class="btn big" href="#test">${L('ابدأ الاختبار','Take the test')}</a></div></section>
+
+    <footer class="lp-foot"><span>© 2026 Fluent Route</span><span><a href="#today">${L('ادخل على التطبيق','Open the app')}</a> · <a href="#more">${L('المكتبة','Library')}</a></span></footer>
+  </div>`;
   const els=h.querySelectorAll('.rv');
-  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});els.forEach(el=>io.observe(el))}
-  else els.forEach(el=>el.classList.add('in'));
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+    els.forEach(el=>io.observe(el));io.observe($('routeBox'));
+  }else{els.forEach(el=>el.classList.add('in'));$('routeBox').classList.add('in')}
 }
 $('v-home').addEventListener('click',e=>{
-  const g=e.target.closest('[data-go]');if(g){e.preventDefault();$(g.dataset.go).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return}
+  const g=e.target.closest('[data-go]');if(g){e.preventDefault();$(g.dataset.go).scrollIntoView({behavior:'smooth'});return}
   const l=e.target.closest('[data-lang]');if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();return}
-  const id=e.target.closest('button')?.id;
-  if(id==='lpPlay')say(LP_SENT);
-  if(id==='lpSlow')say(LP_SENT,{slow:true});
+  if(e.target.closest('#heroPlay')){
+    const bubs=[$('bub0'),$('bub1')];bubs.forEach(b=>b.classList.remove('on'));
+    playLines(HERO_LINES,{root:$('v-home'),onLine:i=>{bubs.forEach((b,k)=>b.classList.toggle('on',k===i))},onDone:()=>bubs.forEach(b=>b.classList.remove('on'))});
+  }
 });
+
+/* =========================================================
+   Google sign-in + progress sync (Firebase, free tier)
+   Paste the web config from Firebase console > Project settings > Your apps.
+   Until it is filled in, the sign-in button explains that it is not set up yet.
+   ========================================================= */
+const FIREBASE_CONFIG={apiKey:'',authDomain:'',projectId:'',appId:''};
+const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv'];
+const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+let fb=null,fbUser=null,pushTimer=null;
+const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
+  :`<button class="gbtn" data-auth="in">${G_ICON}${L('دخول بجوجل','Sign in with Google')}</button>`;
+async function fbInit(){
+  if(!FIREBASE_CONFIG.apiKey)return null;if(fb)return fb;
+  const base='https://www.gstatic.com/firebasejs/10.12.2/';
+  const [app,auth,fs]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);
+  const a=app.initializeApp(FIREBASE_CONFIG);fb={auth:auth.getAuth(a),A:auth,db:fs.getFirestore(a),F:fs};
+  auth.onAuthStateChanged(fb.auth,async u=>{fbUser=u;if(u)await pullCloud();renderShell();if(curView()==='home')renderHome()});
+  return fb;
+}
+async function signIn(){
+  let f;try{f=await fbInit()}catch(e){f=null}
+  if(!f){toast(L('الدخول بجوجل لسه مش متفعّل على الموقع ده.','Google sign-in is not set up on this site yet.'));return}
+  try{await f.A.signInWithPopup(f.auth,new f.A.GoogleAuthProvider())}
+  catch(e){if(e.code!=='auth/popup-closed-by-user')toast(L('مقدرتش أسجّل الدخول: ','Could not sign in: ')+(e.code||e.message))}
+}
+async function pullCloud(){
+  const ref=fb.F.doc(fb.db,'users',fbUser.uid),snap=await fb.F.getDoc(ref);
+  const localAt=store.get('fr-updated',0);
+  if(snap.exists()&&(snap.data().updatedAt||0)>localAt){
+    const d=snap.data().data||{};let changed=false;
+    SYNC_KEYS.forEach(k=>{if(k in d){const nv=JSON.stringify(d[k]);try{if(localStorage.getItem(k)!==nv){localStorage.setItem(k,nv);changed=true}}catch(_){}}});
+    try{localStorage.setItem('fr-updated',JSON.stringify(snap.data().updatedAt))}catch(_){}
+    if(changed)location.reload(); // simplest way to load the cloud progress into every screen
+  }else pushCloud();
+}
+function pushCloud(){
+  if(!fb||!fbUser)return;clearTimeout(pushTimer);
+  pushTimer=setTimeout(()=>{const data={};SYNC_KEYS.forEach(k=>{const v=store.get(k,undefined);if(v!==undefined)data[k]=v});
+    fb.F.setDoc(fb.F.doc(fb.db,'users',fbUser.uid),{data,updatedAt:store.get('fr-updated',Date.now()),name:fbUser.displayName||''}).catch(()=>{})},1500);
+}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-auth]');if(!a)return;if(a.dataset.auth==='in')signIn();else fb&&fb.A.signOut(fb.auth)});
+// every saved change marks the time and is pushed to the cloud when signed in
+const _set=store.set;store.set=(k,v)=>{_set(k,v);if(SYNC_KEYS.includes(k)){_set('fr-updated',Date.now());pushCloud()}};
+if(FIREBASE_CONFIG.apiKey)fbInit().catch(()=>{});
+
+document.addEventListener('click',e=>{if(!e.target.closest('[data-motion]'))return;const on=!motionPref();store.set('fr-motion',on);document.documentElement.classList.toggle('motion',on);renderShell()});
 
 /* =========================================================
    routing
