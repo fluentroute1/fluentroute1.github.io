@@ -432,23 +432,22 @@ html.motion.js .rv.in{opacity:1;transform:none}
 .chara svg{width:clamp(104px,22vw,150px);height:auto;overflow:visible}
 .chara .nm{font:700 15px var(--f-display);padding:3px 12px;border-radius:99px;background:var(--surface);color:var(--muted);transition:background .2s,color .2s}
 .chara.talk .nm{background:var(--accent);color:var(--surface)}
-.chara svg .m1,.chara svg .m2{display:none}
-.chara svg[data-m="1"] .m0,.chara svg[data-m="2"] .m0,.chara svg[data-m="2"] .m1{display:none}
-.chara svg[data-m="1"] .m1,.chara svg[data-m="2"] .m2{display:inline}
-.chara .torso{animation:breathe 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
-.chara .head{animation:sway 5.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 92%}
-.chara:nth-child(even) .head{animation-delay:-2.1s}.chara:nth-child(even) .torso{animation-delay:-1.3s}
-.chara .eye{animation:blink 4.8s infinite;transform-box:fill-box;transform-origin:center}
-.chara:nth-child(3n) .eye{animation-delay:-1.7s}
-.chara.talk .head{animation:nod .42s ease-in-out infinite alternate}
-.chara.talk .arm{animation:gesture .8s ease-in-out infinite alternate;transform-box:view-box;transform-origin:120px 158px}
-.chara.talk .brows{animation:brow .55s ease-in-out infinite alternate}
-@keyframes breathe{50%{transform:scaleY(1.03)}}
-@keyframes sway{25%{transform:rotate(-2.5deg)}75%{transform:rotate(2.5deg)}}
-@keyframes blink{0%,93%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
-@keyframes nod{to{transform:rotate(-4deg) translateY(-2px)}}
-@keyframes gesture{to{transform:rotate(-42deg)}}
-@keyframes brow{to{transform:translateY(-3px)}}
+.chara .mouth>*{display:none}
+.chara svg[data-m="0"] .v0,.chara svg[data-m="M"] .vM,.chara svg[data-m="S"] .vS,.chara svg[data-m="E"] .vE,.chara svg[data-m="A"] .vA,.chara svg[data-m="O"] .vO,.chara svg[data-m="U"] .vU,.chara svg[data-m="F"] .vF{display:inline}
+.chara .torso{animation:breathe 3.8s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.chara .head{animation:sway 6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 92%}
+.chara:nth-child(even) .head{animation-delay:-2.3s}.chara:nth-child(even) .torso{animation-delay:-1.4s}
+.chara.talk .torso{animation-duration:2.4s}
+.chara .hd{transform:rotate(var(--tilt,0deg)) translateY(var(--nod,0px));transform-box:fill-box;transform-origin:50% 90%;transition:transform .14s ease-out}
+.chara .eye{transform-box:fill-box;transform-origin:center;transition:transform .07s}
+.chara svg.blink .eye{transform:scaleY(.08)}
+.chara .pupil{transform:translate(var(--gx,0px),var(--gy,0px));transition:transform .28s cubic-bezier(.3,.7,.2,1)}
+.chara .arm{transform-box:view-box;transform-origin:120px 158px;transition:transform .38s cubic-bezier(.3,.7,.2,1)}
+.chara svg.gest .arm{transform:rotate(-46deg)}
+.chara .brows{transition:transform .18s ease-out}
+.chara svg.brow .brows{transform:translateY(-3.5px)}
+@keyframes breathe{50%{transform:scaleY(1.025)}}
+@keyframes sway{25%{transform:rotate(-1.8deg)}75%{transform:rotate(1.8deg)}}
 .spot{display:grid;place-items:center;height:104px;border-radius:16px;background:var(--accent-soft)}
 .spot svg{height:84px;width:auto;overflow:visible;transition:transform .3s var(--ease)}
 .feat:hover .spot svg{transform:scale(1.08) rotate(-3deg)}
@@ -1185,24 +1184,29 @@ $('v-more').addEventListener('click',e=>{
    talking characters
    ========================================================= */
 const CHARS={
-  Emma:{skin:'#F6CDAE',shade:'#E3A98A',hair:'#C9622D',hairHi:'#E7894F',shirt:'#2F4FE0',shirtSh:'#2238B0',iris:'#3E7A4C',style:'long',g:'f',extra:'earrings'},
+  Emma:{skin:'#F6CDAE',shade:'#E3A98A',hair:'#B5562A',hairHi:'#DD8550',shirt:'#2F4FE0',shirtSh:'#2238B0',iris:'#3E7A4C',style:'bob',g:'f',extra:'earrings'},
   Jack:{skin:'#E8B48C',shade:'#CF9469',hair:'#3A2A20',hairHi:'#5C4434',shirt:'#17885A',shirtSh:'#0F6A45',iris:'#4A3324',style:'short',g:'m',extra:''},
   Sara:{skin:'#C98B66',shade:'#A96E4D',hair:'#231B1A',hairHi:'#43352F',shirt:'#C9373B',shirtSh:'#9E2328',iris:'#3A2418',style:'bun',g:'f',extra:'band'},
   Leo:{skin:'#8E5B3C',shade:'#74462D',hair:'#171111',hairHi:'#3A2C27',shirt:'#F2B705',shirtSh:'#C99500',iris:'#2B1A10',style:'curly',g:'m',extra:'glasses'},
 };
-// Illustrated 2-D characters: outlined shapes, soft shading, eyes with highlights, a talking hand,
-// and three mouth shapes the talking loop switches between (data-m = 0 closed, 1 half, 2 open)
+// Illustrated 2-D characters. The mouth has seven shapes (visemes) chosen from the letters being spoken;
+// eyes have a movable pupil group (gaze), the head has an inner group that tilts with speech.
 const INK='#2A1F26';
 function charSVG(n){
   const c=CHARS[n],o=`stroke="${INK}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
-  const back={long:`<path d="M38 80C36 40 58 22 80 22s44 18 42 58l6 70c-14 10-82 10-96 0z" fill="${c.hair}" ${o}/>`,
-    bun:`<circle cx="80" cy="24" r="17" fill="${c.hair}" ${o}/><path d="M70 14q10-6 20 0" stroke="${c.hairHi}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  const hi=d=>`<path d="${d}" stroke="${c.hairHi}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const back={
+    // chin-length wavy bob with a deep side part
+    bob:`<path d="M38 86C36 48 56 26 82 26c27 0 45 21 42 60l1 30q-6 9-14 4q-6 9-15 3q-7 7-15 1q-8 6-15 0q-8 5-14-2q-9 3-12-8z" fill="${c.hair}" ${o}/>${hi('M46 104q2 10 8 14M114 100q0 12-6 18')}`,
+    bun:`<circle cx="80" cy="24" r="17" fill="${c.hair}" ${o}/>${hi('M70 14q10-6 20 0')}`,
     short:'',curly:''}[c.style];
-  const front={long:`<path d="M44 74C46 42 64 32 82 32c20 0 36 12 36 42-8-14-22-22-38-21-14 1-26 9-36 21z" fill="${c.hair}" ${o}/><path d="M60 42q14-8 30-4" stroke="${c.hairHi}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
-    short:`<path d="M45 76C42 44 60 28 82 28c24 0 38 16 33 46-5-12-14-20-28-21-8 0-14 4-22 0-8 6-14 13-20 23z" fill="${c.hair}" ${o}/><path d="M66 38q12-6 26-2" stroke="${c.hairHi}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  const front={
+    bob:`<path d="M42 84C40 50 60 32 88 32c18 0 32 12 34 34-8-8-18-12-28-11-6 12-24 22-44 24-4 1-6 3-8 5z" fill="${c.hair}" ${o}/>${hi('M58 50q16-12 34-12')}${hi('M98 40q12 2 18 12')}<g transform="rotate(-24 108 54)"><rect x="98" y="50" width="20" height="7" rx="3.5" fill="#FFD84A" ${o}/></g>`,
+    short:`<path d="M45 76C42 44 60 28 82 28c24 0 38 16 33 46-5-12-14-20-28-21-8 0-14 4-22 0-8 6-14 13-20 23z" fill="${c.hair}" ${o}/>${hi('M66 38q12-6 26-2')}`,
     bun:`<path d="M45 78C45 46 62 36 80 36s35 10 35 42c-8-16-20-24-35-24S53 62 45 78z" fill="${c.hair}" ${o}/>${c.extra==='band'?`<path d="M47 66q33-24 66 0" stroke="#FFD84A" stroke-width="6" fill="none" stroke-linecap="round"/>`:''}`,
-    curly:`<g fill="${c.hair}" ${o}>${[[50,58,13],[60,44,14],[76,36,15],[92,38,14],[106,48,13],[113,62,11],[46,70,10]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g><path d="M68 40q10-6 20-2" stroke="${c.hairHi}" stroke-width="3" fill="none" stroke-linecap="round"/>`}[c.style];
-  const eye=x=>`<g class="eye"><ellipse cx="${x}" cy="82" rx="6.5" ry="7.5" fill="#fff" ${o}/><circle class="iris" cx="${x}" cy="83" r="4.2" fill="${c.iris}"/><circle cx="${x}" cy="83" r="2" fill="${INK}"/><circle cx="${x+1.6}" cy="80.6" r="1.4" fill="#fff"/></g>`;
+    curly:`<g fill="${c.hair}" ${o}>${[[50,58,13],[60,44,14],[76,36,15],[92,38,14],[106,48,13],[113,62,11],[46,70,10]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g>${hi('M68 40q10-6 20-2')}`}[c.style];
+  const eye=x=>`<g class="eye"><ellipse cx="${x}" cy="82" rx="6.5" ry="7.5" fill="#fff" ${o}/><g class="pupil"><circle cx="${x}" cy="83" r="4.2" fill="${c.iris}"/><circle cx="${x}" cy="83" r="2" fill="${INK}"/><circle cx="${x+1.6}" cy="80.6" r="1.4" fill="#fff"/></g></g>`;
+  const lips='#6E1E2B',teeth='#FFFFFF',tongue='#E86A7A';
   return `<svg viewBox="0 0 160 210" aria-hidden="true" data-m="0">
     <ellipse cx="80" cy="204" rx="52" ry="6" fill="${INK}" opacity=".12"/>
     <g class="torso">
@@ -1210,9 +1214,9 @@ function charSVG(n){
       <path d="M112 150c10 14 16 32 18 56h-18z" fill="${c.shirtSh}" opacity=".9"/>
       <path d="M66 136l14 18 14-18" fill="none" ${o}/>
       <path d="M34 206c0-20 4-36 12-46" fill="none" ${o}/>
-      <g class="arm"><path d="M120 158c10 12 14 26 12 40" fill="none" stroke="${c.shirt}" stroke-width="16" stroke-linecap="round"/><path d="M120 158c10 12 14 26 12 40" fill="none" ${o} opacity=".0"/><circle cx="132" cy="200" r="9" fill="${c.skin}" ${o}/></g>
+      <g class="arm"><path d="M120 158c10 12 14 26 12 40" fill="none" stroke="${c.shirt}" stroke-width="16" stroke-linecap="round"/><circle cx="132" cy="200" r="9" fill="${c.skin}" ${o}/></g>
     </g>
-    <g class="head">
+    <g class="head"><g class="hd">
       ${back}
       <path d="M70 116h20v20q-10 6-20 0z" fill="${c.shade}" ${o}/>
       <ellipse cx="45" cy="88" rx="7" ry="10" fill="${c.skin}" ${o}/><ellipse cx="115" cy="88" rx="7" ry="10" fill="${c.skin}" ${o}/>
@@ -1226,11 +1230,16 @@ function charSVG(n){
       <path d="M80 86q-4 9 1 11" fill="none" stroke="${c.shade}" stroke-width="2.6" stroke-linecap="round"/>
       <ellipse cx="58" cy="99" rx="6" ry="3.5" fill="#EF8A8A" opacity=".45"/><ellipse cx="102" cy="99" rx="6" ry="3.5" fill="#EF8A8A" opacity=".45"/>
       <g class="mouth">
-        <path class="m0" d="M70 106q10 8 20 0" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
-        <g class="m1"><path d="M70 105q10 9 20 0q-10 4-20 0z" fill="#6E1E2B" ${o}/></g>
-        <g class="m2"><path d="M69 103q11-2 22 0q-1 14-11 14t-11-14z" fill="#6E1E2B" ${o}/><path d="M73 112q7-5 14 0q-7 5-14 0z" fill="#E86A7A"/></g>
+        <path class="v0" d="M70 106q10 8 20 0" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+        <path class="vM" d="M71 107q9 2 18 0" fill="none" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>
+        <g class="vS"><path d="M71 105q9 7 18 0q-9 3-18 0z" fill="${lips}" ${o}/></g>
+        <g class="vE"><path d="M67 104q13-3 26 0q-3 9-13 9t-13-9z" fill="${lips}" ${o}/><path d="M70 104.5q10-2 20 0v3h-20z" fill="${teeth}"/></g>
+        <g class="vA"><path d="M69 102q11-3 22 0q-1 16-11 16t-11-16z" fill="${lips}" ${o}/><path d="M71 103q9-2 18 0v2.5h-18z" fill="${teeth}"/><path d="M73 113q7-5 14 0q-7 4-14 0z" fill="${tongue}"/></g>
+        <g class="vO"><ellipse cx="80" cy="108" rx="7.5" ry="8.5" fill="${lips}" ${o}/><ellipse cx="80" cy="112" rx="4" ry="2.5" fill="${tongue}"/></g>
+        <g class="vU"><ellipse cx="80" cy="107" rx="4.6" ry="5.4" fill="${lips}" ${o}/></g>
+        <g class="vF"><path d="M70 106q10-3 20 0q-10 7-20 0z" fill="${lips}" ${o}/><path d="M72 103.5h16v3.5h-16z" fill="${teeth}" ${o}/></g>
       </g>
-    </g></svg>`;
+    </g></g></svg>`;
 }
 // illustrated backdrop: a small café with a window, a lamp, a plant and a counter, drawn in the theme's colours
 const sceneSVG=()=>`<svg class="scene-bg" viewBox="0 0 600 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
@@ -1283,17 +1292,67 @@ function voiceFor(name){
   if(pool.length)return {voice:pool[same%pool.length],pitch:1};
   return {voice:all[0]||null,pitch:c.g==='f'?1.25:.8};
 }
+/* ---------- lifelike animation engine ----------
+   lip sync: each spoken word (from the speech engine's word-boundary events) is turned into a
+   sequence of mouth shapes from its letters, timed to the speaking rate; if a voice sends no word
+   events, the whole line is played through on the same timing.
+   life: random blinks, small glances, listeners look at the speaker, the speaker looks back,
+   the head tilts with how open the mouth is, the hand and eyebrows move on some words. */
+const VISEME=ch=>/[ah]/.test(ch)?'A':/[eiy]/.test(ch)?'E':/o/.test(ch)?'O':/[uwq]/.test(ch)?'U':/[fv]/.test(ch)?'F':/[mbp]/.test(ch)?'M':/[a-z]/.test(ch)?'S':null;
+const OPEN={A:1,O:.85,E:.6,U:.45,S:.35,F:.3,M:0,'0':0};
+function visemesFor(word){const out=[];for(const ch of word.toLowerCase()){const v=VISEME(ch);if(v&&v!==out[out.length-1])out.push(v)}return out.length?out:['S']}
+console.assert(visemesFor('hello').join('')==='AESO','lip sync: hello -> A E S O');
+console.assert(visemesFor('mama').join('')==='MAMA'&&visemesFor('').join('')==='S','lip sync: repeats and empty');
+let lipTimers=[];
+const clearLips=()=>{lipTimers.forEach(clearTimeout);lipTimers=[]};
+function setMouth(svg,v){svg.dataset.m=v;const o=OPEN[v]??.3;svg.style.setProperty('--tilt',(-o*3)+'deg');svg.style.setProperty('--nod',(-o*1.6)+'px')}
+function lipWord(svg,word,rate){
+  const seq=visemesFor(word),step=Math.max(55,(word.length*62/Math.max(.5,rate))/seq.length);
+  seq.forEach((v,i)=>lipTimers.push(setTimeout(()=>setMouth(svg,v),i*step)));
+  lipTimers.push(setTimeout(()=>setMouth(svg,'S'),seq.length*step));
+  if(Math.random()<.3){svg.classList.add('gest');lipTimers.push(setTimeout(()=>svg.classList.remove('gest'),700))}
+  if(Math.random()<.18){svg.classList.add('brow');lipTimers.push(setTimeout(()=>svg.classList.remove('brow'),380))}
+}
+function lipLine(svg,text,rate){ // fallback when the voice gives no word timings
+  let t=0;text.split(/\s+/).forEach(w=>{const d=Math.max(160,w.length*62/rate);lipTimers.push(setTimeout(()=>lipWord(svg,w,rate),t));t+=d+90/rate});
+}
+// who looks where: listeners turn their eyes to the speaker, the speaker to the nearest listener
+function lookAt(root,speakerEl){
+  const cs=[...root.querySelectorAll('.chara')];
+  cs.forEach(c=>{const s=c.querySelector('svg');
+    if(!speakerEl){s.style.setProperty('--gx','0px');return}
+    const target=c===speakerEl?cs.find(x=>x!==c):speakerEl;
+    if(!target){s.style.setProperty('--gx','0px');return}
+    const dx=target.getBoundingClientRect().left-c.getBoundingClientRect().left;
+    s.style.setProperty('--gx',(dx>0?2.4:-2.4)+'px');s.style.setProperty('--gy','.4px')});
+}
 let talkTimer=null;
-function mouthLoop(el){clearInterval(talkTimer);document.querySelectorAll('.chara.talk').forEach(x=>{x.classList.remove('talk');x.querySelector('svg').dataset.m='0'});
-  if(!el)return;el.classList.add('talk');const s=el.querySelector('svg');let k=0;talkTimer=setInterval(()=>{s.dataset.m=String([1,2,1,0,2,1][k++%6])},115)}
+function mouthLoop(el,root=document){ // el = the character now speaking, or null for silence
+  clearLips();
+  document.querySelectorAll('.chara.talk').forEach(x=>{x.classList.remove('talk');setMouth(x.querySelector('svg'),'0')});
+  if(!el){lookAt(root,null);return}
+  el.classList.add('talk');lookAt(root,el);
+}
+// idle life for every character on screen: blinks at random 2-6 s, the odd glance when nobody talks
+setInterval(()=>{
+  const now=Date.now();
+  document.querySelectorAll('.chara svg').forEach(s=>{
+    if(!s.isConnected)return;
+    if(now>(s._nb||0)){s.classList.add('blink');setTimeout(()=>s.classList.remove('blink'),120+Math.random()*60);s._nb=now+2000+Math.random()*4200}
+    if(!document.querySelector('.chara.talk')&&now>(s._ng||0)){s.style.setProperty('--gx',((Math.random()*4.4)-2.2).toFixed(1)+'px');s.style.setProperty('--gy',((Math.random()*1.6)-.6).toFixed(1)+'px');s._ng=now+2500+Math.random()*4500}
+  });
+},150);
 // lines: [[name,text],...]; plays them in order, the speaking character animates and its name lights up
 function playLines(lines,{rate=.95,root=document,onDone,onLine}={}){
   if(!('speechSynthesis' in window)){onDone&&onDone();return}
   speechSynthesis.cancel();
   lines.forEach(([n,t],i)=>{
     const u=new SpeechSynthesisUtterance(t),vp=voiceFor(n);u.lang=accentLang();u.rate=rate;u.pitch=vp.pitch;if(vp.voice)u.voice=vp.voice;
-    u.onstart=()=>{mouthLoop(root.querySelector(`.chara[data-char="${n}"]`));onLine&&onLine(i)};
-    u.onend=()=>{if(i===lines.length-1){mouthLoop(null);onDone&&onDone()}};
+    u.onstart=()=>{const el=root.querySelector(`.chara[data-char="${n}"]`);mouthLoop(el,root);onLine&&onLine(i);
+      if(el){const s=el.querySelector('svg');let got=false;
+        u.onboundary=e=>{if(e.name&&e.name!=='word')return;got=true;lipWord(s,(t.slice(e.charIndex).match(/^[w']+/)||[''])[0],rate)};
+        lipTimers.push(setTimeout(()=>{if(!got)lipLine(s,t,rate)},350))}};
+    u.onend=()=>{clearLips();if(i===lines.length-1){mouthLoop(null,root);onDone&&onDone()}};
     speechSynthesis.speak(u);
   });
 }
