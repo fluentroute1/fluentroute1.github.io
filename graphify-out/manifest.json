@@ -1,9 +1,9 @@
 {
   "index.html": {
-    "mtime": 1793779807.4693582,
-    "seen": 1793779810.2647653,
-    "ast_hash": "0a1c7e12e8b029f850bf0fb3cc234499",
-    "semantic_hash": "0a1c7e12e8b029f850bf0fb3cc234499"
+    "mtime": 1793781094.250203,
+    "seen": 1793781115.6954918,
+    "ast_hash": "094861d5caabdcf6800d1f82631e87d5",
+    "semantic_hash": "094861d5caabdcf6800d1f82631e87d5"
   },
   "robots.txt": {
     "mtime": 1793779413.8018112,
@@ -34,5 +34,29 @@
     "seen": 1793779524.1668215,
     "ast_hash": "77b8b69a9eace48207e09eb688cedda7",
     "semantic_hash": "77b8b69a9eace48207e09eb688cedda7"
+  },
+  "img/clouds.jpg": {
+    "mtime": 1793780248.798184,
+    "seen": 1793781115.6954918,
+    "ast_hash": "b8d8e3f22796c0f36535ac9e247cb9a3",
+    "semantic_hash": "b8d8e3f22796c0f36535ac9e247cb9a3"
+  },
+  "img/fog.jpg": {
+    "mtime": 1793780250.7181475,
+    "seen": 1793781115.6954918,
+    "ast_hash": "8dd63579206c75e3dc7080d4835e9f00",
+    "semantic_hash": "8dd63579206c75e3dc7080d4835e9f00"
+  },
+  "img/hero.jpg": {
+    "mtime": 1793780247.6331182,
+    "seen": 1793781115.6954918,
+    "ast_hash": "0f37bc351bfa3a19bebe928f5f4eaa0a",
+    "semantic_hash": "0f37bc351bfa3a19bebe928f5f4eaa0a"
+  },
+  "img/jetty.jpg": {
+    "mtime": 1793780249.8183966,
+    "seen": 1793781115.6954918,
+    "ast_hash": "58107cd90772d2b4ee47d28b460fa97f",
+    "semantic_hash": "58107cd90772d2b4ee47d28b460fa97f"
   }
 }
