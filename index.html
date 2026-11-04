@@ -1,10 +1,29 @@
 <!doctype html>
+<html lang="ar" dir="rtl">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fluent Route</title>
+<title>Fluent Route | اتعلم إنجليزي من الصفر للطلاقة</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="اتعلم الإنجليزي ببلاش من A1 لحد ما تتكلم بطلاقة: اختبار تحديد مستوى، تدريب على الكلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وكتب لكل مستوى.">
+<link rel="canonical" href="https://fluent-route.github.io/">
+<meta name="theme-color" content="#121935">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="icon" href="icon-512.png" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fluent Route">
+<meta property="og:title" content="Fluent Route | اتعلم إنجليزي من الصفر للطلاقة">
+<meta property="og:description" content="اختبار مستوى دقيق، تدريب كلام بالمايك، إملاء ونطق، ومسار من A1 لـ C2. ببلاش.">
+<meta property="og:url" content="https://fluent-route.github.io/">
+<meta property="og:image" content="https://fluent-route.github.io/og.png">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Fluent Route","url":"https://fluent-route.github.io/","applicationCategory":"EducationalApplication","operatingSystem":"Any","inLanguage":["ar","en"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free English learning path from A1 to fluency: adaptive placement test, speaking practice with the microphone, dictation, pronunciation ear training, flashcards and a library of podcasts, series and books."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
 <style>
 /* Layout: app shell. Ink header band (brand, language + accent switches, progress ring); one column of views; tab bar fixed at the bottom on phones, sticky on top on desktop */
 :root{
@@ -12,9 +31,9 @@
   --band:#121935; --band-fg:#F4F6FC; --band-muted:#A9B1CF; --band-line:rgba(255,255,255,.16);
   --accent:#2F4FE0; --accent-soft:#E4E9FF; --marker:#FFD84A; --marker-ink:#121935;
   --ok:#17885A; --ok-soft:#DDF3E8; --bad:#C9373B; --bad-soft:#FBE3E3;
-  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
-  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-display:"Baloo Bhaijaan 2","Readex Pro","Segoe UI",Tahoma,sans-serif;
+  --f-body:"Readex Pro","Segoe UI",Tahoma,system-ui,sans-serif;
+  --f-mono:"Readex Pro","Segoe UI",Tahoma,sans-serif; /* numbers use tabular figures, no code font */
   --r:16px; --ease:cubic-bezier(.2,.8,.2,1);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -59,8 +78,10 @@ p{margin:0}
 /* header band */
 header{background:var(--band);color:var(--band-fg)}
 header .wrap{padding-block:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.brand{flex:1;min-width:150px}
-.brand b{display:block;font:800 26px/1 var(--f-display);letter-spacing:-.01em}
+body{font-variant-numeric:tabular-nums}
+.brand{flex:1;min-width:150px;display:flex;align-items:center;gap:12px}
+.brand svg{width:46px;height:46px;flex:none;border-radius:13px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.brand b{display:block;font:800 28px/1 var(--f-display);letter-spacing:-.01em;padding-top:4px}
 .brand b span{color:var(--marker)}
 .brand small{color:var(--band-muted);font-size:13px}
 .switches{display:flex;gap:8px}
@@ -230,6 +251,14 @@ td button{border:0;background:transparent;padding:0;color:var(--accent);font-fam
 .opt{text-align:start;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 16px;font:500 17px var(--f-display);transition:border-color .15s,background .15s,transform .15s}
 .opt:hover{border-color:var(--accent);background:var(--accent-soft)}
 .opt:active{transform:scale(.99)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);animation:pop .35s var(--ease)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+textarea{width:100%;font:500 18px/1.5 var(--f-display);color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:12px 14px;resize:vertical}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.review{display:grid;gap:8px;text-align:start}
+.review li{list-style:none;background:var(--sunk);border-radius:12px;padding:12px 14px;font-family:var(--f-display)}
+.review ul{margin:0;padding:0;display:grid;gap:8px}
+.review summary{cursor:pointer;font-weight:700}
 .yn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
 .lex{font:800 clamp(34px,10vw,52px)/1.1 var(--f-display);text-align:center;padding:36px 0;animation:pop .3s var(--ease)}
 .play{width:84px;height:84px;border-radius:50%;border:0;background:var(--accent);color:var(--surface);display:grid;place-items:center;margin:0 auto 10px}
@@ -247,6 +276,7 @@ td button{border:0;background:transparent;padding:0;color:var(--accent);font-fam
 <header><div class="wrap" id="head"></div></header>
 <nav aria-label="Sections"><div class="wrap" id="nav"></div></nav>
 <main><div class="wrap">
+  <noscript><h1>Fluent Route: اتعلم إنجليزي من الصفر للطلاقة</h1><p>مسار مجاني من A1 لـ C2: اختبار تحديد مستوى، تدريب كلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وأفلام وكتب لكل مستوى. شغّل JavaScript عشان تستخدم الموقع.</p></noscript>
   <section id="v-today" class="stack"></section>
   <section id="v-path" hidden></section>
   <section id="v-speak" hidden></section>
@@ -605,12 +635,13 @@ let voices=[];
 function loadVoices(){try{voices=speechSynthesis.getVoices()}catch(e){}}
 if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
 const accentLang=a=>(a||S.accent)==='uk'?'en-GB':'en-US';
-function say(text,{slow=false,rate,accent,onend}={}){
+function say(text,{slow=false,rate,accent,onend,vary=false}={}){
   if(!('speechSynthesis' in window)){onend&&onend();return}
   speechSynthesis.cancel();
   const lang=accentLang(accent),re=new RegExp(lang.replace('-','[-_]'),'i');
   const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate||(slow?.7:.95);
-  const v=voices.find(v=>re.test(v.lang)&&/natural|neural|google|aria|jenny|guy|sonia|ryan|libby/i.test(v.name))||voices.find(v=>re.test(v.lang));
+  const all=voices.filter(v=>re.test(v.lang));
+  const v=vary&&all.length?all[Math.floor(Math.random()*all.length)]:(all.find(v=>/natural|neural|google|aria|jenny|guy|sonia|ryan|libby/i.test(v.name))||all[0]);
   if(v)u.voice=v;
   if(onend)u.onend=onend;
   speechSynthesis.speak(u);
@@ -654,12 +685,13 @@ const ICONS={
  speak:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
  words:'<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/>',
  more:'<path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h13"/>'};
-const NAV=[['today','النهارده','Today'],['path','المسار','Path'],['speak','اتكلم','Speak'],['words','الكلمات','Words'],['more','المكتبة','Library']];
+// logo: a winding route that ends in a speech bubble (same as logo.svg)
+const LOGO='<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#2F4FE0"/><path d="M14 50c0-10 8-12 15-13s13-4 13-12" fill="none" stroke="#FFD84A" stroke-width="6" stroke-linecap="round"/><circle cx="14" cy="50" r="5.5" fill="#FFFFFF"/><path d="M45 6a11 11 0 1 1-5.6 20.5L33 29l2.4-6.2A11 11 0 0 1 45 6z" fill="#FFFFFF"/><circle cx="40.5" cy="17" r="1.9" fill="#2F4FE0"/><circle cx="45.5" cy="17" r="1.9" fill="#2F4FE0"/><circle cx="50.5" cy="17" r="1.9" fill="#2F4FE0"/></svg>';
+const NAV=[['today','النهارده','Today'],['path','المسار','Path'],['speak','تدريب','Practice'],['words','الكلمات','Words'],['more','المكتبة','Library']];
 function renderShell(){
   document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
-  document.title='Fluent Route';
   const total=STAGES.reduce((a,s)=>a+s.c.length,0),n=STAGES.reduce((a,_,i)=>a+stageDone(i),0),p=Math.round(n/total*100);
-  $('head').innerHTML=`<div class="brand"><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div>
+  $('head').innerHTML=`<div class="brand">${LOGO}<div><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div></div>
    <div class="switches">
     <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">ع</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
     <div class="seg" role="group" aria-label="Accent"><button data-accent="us" aria-pressed="${S.accent==='us'}">US</button><button data-accent="uk" aria-pressed="${S.accent==='uk'}">UK</button></div>
@@ -688,9 +720,9 @@ const resLink=r=>r?`<a href="${esc(link(r))}" target="_blank" rel="noopener" cla
 function tasksFor(lv){return [
   {k:'anki',t:L('كلمات','Words'),m:15,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
   {k:'listen',t:L('استماع','Listening'),m:20,s:L('النهارده: ','Today: ')+resLink(pick(lv<1?'yt':'pod',lv))},
-  {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح اتكلم','Open Speak')}</a>`},
+  {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
   {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:30,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
-  {k:'speak',t:L('كلام','Speaking'),m:10,s:L('اتكلم دقيقة عن موضوع في صفحة اتكلم','Talk for one minute on the Speak page')},
+  {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
   {k:'read',t:L('قراية','Reading'),m:10,s:L('١٠ صفحات من ','10 pages of ')+resLink(pick('book',lv))},
 ]}
 let day=store.get('fr-day',{d:today(),done:{}});if(day.d!==today())day={d:today(),done:{}};
@@ -778,13 +810,13 @@ $('v-words').addEventListener('click',e=>{
    speak (mic)
    ========================================================= */
 const micIcon='<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
-let sp={mode:'repeat',lv:null,idx:0,rec:null,heard:'',result:null,err:'',prompt:0,t0:0,timer:null,secs:0};
+let sp={mode:'repeat',lv:null,idx:0,rec:null,heard:'',result:null,err:'',prompt:0,t0:0,timer:null,secs:0,dIdx:0,dTyped:'',dCheck:false,ear:null};
 function speakLevel(){return sp.lv??Math.min(currentStage(),5)}
 function renderSpeak(){
   const lv=speakLevel(),v=$('v-speak');
-  const head=`<div class="sec-head"><h2>${L('اتكلم','Speak')}</h2><small>${L(`اللهجة: ${S.accent==='uk'?'بريطاني':'أمريكي'}`,`Accent: ${S.accent==='uk'?'British':'American'}`)}</small></div>
-   <div class="tabs"><button data-mode="repeat" aria-pressed="${sp.mode==='repeat'}">${L('قلّد الجملة','Repeat after me')}</button><button data-mode="free" aria-pressed="${sp.mode==='free'}">${L('كلام حر','Free talk')}</button></div>
-   <div class="chips">${LV.slice(0,6).map((l,i)=>`<button class="chip en" data-slv="${i}" aria-pressed="${i===lv}">${l}</button>`).join('')}</div>`;
+  const head=`<div class="sec-head"><h2>${L('تدريب','Practice')}</h2><small>${L(`اللهجة: ${S.accent==='uk'?'بريطاني':'أمريكي'}`,`Accent: ${S.accent==='uk'?'British':'American'}`)}</small></div>
+   <div class="tabs">${[['repeat','قلّد','Repeat'],['free','اتكلم','Talk'],['dict','إملاء','Dictation'],['ear','ودنك','Ear']].map(([k,a,e])=>`<button data-mode="${k}" aria-pressed="${sp.mode===k}">${L(a,e)}</button>`).join('')}</div>
+   ${sp.mode==='ear'?'':`<div class="chips">${LV.slice(0,6).map((l,i)=>`<button class="chip en" data-slv="${i}" aria-pressed="${i===lv}">${l}</button>`).join('')}</div>`}`;
   const noSR=!SR?`<p class="note">${L('المتصفح ده مش بيدعم التعرّف على الصوت. استخدم Chrome أو Edge على الكمبيوتر أو الموبايل.','This browser does not support speech recognition. Use Chrome or Edge on desktop or Android.')}</p>`:'';
   const err=sp.err?`<p class="note">${esc(sp.err)}</p>`:'';
   if(sp.mode==='repeat'){
@@ -804,7 +836,7 @@ function renderSpeak(){
       <div class="row"><button class="btn ghost" id="again2">${L('تاني','Try again')}</button><button class="btn" id="nextSent">${L('الجملة الجاية','Next sentence')}</button></div>
      </div>
      <p class="muted" style="font-size:13px;margin-top:10px">${L('النسبة دي بتقيس هل المايك فهم كل كلمة قلتها، مش بتقيس اللهجة بالظبط.','The score shows whether each word was understood. It does not grade your accent exactly.')}</p>`;
-  }else{
+  }else if(sp.mode==='free'){
     const prompt=PROMPTS[lv][sp.prompt%PROMPTS[lv].length];
     const w=toWords(sp.heard),mins=Math.max(sp.secs,1)/60,uniq=new Set(w).size;
     v.innerHTML=head+`<div class="panel speak-card">
@@ -818,14 +850,64 @@ function renderSpeak(){
        <p class="muted" style="font-size:14px">${L('الـ native بيتكلم حوالي ١٢٠ لـ ١٦٠ كلمة في الدقيقة. لو انت تحت ٨٠ ركّز على الـ shadowing.','Natives speak about 120 to 160 words a minute. Under 80? Do more shadowing.')}</p>`:''}
       ${noSR}${err}
      </div>`;
+  }else if(sp.mode==='dict'){
+    const pool=dictPool(lv),target=pool[sp.dIdx%pool.length];
+    let body='';
+    if(sp.dCheck){
+      const hit=matchWords(toWords(target),toWords(sp.dTyped));let wi=0;
+      const shown=target.split(/(\s+)/).map(tok=>{if(!tok.trim())return tok;const c=hit[wi++]?'hit':'miss';return `<span class="${c}">${esc(tok)}</span>`}).join('');
+      const pct=Math.round(hit.filter(Boolean).length/hit.length*100);
+      body=`<p class="score en">${pct}%</p><p class="target" dir="ltr">${shown}</p><p class="muted">${L('الكلمات الحمرا فاتتك أو اتكتبت غلط. اسمعها تاني وركّز عليها.','Red words were missed or misspelled. Listen again and focus on them.')}</p>
+        <div class="row"><button class="btn ghost" id="dRetry">${L('تاني','Try again')}</button><button class="btn" id="dNext">${L('الجملة الجاية','Next sentence')}</button></div>`;
+    }else{
+      body=`<label for="dInput" class="muted">${L('اكتب اللي سمعته بالظبط:','Type exactly what you hear:')}</label>
+        <textarea id="dInput" dir="ltr" rows="3" autocomplete="off" autocapitalize="off" spellcheck="false">${esc(sp.dTyped)}</textarea>
+        <button class="btn" id="dCheck">${L('صحّح','Check')}</button>`;
+    }
+    v.innerHTML=head+`<div class="panel speak-card">
+      <p class="muted">${L('اسمع الجملة كام مرة ما انت عايز واكتبها. الإملاء بيدرّب ودنك تمسك كل كلمة، حتى الصغيرة.','Play the sentence as often as you like and type it. Dictation trains your ear to catch every word, even the small ones.')}</p>
+      <div class="row"><button class="play" id="dPlay" aria-label="${L('شغّل','Play')}" style="margin:0"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button></div>
+      <button class="btn ghost" id="dSlow">${L('شغّل بالبطيء','Play slowly')}</button>
+      ${body}</div>`;
+    const ta=$('dInput');if(ta){ta.addEventListener('input',()=>{sp.dTyped=ta.value});ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('dCheck').click()}})}
+  }else{
+    if(!sp.ear)sp.ear=newEar();
+    const q=sp.ear,done=q.n>=EAR_ROUND;
+    v.innerHTML=head+`<div class="panel speak-card">
+      <p class="muted">${L('هتسمع كلمة واحدة من الاتنين. اختار اللي سمعتها. التدريب ده بيعلّم ودنك تفرّق بين الأصوات، ولما ودنك تسمع الفرق لسانك بيقدر يقوله.','You will hear one of the two words. Pick the one you heard. Training your ear to hear a difference helps your mouth produce it.')}</p>
+      <p class="timer en">${q.n} / ${EAR_ROUND} · ${L('صح','correct')}: ${q.right}</p>
+      ${done?`<p class="score en">${Math.round(q.right/EAR_ROUND*100)}%</p><button class="btn" id="earNew">${L('جولة جديدة','New round')}</button>`:`
+      <button class="play" id="earPlay" aria-label="${L('شغّل','Play')}"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="yn" style="width:100%;margin-top:0">${q.pair.map(w=>`<button class="opt ${q.picked?(w===q.word?'right':w===q.picked?'wrong':''):''}" data-ear="${w}" dir="ltr" style="text-align:center" ${q.picked?'disabled':''}>${w}</button>`).join('')}</div>
+      ${q.picked?`<p class="muted">${q.picked===q.word?L('صح!','Correct!'):L(`الكلمة كانت "${q.word}"`,`It was "${q.word}"`)}</p><div class="row"><button class="btn ghost" data-say="${q.pair[0]}" data-accent="${S.accent}">${q.pair[0]}</button><button class="btn ghost" data-say="${q.pair[1]}">${q.pair[1]}</button><button class="btn" id="earNext">${L('اللي بعدها','Next')}</button></div>`:''}`}
+      </div>`;
   }
 }
+// Dictation pool: practice sentences + listening clips of the chosen level
+const dictPool=lv=>SENTS[lv].concat(LISTEN.filter(x=>x[0]===lv).map(x=>x[1]));
+// Ear training: minimal pairs Arabic speakers confuse; each play uses a random voice of the accent (high-variability training)
+const EAR=[['pin','bin'],['pea','bee'],['park','bark'],['very','berry'],['fan','van'],['fine','vine'],['think','sink'],['three','tree'],['thin','tin'],['ship','sheep'],['sit','seat'],['live','leave'],['full','fool'],['pull','pool'],['bed','bad'],['cat','cut'],['walk','work'],['hat','hut'],['cap','cup'],['letter','litter']];
+const EAR_ROUND=10;
+function newEar(){const p=shuffle(EAR)[0];return {pair:p,word:p[Math.random()<.5?0:1],picked:null,n:sp.ear?.n>=EAR_ROUND?0:(sp.ear?.n||0),right:sp.ear?.n>=EAR_ROUND?0:(sp.ear?.right||0)}}
 function stopRec(){if(sp.rec){try{sp.rec.stop()}catch(e){}}}
 $('v-speak').addEventListener('click',e=>{
   const m=e.target.closest('[data-mode]'),lv=e.target.closest('[data-slv]');
-  if(m){stopRec();sp={...sp,mode:m.dataset.mode,heard:'',result:null,err:'',secs:0};renderSpeak();return}
-  if(lv){stopRec();sp={...sp,lv:+lv.dataset.slv,idx:0,prompt:0,heard:'',result:null,err:'',secs:0};renderSpeak();return}
+  if(m){stopRec();sp={...sp,mode:m.dataset.mode,heard:'',result:null,err:'',secs:0,dTyped:'',dCheck:false};renderSpeak();return}
+  if(lv){stopRec();sp={...sp,lv:+lv.dataset.slv,idx:0,prompt:0,heard:'',result:null,err:'',secs:0,dIdx:0,dTyped:'',dCheck:false};renderSpeak();return}
   const id=e.target.closest('button')?.id;
+  // dictation
+  const dTarget=()=>{const p=dictPool(speakLevel());return p[sp.dIdx%p.length]};
+  if(id==='dPlay'){say(dTarget());return}
+  if(id==='dSlow'){say(dTarget(),{slow:true});return}
+  if(id==='dCheck'){sp.dCheck=true;renderSpeak();return}
+  if(id==='dRetry'){sp.dCheck=false;sp.dTyped='';renderSpeak();$('dInput')?.focus();return}
+  if(id==='dNext'){sp.dIdx++;sp.dCheck=false;sp.dTyped='';renderSpeak();say(dTarget());return}
+  // ear training
+  const ew=e.target.closest('[data-ear]');
+  if(ew&&sp.ear&&!sp.ear.picked){sp.ear.picked=ew.dataset.ear;sp.ear.n++;if(sp.ear.picked===sp.ear.word)sp.ear.right++;renderSpeak();return}
+  if(id==='earPlay'){say(sp.ear.word,{vary:true});return}
+  if(id==='earNext'){sp.ear=newEar();renderSpeak();say(sp.ear.word,{vary:true});return}
+  if(id==='earNew'){sp.ear=null;renderSpeak();return}
   if(id==='nextSent'){sp={...sp,idx:sp.idx+1,heard:'',result:null,err:''};renderSpeak();return}
   if(id==='again2'){sp={...sp,heard:'',result:null,err:''};renderSpeak();return}
   if(id==='newPrompt'){stopRec();sp={...sp,prompt:sp.prompt+1,heard:'',result:null,err:'',secs:0};renderSpeak();return}
@@ -884,7 +966,7 @@ $('v-more').addEventListener('click',e=>{
 const UOE_N=16, LIS_N=8;
 let tst=null;
 function newTest(){
-  return {step:'intro',
+  return {step:'intro',wrong:[],
     vocab:shuffle(VOCAB.map(([band,w])=>({band,w}))),vi:0,vans:[],
     ubank:UOE.map((x,j)=>({lvl:x[0],q:x[1],p:x[2],opts:x[3],b:bOf(x[0],j)})),uused:new Set(),uresp:[],ucur:null,
     lbank:LISTEN.map((x,j)=>({lvl:x[0],text:x[1],q:x[2],opts:x[3],b:bOf(x[0],j*2)})),lused:new Set(),lresp:[],lcur:null,plays:0,
@@ -943,7 +1025,8 @@ function renderTest(){
       ${bar(L('الاستماع','Listening'),r.l.score)}
       <div class="scale en">${LV.slice(0,6).map(l=>`<span>${l}</span>`).join('')}</div>
      </div>
-     <p class="note" style="margin-top:14px">${L('الاختبار ده بيقيس الفهم والقواعد والكلمات. الكلام نفسه اتدرب عليه وقيسه في صفحة "اتكلم" بالمايك.','This test measures understanding, grammar and vocabulary. Practise and measure speaking on the Speak page with the mic.')}</p>
+     ${tst.wrong.length?`<details class="panel review" style="margin-top:14px"><summary>${L(`راجع أخطائك (${tst.wrong.length})`,`Review your mistakes (${tst.wrong.length})`)}</summary><ul dir="ltr">${tst.wrong.map(w=>`<li><span class="tag">${LV[w.lvl]}</span> ${esc(w.q.replace('___','_____'))}<br><span style="color:var(--bad)">✗ ${esc(w.you)}</span> · <span style="color:var(--ok)">✓ ${esc(w.ans)}</span>${w.say?` · <button class="btn ghost" style="padding:2px 10px" data-say="${esc(w.say)}">▶</button>`:''}</li>`).join('')}</ul></details>`:''}
+     <p class="note" style="margin-top:14px">${L('الاختبار ده بيقيس الفهم والقواعد والكلمات. الكلام نفسه اتدرب عليه وقيسه في صفحة "تدريب" بالمايك.','This test measures understanding, grammar and vocabulary. Practise and measure speaking on the Practice page with the mic.')}</p>
      <div class="row" style="margin-top:14px"><button class="btn ghost" id="tAgain">${L('اعيد الاختبار','Retake')}</button><button class="btn" id="tApply">${L(`ابدأ من مرحلة ${LV[lvl]}`,`Start at ${LV[lvl]}`)}</button></div>`;
   }
 }
@@ -958,9 +1041,11 @@ $('v-test').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||!tst)return;
   if(b.id==='tStart'){tst.step='vocab'}
   else if(b.dataset.yn!==undefined){tst.vans.push({band:tst.vocab[tst.vi].band,yes:b.dataset.yn==='1'});tst.vi++;if(tst.vi>=tst.vocab.length)tst.step='uoe'}
-  else if(b.dataset.opt!==undefined){const it=tst.ubank[tst.ucur];tst.uused.add(tst.ucur);tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)tst.step='listen'}
+  else if(b.dataset.opt!==undefined){const it=tst.ubank[tst.ucur];tst.uused.add(tst.ucur);
+    if(b.dataset.opt!=='0')tst.wrong.push({lvl:it.lvl,q:(it.p?it.p+' — ':'')+it.q,you:it.opts[+b.dataset.opt],ans:it.opts[0]});tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)tst.step='listen'}
   else if(b.id==='tPlay'){if(tst.plays>=2)return;const it=tst.lbank[tst.lcur];tst.plays++;say(it.text,{rate:[.85,.9,.98,1.05,1.1,1.15][it.lvl]})}
-  else if(b.dataset.lopt!==undefined){const it=tst.lbank[tst.lcur];tst.lused.add(tst.lcur);tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();if(tst.lresp.length>=LIS_N)finishTest()}
+  else if(b.dataset.lopt!==undefined){const it=tst.lbank[tst.lcur];tst.lused.add(tst.lcur);
+    if(b.dataset.lopt!=='0')tst.wrong.push({lvl:it.lvl,q:'🔊 "'+it.text+'" — '+it.q,you:it.opts[+b.dataset.lopt],ans:it.opts[0],say:it.text});tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();if(tst.lresp.length>=LIS_N)finishTest()}
   else if(b.id==='tAgain'){tst=newTest()}
   else if(b.id==='tApply'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);fLv=null;location.hash='today';renderAll();return}
   else return;

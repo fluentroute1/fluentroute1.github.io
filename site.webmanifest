@@ -1,0 +1,15 @@
+{
+  "name": "Fluent Route",
+  "short_name": "Fluent Route",
+  "description": "Learn English from A1 to fluency: placement test, speaking, dictation and ear training.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121935",
+  "theme_color": "#121935",
+  "icons": [
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+    {"src": "logo.svg", "sizes": "any", "type": "image/svg+xml"}
+  ]
+}

@@ -1,8 +1,38 @@
 {
   "index.html": {
-    "mtime": 1793777817.525606,
-    "seen": 1793777854.9987066,
-    "ast_hash": "45ec81109f65eaa23483b0daa4dfa02a",
-    "semantic_hash": "45ec81109f65eaa23483b0daa4dfa02a"
+    "mtime": 1793779459.5799048,
+    "seen": 1793779524.1668215,
+    "ast_hash": "19f3e6ed32edccda2296c464a616b159",
+    "semantic_hash": "19f3e6ed32edccda2296c464a616b159"
+  },
+  "robots.txt": {
+    "mtime": 1793779413.8018112,
+    "seen": 1793779524.1668215,
+    "ast_hash": "168728e62947199611e3d0b719f48b80",
+    "semantic_hash": "168728e62947199611e3d0b719f48b80"
+  },
+  "apple-touch-icon.png": {
+    "mtime": 1793779479.196765,
+    "seen": 1793779524.1668215,
+    "ast_hash": "39f03670a0dfc1cb144d70ec811db7be",
+    "semantic_hash": "39f03670a0dfc1cb144d70ec811db7be"
+  },
+  "icon-512.png": {
+    "mtime": 1793779479.1841998,
+    "seen": 1793779524.1668215,
+    "ast_hash": "574a7991678194f8bcfbcf1ef5f3af34",
+    "semantic_hash": "574a7991678194f8bcfbcf1ef5f3af34"
+  },
+  "logo.svg": {
+    "mtime": 1793779335.5263815,
+    "seen": 1793779524.1668215,
+    "ast_hash": "79de3cf4e3c2554f984602d5ecdb9e4d",
+    "semantic_hash": "79de3cf4e3c2554f984602d5ecdb9e4d"
+  },
+  "og.png": {
+    "mtime": 1793779479.254526,
+    "seen": 1793779524.1668215,
+    "ast_hash": "77b8b69a9eace48207e09eb688cedda7",
+    "semantic_hash": "77b8b69a9eace48207e09eb688cedda7"
   }
 }
