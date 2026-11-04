@@ -885,15 +885,31 @@ function matchWords(target,heard){
    ========================================================= */
 let voices=[];
 function loadVoices(){try{voices=speechSynthesis.getVoices()}catch(e){}}
-if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=()=>{loadVoices();try{const v=curView();if(v==='speak'||v==='more')DRAW[v]()}catch(_){}}}
 const accentLang=a=>(a||S.accent)==='uk'?'en-GB':'en-US';
-function say(text,{slow=false,rate,accent,onend,vary=false}={}){
+// voice quality: Edge's "Online (Natural)" voices are the clearest, then Google's, then the rest.
+// Only voices of the chosen accent are used, so American stays American and British stays British.
+const vScore=v=>(/natural|online|neural/i.test(v.name)?100:0)+(/google/i.test(v.name)?60:0)+(/microsoft/i.test(v.name)?10:0)+(v.localService?0:5);
+const accentVoices=a=>{const re=new RegExp(accentLang(a).replace('-','[-_]'),'i');return voices.filter(v=>re.test(v.lang)).sort((x,y)=>vScore(y)-vScore(x))};
+const goodVoice=a=>{const v=accentVoices(a)[0];return !!v&&vScore(v)>=60};
+console.assert(vScore({name:'Microsoft Aria Online (Natural) - English (United States)',localService:false})>vScore({name:'Google US English',localService:false})&&vScore({name:'Google US English'})>vScore({name:'Microsoft David - English (United States)',localService:true}),'voice ranking');
+function voiceNote(){
+  if(!('speechSynthesis' in window))return '';
+  if(!voices.length)return '';
+  const uk=S.accent==='uk';
+  if(!accentVoices().length)return `<p class="note">${L(`المتصفح ده مفيهوش صوت ${uk?'بريطاني':'أمريكي'}. افتح الموقع من Microsoft Edge أو Google Chrome عشان تسمع اللهجة صح.`,`This browser has no ${uk?'British':'American'} voice. Open the site in Microsoft Edge or Google Chrome to hear the right accent.`)}</p>`;
+  if(!goodVoice())return `<p class="note">${L('الأصوات اللي في المتصفح ده مش واضحة. أوضح أصوات ببلاش موجودة في Microsoft Edge (أصوات Natural)، وبعدها Google Chrome.','The voices in this browser are not very clear. The clearest free voices are in Microsoft Edge (Natural voices), then Google Chrome.')}</p>`;
+  return '';
+}
+function say(text,opts={}){
+  const {slow=false,rate,accent,onend,vary=false}=opts;
   if(!('speechSynthesis' in window)){onend&&onend();return}
+  if(!voices.length&&!opts._retry){loadVoices();if(!voices.length){setTimeout(()=>{loadVoices();say(text,{...opts,_retry:true})},350);return}}
   speechSynthesis.cancel();
-  const lang=accentLang(accent),re=new RegExp(lang.replace('-','[-_]'),'i');
-  const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate||(slow?.7:.95);
-  const all=voices.filter(v=>re.test(v.lang));
-  const v=vary&&all.length?all[Math.floor(Math.random()*all.length)]:(all.find(v=>/natural|neural|google|aria|jenny|guy|sonia|ryan|libby/i.test(v.name))||all[0]);
+  const all=accentVoices(accent);
+  const u=new SpeechSynthesisUtterance(text);u.lang=accentLang(accent);u.rate=rate||(slow?.7:.9);u.pitch=1;
+  const top=all.slice(0,Math.min(all.length,3));
+  const v=vary&&top.length?top[Math.floor(Math.random()*top.length)]:all[0];
   if(v)u.voice=v;
   if(onend)u.onend=onend;
   speechSynthesis.speak(u);
@@ -958,7 +974,7 @@ $('head').addEventListener('click',e=>{
   S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();
 });
 // accent is chosen where you learn (Practice, test, tips), not in the header
-const accentPick=()=>`<div class="seg light" role="group" aria-label="${L('اللهجة','Accent')}"><span>${L('اللهجة:','Accent:')}</span><button data-pick-accent="us" aria-pressed="${S.accent==='us'}">${L('أمريكي','American')}</button><button data-pick-accent="uk" aria-pressed="${S.accent==='uk'}">${L('بريطاني','British')}</button></div>`;
+const accentPick=()=>`<div class="seg light" role="group" aria-label="${L('اللهجة','Accent')}"><span>${L('اللهجة:','Accent:')}</span><button data-pick-accent="us" aria-pressed="${S.accent==='us'}">${L('أمريكي','American')}</button><button data-pick-accent="uk" aria-pressed="${S.accent==='uk'}">${L('بريطاني','British')}</button></div>${voiceNote()}`;
 document.addEventListener('click',e=>{
   const a=e.target.closest('[data-pick-accent]');if(!a)return;
   S.accent=a.dataset.pickAccent;store.set('fr-accent',S.accent);
@@ -1331,12 +1347,15 @@ const ROUTE_SVG=`<svg class="route-svg" viewBox="0 0 1200 220" preserveAspectRat
 const F_RE=/female|aria|jenny|zira|samantha|sonia|libby|hazel|susan|emma|ava|michelle|natasha|karen|moira|tessa|fiona|serena|maisie|mia|clara/i;
 const M_RE=/\bmale|guy|david|mark|ryan|daniel|george|alex|fred|thomas|oliver|arthur|christopher|eric|roger|steffan|andrew|brian|liam/i;
 function voiceFor(name){
-  const lang=accentLang(),re=new RegExp(lang.replace('-','[-_]'),'i'),c=CHARS[name];
-  const all=voices.filter(v=>re.test(v.lang));
+  // best voices of the chosen accent first; each character gets its own voice of the right gender when there are several.
+  // pitch stays almost natural (a big change makes voices sound robotic)
+  const c=CHARS[name],all=accentVoices();
   const pool=all.filter(v=>(c.g==='f'?F_RE:M_RE).test(v.name)&&!(c.g==='f'?M_RE:/$^/).test(v.name));
   const same=Object.keys(CHARS).filter(k=>CHARS[k].g===c.g).indexOf(name);
-  if(pool.length)return {voice:pool[same%pool.length],pitch:1};
-  return {voice:all[0]||null,pitch:c.g==='f'?1.25:.8};
+  // clarity beats gender: a robotic voice of the right gender loses to a clear voice of the other one
+  const good=pool.filter(v=>all[0]&&vScore(v)>=vScore(all[0])-20);
+  if(good.length)return {voice:good[same%good.length],pitch:1};
+  return {voice:all[0]||null,pitch:c.g==='f'?1.06:.92};
 }
 /* ---------- lifelike animation engine ----------
    lip sync: each spoken word (from the speech engine's word-boundary events) is turned into a
@@ -1389,8 +1408,9 @@ setInterval(()=>{
   });
 },150);
 // lines: [[name,text],...]; plays them in order, the speaking character animates and its name lights up
-function playLines(lines,{rate=.95,root=document,onDone,onLine}={}){
+function playLines(lines,{rate=.92,root=document,onDone,onLine}={}){
   if(!('speechSynthesis' in window)){onDone&&onDone();return}
+  if(!voices.length)loadVoices();
   speechSynthesis.cancel();
   lines.forEach(([n,t],i)=>{
     const u=new SpeechSynthesisUtterance(t),vp=voiceFor(n);u.lang=accentLang();u.rate=rate;u.pitch=vp.pitch;if(vp.voice)u.voice=vp.voice;
