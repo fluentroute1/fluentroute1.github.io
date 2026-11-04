@@ -23,7 +23,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Fluent Route","url":"https://fluentroute1.github.io/","applicationCategory":"EducationalApplication","operatingSystem":"Any","inLanguage":["ar","en"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free English learning path from A1 to fluency: adaptive placement test, speaking practice with the microphone, dictation, pronunciation ear training, flashcards and a library of podcasts, series and books."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Readex+Pro:wght@300;400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,700&display=swap">
 <style>
 /* Layout: app shell. Ink header band (brand, language + accent switches, progress ring); one column of views; tab bar fixed at the bottom on phones, sticky on top on desktop */
 :root{
@@ -115,6 +115,7 @@ body{font-variant-numeric:tabular-nums}
 @media (max-width:520px){header .pb{display:none}}
 @media (max-width:999px){.authbox .l-long{display:none}.authbox .l-short{display:inline}.authbox .who span{display:none}}
 @media (max-width:420px){.lp-bar .l-long{display:none}.lp-bar .l-short{display:inline}}
+@media (max-width:420px){header .gbtn{padding:8px 10px;font-size:13px;gap:6px}header .brand b{font-size:21px}header .brand svg{width:34px;height:34px}header .wrap{gap:8px}}
 @media (min-width:1000px){.side .authbox{display:grid;gap:10px;order:4}.side .authbox .motion-tgl{display:block}}
 .pb-text{display:none}
 .pb-text strong{display:block;font:700 16px var(--f-display)}
@@ -517,6 +518,49 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
 
 /* motion is on unless the visitor (or their system) turned it off */
 html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:not(.motion) *::after{animation:none!important;transition:none!important}
+/* reader */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.btn.sm{padding:8px 14px;font-size:14px;border-radius:10px}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-bottom:14px}
+.book{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
+.cover{aspect-ratio:2/3;border-radius:6px 12px 12px 6px;background:var(--c);color:#fff;padding:14px 12px 12px 18px;display:flex;flex-direction:column;justify-content:space-between;position:relative;box-shadow:inset 6px 0 0 rgba(0,0,0,.22),0 6px 16px -8px rgba(18,25,53,.5);transition:transform .25s var(--ease)}
+.cover::after{content:"";position:absolute;inset:10px 10px auto 18px;height:2px;background:rgba(255,255,255,.35)}
+.cover .en{font:700 17px/1.2 'Literata',Georgia,serif;margin-top:14px;overflow-wrap:anywhere}
+.cover small{font-size:12px;opacity:.8}
+.book:hover .cover{transform:translateY(-4px) rotate(-1deg)}
+.book .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.book .meta .badge{font:600 12px var(--f-mono);padding:3px 7px;border-radius:6px;min-width:0}
+.book>small{color:var(--muted);font-size:13px;line-height:1.4}
+.book .line{height:5px}
+.reader{max-width:700px;margin:0 auto}
+.rd-top{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rd-back{font-weight:700;text-decoration:none;white-space:nowrap}
+.rd-ch select{max-width:min(60vw,360px);padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
+.rd-head{text-align:left;display:grid;gap:8px;margin-bottom:6px}
+.rd-head .row{justify-content:flex-start;align-items:center}
+.rd-tip{font-size:13px;color:var(--muted);margin:8px 0 18px}
+.rd-text{font:400 19px/1.8 'Literata',Georgia,serif;color:var(--ink);text-align:left}
+.rd-text p{margin:0 0 1em;padding:4px 8px 4px 34px;border-radius:10px;position:relative;transition:background .3s}
+.rd-text p.on{background:var(--accent-soft)}
+.rd-text .t{cursor:pointer}
+.rd-play{position:absolute;left:2px;top:8px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--accent);font-size:10px;line-height:1;display:grid;place-items:center;opacity:.55;transition:opacity .2s}
+.rd-text p:hover .rd-play,.rd-text p.on .rd-play,.rd-play:focus-visible{opacity:1}
+.rd-foot{display:flex;justify-content:space-between;gap:10px;margin:22px 0 40px;flex-wrap:wrap}
+.wpop{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 18px 40px -16px rgba(18,25,53,.45);z-index:60;display:grid;gap:8px;animation:rise .25s var(--ease)}
+.wpop[hidden]{display:none}
+.wp-top{display:flex;align-items:center;gap:10px}
+.wp-top strong{font-size:22px;flex:1}
+.wpop .x{border:0;background:transparent;font-size:18px;color:var(--muted);padding:6px}
+#wpBody{text-align:left;font-size:15px;color:var(--ink);display:grid;gap:4px}
+#wpBody p{margin:0}.wp-base{border-top:1px dashed var(--line);padding-top:6px}#wpBody i{color:var(--muted);margin-right:4px}
+.ipa{font:500 14px var(--f-mono);color:var(--muted)}
+.wp-ar{margin:0;font-size:16px;line-height:1.7}.linkish{border:0;background:none;padding:4px 0;color:var(--accent);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}.wp-sent{display:block;font-size:15px;background:var(--sunk);border-radius:10px;padding:8px 10px;margin-top:4px}.wp-ar small{font-size:12px}
+.wpop .row{justify-content:flex-start}
+.read-card{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit}
+.read-card .cover{width:64px;flex:none;padding:8px;aspect-ratio:2/3}
+.read-card .cover .en{font-size:9px;margin-top:4px}
+.read-card .cover small,.read-card .cover::after{display:none}
+@media (min-width:900px){.wpop{bottom:24px}}
 </style>
 
 <aside class="side">
@@ -532,6 +576,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
   <section id="v-words" hidden></section>
   <section id="v-more" hidden></section>
   <section id="v-test" hidden></section>
+  <section id="v-read" hidden></section>
 </div></main>
 
 <script>
@@ -610,7 +655,7 @@ const RES=[
  ['book','Word Power Made Easy',4,6,'كلمات متقدمة بالجذور','Advanced words through roots'],
  ['book','Sapiens — Yuval Noah Harari',4,6,'non-fiction ممتع','Gripping non-fiction'],
  ['book','1984 — George Orwell',5,6,'رواية أدبية','A literary classic'],
- ['book','The Great Gatsby',5,6,'أسلوب أدبي غني','Rich literary style'],
+ ['book','The Great Gatsby',5,6,'أسلوب أدبي غني، اقراه هنا في الموقع','Rich literary style. Read it here','#read/great-gatsby'],
  ['tool','Anki',0,6,'بطاقات كلمات بالتكرار المتباعد، مجاني','Free spaced-repetition flashcards','https://apps.ankiweb.net'],
  ['tool','Oxford 3000 / 5000',0,5,'أهم الكلمات مترتبة بالمستوى','The key words, sorted by level','https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000'],
  ['tool','Cambridge Dictionary',0,6,'المعنى ونطق أمريكي وبريطاني','Meanings with US and UK audio','https://dictionary.cambridge.org'],
@@ -645,34 +690,34 @@ const STAGES=[
 const CARDS=[
  ['pv','figure out','أفهم / ألاقي حل',"I can't figure out how this works.",'to understand or solve something'],
  ['pv','give up','أستسلم',"Don't give up, you're almost there.",'to stop trying'],
- ['pv','run out of','يخلص مني','We ran out of coffee.','to have none left'],
+ ['pv','run out of','يخلص (مايفضلش منه حاجة)','We ran out of coffee.','to have none left'],
  ['pv','look forward to','مستني بشوق',"I'm looking forward to the weekend.",'to feel happy about something coming'],
- ['pv','come up with','أطلع بفكرة','She came up with a great idea.','to think of an idea'],
+ ['pv','come up with','أطلّع فكرة / ألاقي حل','She came up with a great idea.','to think of an idea'],
  ['pv','get along with','أتفاهم مع','I get along with my coworkers.','to have a good relationship with'],
- ['pv','put off','أأجّل','Stop putting it off and just do it.','to delay doing something'],
+ ['pv','put off','أؤجّل','Stop putting it off and just do it.','to delay doing something'],
  ['pv','turn down','أرفض','He turned down the job offer.','to refuse an offer'],
  ['pv','end up','في الآخر لقيت نفسي','We ended up staying home.','to finally be in a situation'],
- ['pv','catch up','نتكلم بعد غياب','Let\'s catch up over coffee.','to talk after not seeing someone'],
- ['pv','hang out','أخرج مع صحابي','Wanna hang out later?','to spend relaxed time together'],
+ ['pv','catch up','نتقابل ونحكي اللي فاتنا','Let\'s catch up over coffee.','to talk after not seeing someone'],
+ ['pv','hang out','أقضّي وقت / أخرج مع حد','Wanna hang out later?','to spend relaxed time together'],
  ['pv','bring up','أفتح موضوع',"Don't bring up politics at dinner.",'to start talking about a topic'],
- ['pv','work out','تتحل / أتمرن',"Don't worry, it'll work out.",'to end well; to exercise'],
- ['pv','pick up','أتعلم من غير قصد','I picked up some Spanish on vacation.','to learn without studying'],
- ['pv','show up','أوصل / أظهر','He showed up an hour late.','to arrive'],
+ ['pv','work out','تمشي كويس في الآخر / أتمرن',"Don't worry, it'll work out.",'to end well; to exercise'],
+ ['pv','pick up','ألقط (لغة أو مهارة) من غير مذاكرة','I picked up some Spanish on vacation.','to learn without studying'],
+ ['pv','show up','ييجي / يظهر (غالبًا متأخر أو فجأة)','He showed up an hour late.','to arrive'],
  ['pv','find out','أعرف / أكتشف',"I just found out she's moving.",'to discover information'],
  ['pv','go through','أعدّي بتجربة صعبة',"She's going through a lot right now.",'to experience something hard'],
  ['pv','hold on','استنى ثانية','Hold on, let me check.','to wait a moment'],
  ['pv','deal with','أتعامل مع',"I'll deal with it tomorrow.",'to handle a problem'],
- ['pv','make up','أألّف حجة / نتصالح','He made up an excuse.','to invent; to become friends again'],
+ ['pv','make up','أؤلّف (حجة أو قصة) / نتصالح','He made up an excuse.','to invent; to become friends again'],
  ['id','a piece of cake','سهلة جدًا','The test was a piece of cake.','very easy'],
- ['id','break the ice','أكسر الحاجز','He told a joke to break the ice.','to make people feel relaxed'],
+ ['id','break the ice','أكسر الجليد (أكسر التوتر في أول قعدة)','He told a joke to break the ice.','to make people feel relaxed'],
  ['id','hit the sack','أروح أنام',"I'm exhausted, I'm gonna hit the sack.",'to go to bed'],
- ['id','on the same page','متفقين',"Let's make sure we're on the same page.",'agreeing and understanding each other'],
+ ['id','on the same page','فاهمين بعض ومتفقين',"Let's make sure we're on the same page.",'agreeing and understanding each other'],
  ['id','under the weather','تعبان شوية',"I'm feeling a bit under the weather.",'slightly ill'],
  ['id','call it a day','نكتفي كده النهارده',"It's late, let's call it a day.",'to stop working for today'],
  ['id','the ball is in your court','القرار عندك','I made my offer. The ball is in your court.','it is your decision now'],
  ['id','cost an arm and a leg','غالي جدًا','That phone cost an arm and a leg.','very expensive'],
  ['id','once in a blue moon','نادرًا جدًا','I eat fast food once in a blue moon.','very rarely'],
- ['id','get the hang of it','أتعود عليها',"Don't worry, you'll get the hang of it.",'to learn how to do it'],
+ ['id','get the hang of it','آخد عليها وأعرف أعملها',"Don't worry, you'll get the hang of it.",'to learn how to do it'],
  ['id','beat around the bush','ألف وأدوّر','Stop beating around the bush.','to avoid saying something directly'],
  ['id','a blessing in disguise','ضارة نافعة','Losing that job was a blessing in disguise.','a bad thing that turns out good'],
  ['id','spill the beans','أفشي السر','Come on, spill the beans!','to tell a secret'],
@@ -687,16 +732,16 @@ const CARDS=[
  ['ex','Sounds good.','تمام كده',"Eight o'clock? Sounds good.",'I agree'],
  ['ex',"It's up to you.",'براحتك',"Pizza or burgers? It's up to you.",'you decide'],
  ['ex','Never mind.','خلاص مش مهم','Never mind, I found it.','forget it, it is not important'],
- ['ex','kind of','نوعًا ما',"I'm kind of hungry.",'a little; somewhat'],
+ ['ex','kind of','شوية / نوعًا ما',"I'm kind of hungry.",'a little; somewhat'],
  ['ex',"I'm not gonna lie...",'بصراحة',"I'm not gonna lie, that was amazing.",'honestly'],
  ['ex',"I'll pass.",'لا شكرًا',"Thanks, but I'll pass this time.",'no, thank you'],
  ['ex',"That's a good point.",'نقطة حلوة',"That's a good point, I didn't think of that.",'you said something smart'],
- ['ex','How come?','إزاي يعني؟ ليه؟',"How come you didn't call me?",'why?'],
+ ['ex','How come?','ليه يعني؟',"How come you didn't call me?",'why?'],
  ['ex',"I couldn't care less.",'ولا فارق معايا خالص',"I couldn't care less about football.",'I do not care at all'],
  ['ex','My bad.','غلطتي','Oh, my bad, I took your seat.','my mistake'],
  ['ex','Just kidding.','بهزر',"You're fired. Just kidding!",'I am joking'],
  ['cn','Actually','في الحقيقة (مش "حاليًا")','Actually, I changed my mind.','in fact (not "currently")'],
- ['cn','Eventually','في الآخر (مش "احتمال")','Eventually, he found a job.','in the end (not "possibly")'],
+ ['cn','Eventually','في الآخر، بعد وقت (مش "احتمال")','Eventually, he found a job.','in the end (not "possibly")'],
  ['cn','Anyway','المهم','Anyway, how was your trip?','used to change the topic'],
  ['cn','Besides','وكمان',"It's too expensive. Besides, I don't need it.",'also; in addition'],
  ['cn','though','بس (في آخر الجملة)','It was hard. Fun, though.','however (at the end)'],
@@ -706,12 +751,12 @@ const CARDS=[
  ['cn','In other words','بمعنى تاني',"In other words, we're out of time.",'said differently'],
  ['cn','By the way','على فكرة','By the way, I loved your website.','used to add a new topic'],
 ];
-const CATS={all:['الكل','All'],pv:['Phrasal verbs','Phrasal verbs'],id:['Idioms','Idioms'],ex:['تعبيرات يومية','Everyday phrases'],cn:['كلمات ربط','Linking words']};
+const CATS={all:['الكل','All'],pv:['Phrasal verbs','Phrasal verbs'],id:['Idioms','Idioms'],ex:['تعبيرات يومية','Everyday phrases'],cn:['كلمات ربط','Linking words'],my:['كلماتي من الكتب','My words from books']};
 
 // pairs Arabic speakers mix up: p/b, v/f, th/s, short/long vowels, clusters
 const PAIRS=['pin','bin','people','very','ferry','van','fan','think','sink','this','that','ship','sheep','full','fool','street','world','word','comfortable','vegetable'];
 // [US, UK, Arabic]
-const USUK=[['apartment','flat','شقة'],['elevator','lift','أسانسير'],['truck','lorry','لوري'],['cookie','biscuit','بسكوت'],['fall','autumn','الخريف'],['vacation','holiday','أجازة'],['sidewalk','pavement','الرصيف'],['gas','petrol','بنزين'],['line','queue','طابور'],['trash','rubbish','زبالة'],['cell phone','mobile phone','موبايل'],['french fries','chips','بطاطس محمرة'],['subway','underground','مترو'],['color','colour','لون (الكتابة)']];
+const USUK=[['apartment','flat','شقة'],['elevator','lift','أسانسير'],['truck','lorry','شاحنة / عربية نقل'],['cookie','biscuit','بسكوت'],['fall','autumn','الخريف'],['vacation','holiday','أجازة'],['sidewalk','pavement','الرصيف'],['gas','petrol','بنزين'],['line','queue','طابور'],['trash','rubbish','زبالة'],['cell phone','mobile phone','موبايل'],['french fries','chips','بطاطس محمّرة (صوابع)'],['subway','underground','مترو'],['color','colour','لون (الفرق في الإملا بس)']];
 
 // Speak: sentences to repeat, 4 per level
 const SENTS=[
@@ -942,7 +987,7 @@ const stageDone=i=>skipped(i)?STAGES[i].c.length:STAGES[i].c.filter((_,j)=>check
 function currentStage(){const i=STAGES.findIndex((s,i)=>stageDone(i)<s.c.length);return i<0?STAGES.length-1:i}
 const forLevel=(t,lv)=>RES.filter(r=>r[0]===t&&r[2]<=lv&&lv<=r[3]);
 const link=r=>r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
-const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}" target="_blank" rel="noopener"><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small></a>`;
+const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'}><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small></a>`;
 
 /* =========================================================
    shell: header + nav
@@ -1017,6 +1062,7 @@ function renderToday(){
      ${nextJ>=0?`<div class="next"><b>${L('الجاية:','Next:')}</b><span>${tx(s.c[nextJ])}</span></div>`:''}
    </div>
    <div class="statrow"><a class="stat" href="#words"><strong class="en">${dueCards('all').length}</strong><span>${L('كلمة مستنية مراجعة','cards to review')}</span></a><div class="stat"><strong class="en">${streakFrom(fullDays,today())}</strong><span>${L('يوم ورا بعض','day streak')}</span></div></div>
+   ${(()=>{const s=lastBook()||recBook()[0],b=bookFor(s),p=bookPct(s);return `<a class="panel read-card" href="#read/${s}"><span class="cover" dir="ltr" style="--c:${b[7]}"><span class="en">${esc(b[1])}</span></span><span><strong>${lastBook()?L('كمّل قراية','Keep reading'):L('اقرا كتاب على مستواك','Read a book at your level')}</strong><br><span class="en" dir="ltr">${esc(b[1])}</span><br><small class="muted">${p?L(`${p}٪ خلصت`,`${p}% done`):L('دوس على أي كلمة تعرف معناها','Tap any word for its meaning')}</small></span></a>`})()}
    </div><div class="stack">
    <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده','All done today'):L(`${n} من ${T.length}`,`${n} of ${T.length}`)}</small></div>
    <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><button class="tick" data-task="${t.k}" aria-pressed="${!!day.done[t.k]}" aria-label="${esc(t.t)}">${tick}</button><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span></span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
@@ -1066,17 +1112,17 @@ function grade(st,known,now){const box=known?Math.min((st?.box??0)+1,GAPS.length
 console.assert(grade(undefined,true,0).box===1&&grade({box:3},false,5).due===5&&grade({box:5},true,0).box===5,'grade');
 let srs=store.get('fr-srs',{}), cat='all', cur=null;
 const NEW_PER_DAY=10;
-function dueCards(c){const now=Date.now(),pool=CARDS.filter(x=>c==='all'||x[0]===c);
+function dueCards(c){const now=Date.now(),pool=allCards().filter(x=>c==='all'||x[0]===c);
   const newLeft=Math.max(0,NEW_PER_DAY-Object.values(srs).filter(s=>s.first===today()).length);
   return pool.filter(x=>srs[x[1]]&&srs[x[1]].due<=now).concat(pool.filter(x=>!srs[x[1]]).slice(0,newLeft))}
 function renderWords(){
-  const pool=CARDS.filter(c=>cat==='all'||c[0]===cat),due=dueCards(cat),learned=pool.filter(c=>(srs[c[1]]?.box||0)>=3).length;
+  const pool=allCards().filter(c=>cat==='all'||c[0]===cat),due=dueCards(cat),learned=pool.filter(c=>(srs[c[1]]?.box||0)>=3).length;
   if(!cur||!due.includes(cur))cur=due[Math.floor(Math.random()*due.length)]||null;
   $('v-words').innerHTML=`<div class="sec-head"><h1 class="st">${L('كلمات بيقولها الـ native كل يوم','Words natives use every day')}</h1><small>${L(`${due.length} للمراجعة · ${learned}/${pool.length} اتحفظت`,`${due.length} to review · ${learned}/${pool.length} learned`)}</small></div>
-   <div class="chips">${Object.entries(CATS).map(([k,v])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${tx(v)}</button>`).join('')}</div>
+   <div class="chips">${Object.entries(CATS).filter(([k])=>k!=='my'||myWords.length).map(([k,v])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${tx(v)}</button>`).join('')}</div>
    ${cur?`<div class="flip" id="flip"><div class="flip-in">
       <div class="face"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ex" dir="ltr">${esc(cur[3])}</p><p class="muted">${L('قول الجملة بصوت عالي وخمّن المعنى','Say the sentence out loud and guess the meaning')}</p></div>
-      <div class="face back"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ar"${S.lang==='en'?' dir="ltr"':''}>${esc(S.lang==='ar'?cur[2]:cur[4])}</p>${S.lang==='en'?`<p class="muted" dir="rtl">${esc(cur[2])}</p>`:''}<p class="ex" dir="ltr">${esc(cur[3])}</p></div>
+      <div class="face back"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ar"${S.lang==='en'?' dir="ltr"':''}>${esc(S.lang==='ar'?cur[2]||cur[4]:cur[4]||cur[2])}</p>${S.lang==='en'?`<p class="muted" dir="rtl">${esc(cur[2])}</p>`:''}<p class="ex" dir="ltr">${esc(cur[3])}</p></div>
      </div></div>
      <div class="row" style="margin-top:14px" id="cardBtns"><button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn" id="flipBtn">${L('اعرض المعنى','Show meaning')}</button></div>`
    :`<div class="empty-card"><p class="ar">${L('خلصت مراجعة النهارده','Done for today')}</p><p class="muted">${L('ارجع بكرة، البطاقات هترجعلك في ميعادها.','Come back tomorrow. Cards return when they are due.')}</p></div>`}`;
@@ -1218,6 +1264,7 @@ function renderMore(){
     v.innerHTML=tabs+`<div class="sec-head"><h1 class="st">${L('المكتبة','Library')}</h1><small>${L(`${list.length} مصدر`,`${list.length} resources`)}</small></div>
      <div class="chips">${[[-1,L('كل المستويات','All levels')],...LV.map((l,i)=>[i,l])].map(([k,t])=>`<button class="chip" data-l="${k}" aria-pressed="${k===fLv}">${t}</button>`).join('')}</div>
      <div class="chips">${[['all',L('الكل','All')],...Object.entries(TYPES).map(([k,p])=>[k,tx(p)])].map(([k,t])=>`<button class="chip" data-t="${k}" aria-pressed="${k===fType}">${t}</button>`).join('')}</div>
+     ${fType==='all'||fType==='book'?`<a class="cta" href="#read" style="text-decoration:none;color:inherit"><div><strong>${L('اقرا ١٢ كتاب كامل جوه الموقع','Read 12 whole books inside the site')}</strong><p>${L('دوس على أي كلمة تسمعها وتعرف معناها وتحفظها في بطاقاتك.','Tap any word to hear it, see its meaning and save it to your cards.')}</p></div><span class="btn">${L('افتح الكتب','Open the books')}</span></a>`:''}
      <div class="list" id="libList">${list.map(r=>itemHTML(r,true)).join('')||`<p class="muted">${L('مفيش حاجة بالاختيار ده.','Nothing matches.')}</p>`}</div>`;
     stagger($('libList'));
   }else{
@@ -1678,7 +1725,7 @@ const GRAMMAR=[
   {t:['الشرطية الأولى والتانية','First and second conditionals'],x:['الأولى لحاجة ممكن تحصل: If + مضارع، will. التانية لحاجة خيالية: If + ماضي، would.','First: real possibility (If + present, will). Second: imaginary (If + past, would).'],ex:["If it rains, we'll stay home.",'If I had more time, I would learn Spanish.','If I were you, I would apologise.'],q:[['If I ___ rich, I would travel the world.',['were','am','will be']],["If you study, you ___ pass.",["'ll","would","did"]]]},
   {t:['المبني للمجهول','The passive'],x:['لما المهم الحاجة نفسها مش مين عملها: be + التصريف التالت.','When the action matters more than who did it: be + past participle.'],ex:['The bridge was built in 1890.','English is spoken here.','My car is being repaired.'],q:[['The letters ___ every morning.',['are delivered','deliver','are deliver']],['This house ___ in 1950.',['was built','built','is build']]]},
   {t:['who / which / whose','Relative clauses'],x:['who للناس، which للحاجات، whose للملكية، و that ينفع للاتنين في الكلام العادي.','who for people, which for things, whose for possession; that works for both in everyday speech.'],ex:['The man who called is my uncle.','The phone which I bought is great.','She\'s the girl whose bag was stolen.'],q:[['That\'s the woman ___ son is a doctor.',['whose','who','which']],['The book ___ you gave me is amazing.',['which','who','whose']]]},
-  {t:['used to و be used to','used to vs be used to'],x:['used to + فعل = كنت بعمل حاجة زمان. be/get used to + ing = متعود على حاجة.','used to + verb = past habit. be/get used to + -ing = accustomed to.'],ex:['I used to play football every day.',"I'm used to waking up early.",'You\'ll get used to it.'],q:[['I ___ live in Cairo, but now I live in Riyadh.',['used to','am used to','use to']],["She isn't used to ___ in English.",['speaking','speak','spoke']]]},
+  {t:['used to و be used to','used to vs be used to'],x:['used to + فعل = كنت بعمل حاجة زمان. be/get used to + ing = متعود على حاجة.','used to + verb = past habit. be/get used to + -ing = accustomed to.'],ex:['I used to play football every day.',"I'm used to waking up early.",'You\'ll get used to it.'],q:[['I ___ live in Manchester, but now I live in London.',['used to','am used to','use to']],["She isn't used to ___ in English.",['speaking','speak','spoke']]]},
  ],
  [ // B2
   {t:['الشرطية التالتة والمختلطة','Third and mixed conditionals'],x:['التالتة لندم على الماضي: If + had + التصريف التالت، would have + التصريف التالت. المختلطة: سبب في الماضي ونتيجة دلوقتي.','Third: unreal past (If + had done, would have done). Mixed: past cause, present result.'],ex:["If I had left earlier, I wouldn't have missed the train.","If I had studied medicine, I'd be a doctor now."],q:[['If she ___ harder, she would have passed.',['had worked','worked','would work']],["If I hadn't eaten so much, I ___ sick now.",["wouldn't feel","wouldn't have felt","don't feel"]]]},
@@ -1690,7 +1737,7 @@ const GRAMMAR=[
  [ // C1
   {t:['القلب للتأكيد','Inversion for emphasis'],x:['بعد كلمات زي Hardly, Not only, Rarely, Never في أول الجملة، الفعل المساعد بييجي قبل الفاعل.','After negative adverbials at the start, the auxiliary comes before the subject.'],ex:['Hardly had I sat down when the phone rang.','Not only is it cheap, but it\'s also fast.','Rarely do we see such talent.'],q:[['Never ___ such a beautiful view.',['have I seen','I have seen','I saw']],['Not only ___ late, but he forgot the tickets.',['was he','he was','did he']]]},
   {t:['جمل التركيز (Cleft)','Cleft sentences'],x:['عشان تركّز على جزء: What I need is... / It was ... who/that...','To focus on one part: What I need is... / It was X that...'],ex:['What I need is a long holiday.','It was Sara who solved the problem.'],q:[['___ I love about Cairo is the food.',['What','That','Which']],['It was in 2020 ___ we met.',['that','what','which']]]},
-  {t:['جمل اسم الفاعل','Participle clauses'],x:['تختصر جملتين: Having finished the work, I went home. / Built in 1890, the bridge is still strong.','Shorten clauses with -ing, having done, or a past participle.'],ex:['Having finished the report, she left.','Feeling tired, I went to bed early.','Written in 1949, the novel is still relevant.'],q:[['___ the email, he closed his laptop.',['Having sent','Sent','Having send']],['___ by millions, the app is free.',['Used','Using','Having used']]]},
+  {t:['اختصار الجمل بالـ participle','Participle clauses'],x:['تختصر جملتين: Having finished the work, I went home. / Built in 1890, the bridge is still strong.','Shorten clauses with -ing, having done, or a past participle.'],ex:['Having finished the report, she left.','Feeling tired, I went to bed early.','Written in 1949, the novel is still relevant.'],q:[['___ the email, he closed his laptop.',['Having sent','Sent','Having send']],['___ by millions, the app is free.',['Used','Using','Having used']]]},
   {t:['المبني للمجهول المتقدم','Advanced passive'],x:['He is said to be... / She is believed to have... للكلام عن آراء الناس من غير ما تقول مين.','Report beliefs without naming the source: is said to / is believed to have.'],ex:['He is said to be the best chef in town.','The painting is believed to have been stolen.'],q:[['She is thought ___ the country last year.',['to have left','to leave','leaving']],['The company is said ___ huge profits.',['to be making','make','being made']]]},
   {t:['wish / if only / it\'s time','wish, if only, it\'s time'],x:['wish + ماضي = نفسي الحاجة تبقى غير كده دلوقتي. wish + had = ندم على الماضي. It\'s (high) time + ماضي = آن الأوان.','wish + past for now; wish + had for regret; It\'s time + past.'],ex:['I wish I spoke French.','If only I had listened to you.',"It's high time we left."],q:[['I wish I ___ more money.',['had','have','would have']],["It's time you ___ to bed.",['went','go','going']]]},
  ],
@@ -1705,11 +1752,11 @@ const GRAMMAR=[
 // vocabulary groups per level: [english, arabic]
 const VOCAB_SETS=[
  {t:['يومك','Your day'],w:[['wake up','أصحى'],['have breakfast','أفطر'],['go to work','أروح الشغل'],['get home','أوصل البيت'],['cook','أطبخ'],['go to bed','أنام'],['busy','مشغول'],['tired','تعبان']]},
- {t:['السفر','Travel'],w:[['book a ticket','أحجز تذكرة'],['luggage','شنط السفر'],['delay','تأخير'],['check in','أسجّل وصولي'],['abroad','بره البلد'],['sightseeing','أتفرج على المعالم'],['currency','العملة'],['passport','الباسبور']]},
- {t:['الشغل','Work'],w:[['deadline','آخر ميعاد'],['apply for','أقدّم على'],['interview','مقابلة'],['salary','مرتب'],['colleague','زميل'],['promotion','ترقية'],['meeting','اجتماع'],['client','عميل']]},
- {t:['الآراء والنقاش','Opinions and debate'],w:[['in my view','من وجهة نظري'],['I tend to think','بميل إني أفكر'],['on the whole','في المجمل'],['convince','أقنع'],['point of view','وجهة نظر'],['drawback','عيب'],['benefit','فايدة'],['debatable','فيه نقاش']]},
- {t:['البيزنس والتكنولوجيا','Business and tech'],w:[['launch','أطلق'],['revenue','الإيرادات'],['stakeholder','صاحب مصلحة'],['streamline','أبسّط وأسرّع'],['leverage','أستغل'],['feasible','ممكن تنفيذه'],['roll out','أنزّل تدريجيًا'],['bottleneck','عنق الزجاجة']]},
- {t:['التعبير الدقيق','Precise expression'],w:[['nuance','فرق دقيق'],['ubiquitous','موجود في كل حتة'],['meticulous','دقيق جدًا'],['candid','صريح'],['ambivalent','متردد بين رأيين'],['pragmatic','عملي'],['eloquent','فصيح'],['understatement','تهوين']]},
+ {t:['السفر','Travel'],w:[['book a ticket','أحجز تذكرة'],['luggage','شنط السفر'],['delay','تأخير'],['check in','أسجّل وصولي (في الفندق أو المطار)'],['abroad','بره البلد'],['sightseeing','التفرّج على الأماكن السياحية'],['currency','العملة'],['passport','الباسبور']]},
+ {t:['الشغل','Work'],w:[['deadline','آخر ميعاد للتسليم'],['apply for','أقدّم على'],['interview','مقابلة'],['salary','مرتب'],['colleague','زميل'],['promotion','ترقية'],['meeting','اجتماع'],['client','عميل']]},
+ {t:['الآراء والنقاش','Opinions and debate'],w:[['in my view','من وجهة نظري'],['I tend to think','غالبًا بشوف إن'],['on the whole','في المجمل'],['convince','أقنع'],['point of view','وجهة نظر'],['drawback','عيب'],['benefit','فايدة'],['debatable','قابل للنقاش / مش محسوم']]},
+ {t:['البيزنس والتكنولوجيا','Business and tech'],w:[['launch','أطلق (منتج أو خدمة)'],['revenue','الإيرادات'],['stakeholder','طرف ليه مصلحة في الموضوع'],['streamline','أبسّط وأسرّع'],['leverage','أستفيد من / أستغل'],['feasible','ممكن تنفيذه'],['roll out','أطرح (منتج أو ميزة) على مراحل'],['bottleneck','عنق الزجاجة (الحاجة اللي معطّلة الشغل)']]},
+ {t:['التعبير الدقيق','Precise expression'],w:[['nuance','فرق دقيق'],['ubiquitous','موجود في كل حتة'],['meticulous','دقيق جدًا'],['candid','صريح'],['ambivalent','مشاعره متضاربة (مش عارف يحدد)'],['pragmatic','عملي'],['eloquent','فصيح'],['understatement','كلام أقل من الحقيقة (تقليل من حجم الحاجة)']]},
 ];
 const WRITING=[['اكتب ٥ جمل عن نفسك وعيلتك.','Write 5 sentences about yourself and your family.'],['اكتب ٨ جمل عن آخر أجازة ليك بالماضي.','Write 8 sentences about your last holiday in the past tense.'],['اكتب إيميل ١٢٠ كلمة لصاحب شغل تسأله عن وظيفة.','Write a 120-word email asking an employer about a job.'],['اكتب مقال رأي ٢٠٠ كلمة: الشغل من البيت أحسن ولا لأ؟','Write a 200-word opinion essay: is working from home better?'],['اكتب تقرير ٢٥٠ كلمة عن مشكلة في مجالك واقتراح حل.','Write a 250-word report on a problem in your field and a solution.'],['اكتب مقال جدلي ٣٠٠ كلمة بأسلوب رسمي ومتوازن.','Write a 300-word balanced, formal argumentative essay.']];
 /* =========================================================
@@ -1807,8 +1854,9 @@ function sheetBody(u){
   if(u.type==='pron')return `<p>${L('جولة "ودنك" كاملة (١٠ كلمات)، وبعدين قول كل زوج كلمات بصوتك.','A full Ear round (10 words), then say each pair yourself.')}</p>
       <div class="pairs">${['ship sheep','very berry','think sink','pin bin'].map(p=>`<button class="chip en" data-say="${p.replace(' ',', ')}">${p}</button>`).join('')}</div>
       <button class="btn wide" data-go-practice="ear" data-lv="${L_}">${L('ابدأ "ودنك"','Start Ear training')}</button>`;
-  if(u.type==='read'){const r=pick('book',L_);
-    return `<p>${L('اقرا ١٠ صفحات، وكل كلمة جديدة مهمة اكتبها في جملة.','Read 10 pages; put every useful new word into a sentence.')}</p>${r?itemHTML(r,true):''}`}
+  if(u.type==='read'){const b=READS.find(r=>r[3]===bookLv(L_));
+    return `<p>${L('اقرا فصل كامل هنا في الموقع. دوس على الكلمات الجديدة واحفظ المهم منها في كلماتي، وبعدين اسمع الفصل وانت بتقرا.','Read a whole chapter here. Tap new words and save the useful ones, then listen to the chapter while you read.')}</p>
+      <a class="panel read-card" href="#read/${b[0]}"><span class="cover" dir="ltr" style="--c:${b[7]}"><span class="en">${esc(b[1])}</span></span><span><strong class="en" dir="ltr">${esc(b[1])}</strong><br><small class="muted">${L(b[5],b[6])}</small></span></a>`}
   if(u.type==='write')return `<p>${tx(WRITING[L_])}</p>
       <textarea id="wrIn" rows="6" dir="ltr" aria-label="${L('اكتب هنا','Write here')}" placeholder="Write here...">${esc(store.get('fr-write-'+u.id,''))}</textarea>
       <p class="muted" style="font-size:14px"><span id="wrCount" class="en">0</span> ${L('كلمة','words')} · <a href="https://writeandimprove.com" target="_blank" rel="noopener">${L('صحّحها ببلاش على Write & Improve','Get free feedback on Write & Improve')}</a></p>`;
@@ -1930,7 +1978,7 @@ $('v-home').addEventListener('click',e=>{
    Until it is filled in, the sign-in button explains that it is not set up yet.
    ========================================================= */
 const FIREBASE_CONFIG={apiKey:'AIzaSyBd_zM8rg6D9x0gtQHk44AQc5uW1kxlBR4',authDomain:'fluent-route-ed587.firebaseapp.com',projectId:'fluent-route-ed587',storageBucket:'fluent-route-ed587.firebasestorage.app',messagingSenderId:'990654544590',appId:'1:990654544590:web:1b0ee75a81abaded8f6e9f'};
-const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone','fr-test'];
+const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone','fr-test','fr-read','fr-mywords','fr-lastbook'];
 const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 let fb=null,fbUser=null,pushTimer=null;
 const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
@@ -1972,18 +2020,171 @@ if(FIREBASE_CONFIG.apiKey)fbInit().catch(()=>{});
 document.addEventListener('click',e=>{if(!e.target.closest('[data-motion]'))return;const on=!motionPref();store.set('fr-motion',on);document.documentElement.classList.toggle('motion',on);renderShell()});
 
 /* =========================================================
+   reader: whole public-domain books (Project Gutenberg) read inside the site.
+   Tap any word: hear it, English definition, rough Arabic, save it with its sentence to your flashcards.
+   Listen: reads the chapter aloud in your accent, one sentence at a time, lighting up the paragraph.
+   ========================================================= */
+// [slug, title, author, fromLevel, toLevel, ar note, en note, cover colour]
+const READS=[
+ ['peter-rabbit','The Tale of Peter Rabbit','Beatrix Potter',1,2,'قصة أطفال قصيرة جدًا، تخلص في ١٠ دقايق','A very short children\'s story: 10 minutes','#4F8A3C'],
+ ['aesop','The Aesop for Children','Aesop',1,2,'١٣٧ حكاية، كل واحدة نص صفحة وليها حكمة','137 half-page fables, each with a moral','#B5562A'],
+ ['happy-prince','The Happy Prince and Other Tales','Oscar Wilde',2,3,'٥ حواديت جميلة بجمل واضحة','Five beautiful tales in clear sentences','#C9A227'],
+ ['wizard-of-oz','The Wonderful Wizard of Oz','L. Frank Baum',2,3,'مغامرة بسيطة وفصول قصيرة','A simple adventure in short chapters','#17885A'],
+ ['alice',"Alice's Adventures in Wonderland",'Lewis Carroll',2,4,'خيال ولعب بالكلام','Fantasy and wordplay','#2F4FE0'],
+ ['call-of-the-wild','The Call of the Wild','Jack London',3,4,'رواية قصيرة عن كلب في ألاسكا','A short novel about a dog in Alaska','#3E5C76'],
+ ['treasure-island','Treasure Island','Robert Louis Stevenson',3,5,'قراصنة وكنز، أسلوب قديم شوية','Pirates and treasure, slightly old style','#8E3B2E'],
+ ['sherlock-holmes','The Adventures of Sherlock Holmes','Arthur Conan Doyle',3,5,'١٢ قضية، كل واحدة قصة لوحدها','Twelve cases, each a story on its own','#2A1F26'],
+ ['great-gatsby','The Great Gatsby','F. Scott Fitzgerald',4,6,'أسلوب أدبي غني ومش طويل','Rich literary style, not long','#0F6A6A'],
+ ['dorian-gray','The Picture of Dorian Gray','Oscar Wilde',4,6,'حوارات ذكية وجمل بتتحفظ','Witty dialogue and quotable lines','#5B3A8C'],
+ ['pride-and-prejudice','Pride and Prejudice','Jane Austen',4,6,'إنجليزي بريطاني كلاسيكي وحوار راقي','Classic British English and sharp dialogue','#9E2328'],
+ ['frankenstein','Frankenstein','Mary Shelley',5,6,'لغة أدبية قديمة وتقيلة','Heavy, old literary language','#33402A'],
+];
+let readPos=store.get('fr-read',{}),myWords=store.get('fr-mywords',[]),book=null,bookSlug=null,rdPlaying=false,rdSel=null;
+const allCards=()=>CARDS.concat(myWords);
+const bookFor=s=>READS.find(r=>r[0]===s);
+const bookPct=s=>{const p=readPos[s];return p&&p.n?Math.round(Object.keys(p.done||{}).length/p.n*100):0};
+// the first book that starts at your level (A1 starts with the easiest, Native gets the hardest), skipping finished ones
+const bookLv=l=>Math.max(1,Math.min(l,5));
+const recBook=()=>{const lv=bookLv(currentStage());return READS.find(r=>r[3]>=lv&&bookPct(r[0])<100)||READS.find(r=>r[3]===lv)};
+console.assert(READS.find(r=>r[3]===bookLv(0))[0]==='peter-rabbit'&&READS.find(r=>r[3]===bookLv(6))[0]==='frankenstein','book level');
+const lastBook=()=>{const s=store.get('fr-lastbook',null);return s&&bookFor(s)?s:null};
+async function loadBook(slug){
+  if(bookSlug===slug&&book)return book;
+  // GitHub Pages allows other sites to read these files, so the hosted copy is the fallback (the artifact copy has no books folder)
+  for(const u of [`books/${slug}.json`,`https://fluentroute1.github.io/books/${slug}.json`]){
+    try{const r=await fetch(u);if(r.ok){book=await r.json();bookSlug=slug;return book}}catch(_){}
+  }
+  throw new Error('book');
+}
+function rdStop(){rdPlaying=false;window.speechSynthesis?.cancel();document.querySelectorAll('.rd-text p.on').forEach(p=>p.classList.remove('on'));const b=$('rdListen');if(b)b.textContent=L('اسمع الفصل','Listen');}
+const sentencesOf=t=>t.match(/[^.!?]+[.!?]+["”’)]*\s*|[^.!?]+$/g)||[t];
+console.assert(sentencesOf('Hi there. "Who?" he said! Ok').length===4,'sentences');
+function rdPlayFrom(i){
+  const ps=[...document.querySelectorAll('.rd-text p')];
+  if(!rdPlaying||i>=ps.length){rdStop();return}
+  ps.forEach(p=>p.classList.toggle('on',+p.dataset.i===i));
+  ps[i].scrollIntoView({block:'center',behavior:motionPref()?'smooth':'auto'});
+  const ss=sentencesOf(ps[i].querySelector('.t').textContent);let k=0;
+  const next=()=>{if(!rdPlaying)return;if(k>=ss.length){rdPlayFrom(i+1);return}say(ss[k++].trim(),{accent:S.accent,rate:.92,onend:next})};
+  next();
+}
+function shelfHTML(){
+  const lv=currentStage(),rec=recBook()[0];
+  return `<div class="sec-head"><h1 class="st">${L('اقرا كتب كاملة هنا','Read whole books here')}</h1><small>${L('كتب أصلية ببلاش، دوس على أي كلمة تعرف معناها','Free original books. Tap any word for its meaning')}</small></div>
+   <div class="shelf" id="shelf">${READS.map(([s,t,a,f,to,ar,en,c])=>{const p=bookPct(s);return `<a class="book" href="#read/${s}">
+     <span class="cover" dir="ltr" style="--c:${c}"><span class="en">${esc(t)}</span><small class="en">${esc(a)}</small></span>
+     <span class="meta"><span class="badge en">${LV[f]}–${LV[to]}</span>${s===rec?`<span class="tag">${L('مناسب لمستواك','For your level')}</span>`:''}</span>
+     <small>${L(ar,en)}</small>${p?`<span class="line"><i style="width:${p}%"></i></span>`:''}</a>`}).join('')}</div>
+   <p class="muted" style="font-size:13px">${L('النصوص من Project Gutenberg، كتب خلصت حقوقها وبقت متاحة للكل. الكتب الحديثة اللي في المكتبة لازم تشتريها أو تستلفها.','Texts from Project Gutenberg, books in the public domain. The modern books in the Library you need to buy or borrow.')}</p>`;
+}
+async function renderRead(){
+  const v=$('v-read'),slug=location.hash.split('/')[1];
+  rdStop();
+  if(!slug||!bookFor(slug)){v.innerHTML=shelfHTML();stagger($('shelf'));return}
+  const meta=bookFor(slug);
+  if(bookSlug!==slug){v.innerHTML=`<p class="muted">${L('بيحمّل الكتاب...','Loading the book...')}</p>`;
+    try{await loadBook(slug)}catch(_){v.innerHTML=`<a href="#read" class="rd-back">${L('→ الكتب','← Books')}</a><p>${L('الكتاب مش راضي يتحمّل. اتأكد من النت أو افتح الموقع الأصلي fluentroute1.github.io.','The book did not load. Check your connection or open fluentroute1.github.io.')}</p>`;return}
+    if(curView()!=='read'||location.hash.split('/')[1]!==slug)return;}
+  const pos=readPos[slug]||(readPos[slug]={ch:0,done:{},n:book.ch.length});pos.n=book.ch.length;
+  const ci=Math.min(pos.ch,book.ch.length-1),c=book.ch[ci];
+  store.set('fr-lastbook',slug);
+  v.innerHTML=`<div class="reader">
+   <div class="rd-top"><a href="#read" class="rd-back">${L('→ الكتب','← Books')}</a>
+     <label class="rd-ch"><span class="sr">${L('الفصل','Chapter')}</span><select id="rdCh" dir="ltr">${book.ch.map((x,i)=>`<option value="${i}"${i===ci?' selected':''}>${pos.done[i]?'✓ ':''}${esc(x.h)}</option>`).join('')}</select></label></div>
+   <div class="rd-head" dir="ltr"><p class="muted">${esc(meta[1])} · ${esc(meta[2])}</p><h1 class="st en">${esc(c.h)}</h1>
+     <div class="row"><button class="btn ghost" id="rdListen">${L('اسمع الفصل','Listen')}</button><span class="muted" style="font-size:14px">${L(`فصل ${ci+1} من ${book.ch.length} · ${bookPct(slug)}٪ من الكتاب`,`Chapter ${ci+1} of ${book.ch.length} · ${bookPct(slug)}% of the book`)}</span></div></div>
+   <p class="rd-tip">${L('دوس على أي كلمة: تسمعها وتعرف معناها وتحفظها. دوس ▶ جنب أي فقرة تسمعها.','Tap any word to hear it, see its meaning and save it. Tap ▶ beside a paragraph to hear it.')}</p>
+   <div class="rd-text" dir="ltr" lang="en">${c.p.map((p,i)=>`<p data-i="${i}"><button class="rd-play" data-pi="${i}" aria-label="${L('اسمع الفقرة','Listen to this paragraph')}">▶</button><span class="t">${esc(p)}</span></p>`).join('')}</div>
+   <div class="rd-foot">${ci>0?`<button class="btn ghost" data-go="${ci-1}">${L('الفصل اللي فات','Previous')}</button>`:'<span></span>'}
+     <button class="btn" data-go="${ci+1}" data-fin="${ci}">${ci+1<book.ch.length?L('خلصت الفصل، اللي بعده','Done, next chapter'):L('خلصت الكتاب','I finished the book')}</button></div>
+  </div><div id="wpop" class="wpop" hidden></div>`;
+}
+// the word under the tap, and the sentence it sits in (the sentence becomes the flashcard's example)
+function wordAt(e){
+  let node,off;
+  if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(e.clientX,e.clientY);if(p){node=p.offsetNode;off=p.offset}}
+  else if(document.caretRangeFromPoint){const r=document.caretRangeFromPoint(e.clientX,e.clientY);if(r){node=r.startContainer;off=r.startOffset}}
+  if(!node||node.nodeType!==3)return null;
+  const t=node.textContent,isW=ch=>/[A-Za-z'’\-]/.test(ch||'');
+  let a=off,b=off;while(a>0&&isW(t[a-1]))a--;while(b<t.length&&isW(t[b]))b++;
+  const w=t.slice(a,b).replace(/^['’\-]+|['’\-]+$/g,'');if(!/[A-Za-z]/.test(w))return null;
+  let at=0,sent=t;for(const s of sentencesOf(t)){if(a<at+s.length){sent=s;break}at+=s.length}
+  return {w,sent:sent.trim()};
+}
+const defCache={};
+// English definitions from Wiktionary (free, allows other sites to read it, knows inflected forms:
+// "peeped" says "simple past of peep", so we also show peep's own meaning)
+const stripTags=s=>{const d=document.createElement('div');d.innerHTML=s;d.querySelectorAll('style,sup').forEach(x=>x.remove());return d.textContent.replace(/\s+/g,' ').trim()};
+async function wikt(w){
+  try{const r=await fetch('https://en.wiktionary.org/api/rest_v1/page/definition/'+encodeURIComponent(w));if(r.status===404)return [];if(!r.ok)return null;
+    const j=await r.json();
+    return (j.en||[]).map(p=>({pos:p.partOfSpeech.toLowerCase(),def:(p.definitions||[]).map(d=>stripTags(d.definition)).find(Boolean)||''})).filter(m=>m.def&&m.pos!=='symbol')}catch(_){return null}
+}
+const FORM_OF=/\bof ([a-z'\-]+)\.?$/i;
+async function define(w){
+  const k=w.replace(/’/g,"'");if(k in defCache)return defCache[k];
+  // lowercase first ("The" at a sentence start), the capitalised word only for names
+  let m=await wikt(k.toLowerCase());
+  if(m&&!m.length&&k!==k.toLowerCase())m=await wikt(k);
+  if(m===null)return null;  // offline or blocked: not cached, so the next tap tries again
+  if(!m.length)return defCache[k]=null;
+  const form=m.find(x=>/(past|participle|plural|comparative|superlative|third-person|form) .*of /i.test(x.def)&&FORM_OF.test(x.def)&&!/alternative|obsolete|archaic|dialect|misspelling/i.test(x.def));
+  let base=null;
+  if(form){const b=form.def.match(FORM_OF)[1];const bm=await wikt(b);if(bm&&bm.length){const same=bm.filter(x=>x.pos===form.pos);base={w:b,m:(same.length?same:bm).slice(0,2)}}}
+  return defCache[k]={head:k,m:m.slice(0,3),base};
+}
+// Google Translate's free endpoint: the word's main Arabic meaning plus its dictionary meanings by part of speech,
+// and the whole sentence on request (a word's meaning depends on its sentence: "bank" of a river is ضفة, not بنك)
+const POS_AR={noun:'اسم',verb:'فعل',adjective:'صفة',adverb:'ظرف',preposition:'حرف جر',pronoun:'ضمير',conjunction:'أداة ربط',interjection:'تعجّب'};
+async function gTranslate(q,dict){
+  try{const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t'+(dict?'&dt=bd':'')+'&q='+encodeURIComponent(q));if(!r.ok)return null;
+    const j=await r.json();return {main:(j[0]||[]).map(x=>x[0]).join(''),alts:(j[1]||[]).map(x=>[x[0],x[1].slice(0,4)])}}catch(_){return null}
+}
+async function showWord(x){
+  const pop=$('wpop');if(!pop)return;rdSel={...x,ar:'',def:''};
+  const saved=myWords.some(c=>c[1].toLowerCase()===x.w.toLowerCase());
+  pop.hidden=false;
+  pop.innerHTML=`<div class="wp-top"><strong class="en" dir="ltr">${esc(x.w)}</strong><button class="btn ghost sm" data-say="${esc(x.w)}">🔊</button><button class="x" id="wpX" aria-label="${L('اقفل','Close')}">✕</button></div>
+   <div id="wpBody" dir="ltr" class="muted">${L('بيدوّر على المعنى...','Looking it up...')}</div>
+   <p id="wpAr" class="wp-ar"></p>
+   <div class="row"><button class="btn sm" id="wpSave"${saved?' disabled':''}>${saved?L('محفوظة في كلماتي','Saved in My words'):L('احفظها في كلماتي','Save to My words')}</button><button class="btn ghost sm" data-say="${esc(x.sent)}">${L('اسمع الجملة','Hear the sentence')}</button></div>`;
+  say(x.w,{accent:S.accent,slow:true});
+  const [d,ar]=await Promise.all([define(x.w),gTranslate(x.w,true)]);
+  if(!rdSel||rdSel.w!==x.w)return;
+  rdSel.def=d?d.m[0].def:'';rdSel.ar=ar?ar.main:'';
+  $('wpBody').innerHTML=d?`${d.m.map(m=>`<p><i>${esc(m.pos)}</i> ${esc(m.def)}</p>`).join('')}${d.base?`<p class="wp-base"><b>${esc(d.base.w)}:</b> ${d.base.m.map(m=>`<i>${esc(m.pos)}</i> ${esc(m.def)}`).join(' · ')}</p>`:''}`:`<p>${L('مفيش تعريف للكلمة دي (ممكن تكون اسم أو كلمة قديمة).','No definition found (it may be a name or an old word).')}</p>`;
+  $('wpAr').innerHTML=ar?`<strong>${esc(ar.main)}</strong>${ar.alts.map(([p,ws])=>`<br><small><b>${POS_AR[p]||esc(p)}:</b> ${esc(ws.join('، '))}</small>`).join('')}
+    <br><button class="linkish" id="wpSent">${L('ترجم الجملة كلها عشان تعرف المعنى المقصود هنا','Translate the whole sentence for the meaning here')}</button><span id="wpSentAr"></span>`:'';
+}
+$('v-read').addEventListener('click',e=>{
+  const go=e.target.closest('[data-go]'),pl=e.target.closest('[data-pi]');
+  if(e.target.id==='rdListen'){if(rdPlaying){rdStop();return}rdPlaying=true;e.target.textContent=L('وقّف','Stop');const on=document.querySelector('.rd-text p.on');rdPlayFrom(on?+on.dataset.i:0);return}
+  if(pl){rdStop();rdPlaying=true;$('rdListen').textContent=L('وقّف','Stop');rdPlayFrom(+pl.dataset.pi);return}
+  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
+    pos.ch=+go.dataset.go;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0);return}
+  if(e.target.id==='wpSent'&&rdSel){const s=rdSel;e.target.disabled=true;gTranslate(s.sent,false).then(t=>{if(rdSel===s&&$('wpSentAr'))$('wpSentAr').innerHTML=t?'<span class="wp-sent">'+esc(t.main)+'</span>':L('الترجمة مش متاحة دلوقتي.','Translation is not available right now.')});return}
+  if(e.target.id==='wpX'){$('wpop').hidden=true;rdSel=null;return}
+  if(e.target.id==='wpSave'&&rdSel){const w=rdSel.w.toLowerCase();if(!myWords.some(c=>c[1].toLowerCase()===w)){myWords.push(['my',w,rdSel.ar,rdSel.sent,rdSel.def||'']);store.set('fr-mywords',myWords)}
+    e.target.disabled=true;e.target.textContent=L('اتحفظت في كلماتي','Saved in My words');return}
+  if(e.target.closest('.rd-text .t')){const x=wordAt(e);if(x)showWord(x)}
+});
+$('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookSlug].ch=+e.target.value;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0)}});
+
+/* =========================================================
    routing
    ========================================================= */
-const VIEWS=['home','today','path','speak','words','more','test'];
+const VIEWS=['home','today','path','speak','words','more','test','read'];
 let shown=null;
 // new visitors land on the landing page; returning learners go straight to Today
 const hasProgress=()=>!!place||Object.keys(checks).length>0||Object.keys(srs).length>0||!!store.get('fr-lastTest',null);
-const curView=()=>{const h=location.hash.slice(1);return VIEWS.includes(h)?h:'home'};
-function markNav(){const v=curView();document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
+const curView=()=>{const h=location.hash.slice(1).split('/')[0];return VIEWS.includes(h)?h:'home'};
+function markNav(){const v=curView()==='read'?'more':curView();document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
 function route(){
   const v=curView();
   document.body.classList.toggle('on-home',v==='home');
   if(v!=='speak')stopRec();
+  if(v!=='read')rdStop();
+  if($('sheet')&&!$('sheet').hidden)closeSheet(); // a link inside a lesson goes to another screen
   // only the screen in view is in the page (one h1 per screen, less work); the others are emptied
   VIEWS.forEach(x=>{const el=$('v-'+x);el.hidden=x!==v;if(x!==v)el.innerHTML=''});
   DRAW[v]();
@@ -1991,9 +2192,9 @@ function route(){
   markNav();if(shown!==null)window.scrollTo(0,0);shown=v;
 }
 // each screen draws itself only while it is the one in view
-const DRAW={home:renderHome,today:renderToday,path:renderPath,speak:renderSpeak,words:renderWords,more:renderMore,test:renderTest};
+const DRAW={home:renderHome,today:renderToday,path:renderPath,speak:renderSpeak,words:renderWords,more:renderMore,test:renderTest,read:renderRead};
 const onlyIf=(k,f)=>(...a)=>{if(curView()===k)return f(...a)};
-renderHome=onlyIf('home',renderHome);renderToday=onlyIf('today',renderToday);renderPath=onlyIf('path',renderPath);renderWords=onlyIf('words',renderWords);renderSpeak=onlyIf('speak',renderSpeak);renderMore=onlyIf('more',renderMore);renderTest=onlyIf('test',renderTest);
+renderHome=onlyIf('home',renderHome);renderToday=onlyIf('today',renderToday);renderPath=onlyIf('path',renderPath);renderWords=onlyIf('words',renderWords);renderSpeak=onlyIf('speak',renderSpeak);renderMore=onlyIf('more',renderMore);renderTest=onlyIf('test',renderTest);renderRead=onlyIf('read',renderRead);
 function renderAll(){renderShell();route()}
 window.addEventListener('hashchange',route);
 renderAll();
