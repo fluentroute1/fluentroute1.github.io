@@ -83,12 +83,35 @@ body{font-variant-numeric:tabular-nums}
 .brand svg{width:46px;height:46px;flex:none;border-radius:13px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 .brand b{display:block;font:800 28px/1 var(--f-display);letter-spacing:-.01em;padding-top:4px}
 .brand b span{color:var(--marker)}
+.brand b{white-space:nowrap}
+@media (max-width:999px){
+  header .wrap{flex-wrap:nowrap;padding-block:14px}
+  .brand{min-width:0}
+  .brand small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ring{width:52px;height:52px}.ring div{width:41px;height:41px}.ring strong{font-size:14px}
+}
+@media (max-width:520px){
+  .brand small{display:none}.brand svg{width:40px;height:40px}.brand b{font-size:24px}
+  .brand{flex:1 0 auto}
+  header .wrap{gap:10px}
+  /* on phones the language switch shows only the language you can switch to */
+  .switches .seg button[aria-pressed="true"]{display:none}
+  .switches .seg button{color:var(--band-fg);padding:6px 12px}
+  .cta{grid-template-columns:1fr}
+}
 .brand small{color:var(--band-muted);font-size:13px}
 .switches{display:flex;gap:8px}
-@media (max-width:520px){.switches{order:3;flex-basis:100%}}
-.seg{display:inline-flex;border:1px solid var(--band-line);border-radius:99px;padding:2px}
-.seg button{border:0;background:transparent;color:var(--band-muted);padding:4px 10px;border-radius:99px;font:500 13px var(--f-mono)}
+.seg{display:inline-flex;align-items:center;border:1px solid var(--band-line);border-radius:99px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--band-muted);padding:4px 11px;border-radius:99px;font:500 13px var(--f-mono);transition:background .2s,color .2s}
 .seg button[aria-pressed="true"]{background:var(--band-fg);color:var(--band)}
+.seg.light{border-color:var(--line);background:var(--surface)}
+.seg.light span{padding-inline:10px 4px;font-size:13px;color:var(--muted)}
+.seg.light button{color:var(--muted);font:500 14px var(--f-body);padding:6px 12px}
+.seg.light button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.pb{display:flex;align-items:center;gap:12px}
+.pb-text{display:none}
+.pb-text strong{display:block;font:700 16px var(--f-display)}
+.pb-text small{color:var(--band-muted);font-size:13px}
 .ring{--p:0;width:60px;height:60px;border-radius:50%;flex:none;display:grid;place-items:center;
   background:conic-gradient(var(--marker) calc(var(--p)*1%),var(--band-line) 0);transition:--p .8s}
 .ring div{width:47px;height:47px;border-radius:50%;background:var(--band);display:grid;place-items:center;text-align:center;line-height:1.05}
@@ -111,6 +134,31 @@ main .wrap{padding-block:22px 110px}
   nav a[aria-current="page"] svg{transform:none}
   nav svg{width:18px;height:18px}
   main .wrap{padding-block:28px 64px}
+}
+.today-grid{display:grid;gap:14px}
+.today-grid>.stack{align-content:start}
+
+/* desktop: dark sidebar with brand, progress, nav and language; wide content area */
+@media (min-width:1000px){
+  .side{position:fixed;inset-block:0;inset-inline-start:0;width:272px;background:var(--band);color:var(--band-fg);display:flex;flex-direction:column;overflow-y:auto;z-index:6;padding-top:env(safe-area-inset-top,0px)}
+  .side header .wrap{flex-direction:column;align-items:stretch;gap:22px;padding:28px 22px 18px}
+  .side .brand{min-width:0}
+  .side .pb{background:rgba(255,255,255,.06);border-radius:16px;padding:14px}
+  .side .pb-text{display:block}
+  .side .switches{order:3}
+  .side nav{position:static;background:transparent;border:0;padding:0}
+  .side nav .wrap{display:flex;flex-direction:column;gap:4px;padding:6px 14px 24px}
+  .side nav a{flex-direction:row;gap:12px;font-size:16px;padding:11px 14px;border-radius:12px;color:var(--band-muted)}
+  .side nav a:hover{background:rgba(255,255,255,.06);color:var(--band-fg)}
+  .side nav a[aria-current="page"]{background:rgba(255,255,255,.12);color:var(--band-fg)}
+  .side nav a[aria-current="page"] svg{color:var(--marker)}
+  .side nav svg{width:20px;height:20px}
+  main{margin-inline-start:272px}
+  main .wrap{max-width:1080px;padding:40px max(40px,env(safe-area-inset-right,0px)) 64px max(40px,env(safe-area-inset-left,0px))}
+  .today-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px}
+  #v-speak,#v-test,#v-words{max-width:760px;margin-inline:auto}
+  .stages{grid-template-columns:1fr}
+  h2{font-size:22px}
 }
 
 /* buttons */
@@ -273,8 +321,10 @@ textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(
 .intro-list li::before{counter-increment:s;content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font:600 13px var(--f-mono)}
 </style>
 
+<aside class="side">
 <header><div class="wrap" id="head"></div></header>
 <nav aria-label="Sections"><div class="wrap" id="nav"></div></nav>
+</aside>
 <main><div class="wrap">
   <noscript><h1>Fluent Route: اتعلم إنجليزي من الصفر للطلاقة</h1><p>مسار مجاني من A1 لـ C2: اختبار تحديد مستوى، تدريب كلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وأفلام وكتب لكل مستوى. شغّل JavaScript عشان تستخدم الموقع.</p></noscript>
   <section id="v-today" class="stack"></section>
@@ -693,19 +743,24 @@ function renderShell(){
   const total=STAGES.reduce((a,s)=>a+s.c.length,0),n=STAGES.reduce((a,_,i)=>a+stageDone(i),0),p=Math.round(n/total*100);
   $('head').innerHTML=`<div class="brand">${LOGO}<div><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div></div>
    <div class="switches">
-    <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">ع</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
-    <div class="seg" role="group" aria-label="Accent"><button data-accent="us" aria-pressed="${S.accent==='us'}">US</button><button data-accent="uk" aria-pressed="${S.accent==='uk'}">UK</button></div>
+    <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">عربي</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
    </div>
-   <div class="ring" style="--p:${p}" aria-label="${p}%"><div><strong class="en">${p}%</strong><em>${LV[currentStage()]}</em></div></div>`;
+   <div class="pb"><div class="ring" style="--p:${p}" aria-label="${p}%"><div><strong class="en">${p}%</strong><em>${LV[currentStage()]}</em></div></div>
+    <div class="pb-text"><strong>${L('مستواك','Your level')} <span class="en">${LV[currentStage()]}</span></strong><small>${L(`خلصت ${p}% من المسار`,`${p}% of the route done`)}</small></div></div>`;
   $('nav').innerHTML=NAV.map(([k,ar,en])=>`<a href="#${k}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${L(ar,en)}</a>`).join('');
   markNav();
 }
 $('head').addEventListener('click',e=>{
-  const l=e.target.closest('[data-lang]'),a=e.target.closest('[data-accent]');
-  if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang)}
-  else if(a){S.accent=a.dataset.accent;store.set('fr-accent',S.accent);say(S.accent==='uk'?'Hello, this is British English.':'Hi, this is American English.')}
-  else return;
-  renderAll();
+  const l=e.target.closest('[data-lang]');if(!l)return;
+  S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();
+});
+// accent is chosen where you learn (Practice, test, tips), not in the header
+const accentPick=()=>`<div class="seg light" role="group" aria-label="${L('اللهجة','Accent')}"><span>${L('اللهجة:','Accent:')}</span><button data-pick-accent="us" aria-pressed="${S.accent==='us'}">${L('أمريكي','American')}</button><button data-pick-accent="uk" aria-pressed="${S.accent==='uk'}">${L('بريطاني','British')}</button></div>`;
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-pick-accent]');if(!a)return;
+  S.accent=a.dataset.pickAccent;store.set('fr-accent',S.accent);
+  say(S.accent==='uk'?'Hello, this is British English.':'Hi, this is American English.');
+  renderSpeak();renderMore();if(tst)renderTest();
 });
 
 /* =========================================================
@@ -732,7 +787,7 @@ function renderToday(){
   const lv=currentStage(),s=STAGES[lv],done=stageDone(lv),nextJ=s.c.findIndex((_,j)=>!checks[lv+'-'+j]);
   const T=tasksFor(lv),n=T.filter(t=>day.done[t.k]).length;
   const v=$('v-today');
-  v.innerHTML=`
+  v.innerHTML=`<div class="today-grid"><div class="stack">
    ${place?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٣ أجزاء في حوالي ٢٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 3-part placement test, about 20 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
      <div class="lvl"><span class="badge en">${LV[lv]}</span><div><p class="muted">${L('انت دلوقتي في مرحلة','You are now at')}</p><h2>${tx(s.n)}</h2></div></div>
@@ -741,10 +796,12 @@ function renderToday(){
      <p class="muted" style="font-size:14px">${L(`${done} من ${s.c.length} اتعملت · المدة المتوقعة ${tx(s.d)}`,`${done} of ${s.c.length} done · expected ${tx(s.d)}`)}${place?` · <a href="#test">${L('اعيد الاختبار','Retake the test')}</a>`:''}</p>
      ${nextJ>=0?`<div class="next"><b>${L('الجاية:','Next:')}</b><span>${tx(s.c[nextJ])}</span></div>`:''}
    </div>
+   <div class="statrow"><a class="stat" href="#words"><strong class="en">${dueCards('all').length}</strong><span>${L('كلمة مستنية مراجعة','cards to review')}</span></a><div class="stat"><strong class="en">${streakFrom(fullDays,today())}</strong><span>${L('يوم ورا بعض','day streak')}</span></div></div>
+   </div><div class="stack">
    <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده 👏','All done today 👏'):L(`${n} من ${T.length}`,`${n} of ${T.length}`)}</small></div>
    <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><button class="tick" data-task="${t.k}" aria-pressed="${!!day.done[t.k]}" aria-label="${esc(t.t)}">${tick}</button><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span></span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
-   <div class="statrow"><a class="stat" href="#words"><strong class="en">${dueCards('all').length}</strong><span>${L('كلمة مستنية مراجعة','cards to review')}</span></a><div class="stat"><strong class="en">${streakFrom(fullDays,today())}</strong><span>${L('يوم ورا بعض','day streak')}</span></div></div>`;
-  stagger(v);
+   </div></div>`;
+  v.querySelectorAll('.today-grid>.stack').forEach(stagger);
 }
 $('v-today').addEventListener('click',e=>{
   const b=e.target.closest('[data-task]');if(!b)return;
@@ -814,7 +871,7 @@ let sp={mode:'repeat',lv:null,idx:0,rec:null,heard:'',result:null,err:'',prompt:
 function speakLevel(){return sp.lv??Math.min(currentStage(),5)}
 function renderSpeak(){
   const lv=speakLevel(),v=$('v-speak');
-  const head=`<div class="sec-head"><h2>${L('تدريب','Practice')}</h2><small>${L(`اللهجة: ${S.accent==='uk'?'بريطاني':'أمريكي'}`,`Accent: ${S.accent==='uk'?'British':'American'}`)}</small></div>
+  const head=`<div class="sec-head"><h2>${L('تدريب','Practice')}</h2>${accentPick()}</div>
    <div class="tabs">${[['repeat','قلّد','Repeat'],['free','اتكلم','Talk'],['dict','إملاء','Dictation'],['ear','ودنك','Ear']].map(([k,a,e])=>`<button data-mode="${k}" aria-pressed="${sp.mode===k}">${L(a,e)}</button>`).join('')}</div>
    ${sp.mode==='ear'?'':`<div class="chips">${LV.slice(0,6).map((l,i)=>`<button class="chip en" data-slv="${i}" aria-pressed="${i===lv}">${l}</button>`).join('')}</div>`}`;
   const noSR=!SR?`<p class="note">${L('المتصفح ده مش بيدعم التعرّف على الصوت. استخدم Chrome أو Edge على الكمبيوتر أو الموبايل.','This browser does not support speech recognition. Use Chrome or Edge on desktop or Android.')}</p>`:'';
@@ -951,7 +1008,8 @@ function renderMore(){
      <div class="sec-head"><h2>${L('أصوات بتتعب العرب','Sounds Arabic speakers find hard')}</h2><small>${L('دوس واسمع، وبعدين قولها','Tap, listen, then say it')}</small></div>
      <div class="pairs">${PAIRS.map(w=>`<span class="pair"><button class="en" data-say="${w}">${w}</button><button data-say="${w}" data-slow="1">${L('بطيء','slow')}</button></span>`).join('')}</div>
      <div class="sec-head"><h2>${L('أمريكي ولا بريطاني؟','American or British?')}</h2><small>${L('دوس على الكلمة تسمعها باللهجة بتاعتها','Tap a word to hear it in its accent')}</small></div>
-     <div class="tablewrap"><table><thead><tr><th>🇺🇸 US</th><th>🇬🇧 UK</th><th>${L('المعنى','Meaning')}</th></tr></thead><tbody>${USUK.map(([u,k,a])=>`<tr><td><button data-say="${u}" data-accent="us">${u}</button></td><td><button data-say="${k}" data-accent="uk">${k}</button></td><td>${a}</td></tr>`).join('')}</tbody></table></div>`;
+     <div class="tablewrap"><table><thead><tr><th>🇺🇸 US</th><th>🇬🇧 UK</th><th>${L('المعنى','Meaning')}</th></tr></thead><tbody>${USUK.map(([u,k,a])=>`<tr><td><button data-say="${u}" data-accent="us">${u}</button></td><td><button data-say="${k}" data-accent="uk">${k}</button></td><td>${a}</td></tr>`).join('')}</tbody></table></div>
+     <div style="margin-top:12px">${accentPick()}</div>`;
   }
 }
 $('v-more').addEventListener('click',e=>{
@@ -985,6 +1043,7 @@ function renderTest(){
         <li><span><strong>${L('القواعد والقراية','Grammar & reading')}</strong><br><span class="muted">${L(`${UOE_N} سؤال بتتكيّف على مستواك.`,`${UOE_N} questions that adapt to you.`)}</span></span></li>
         <li><span><strong>${L('الاستماع','Listening')}</strong><br><span class="muted">${L(`${LIS_N} جمل بصوت ${S.accent==='uk'?'بريطاني':'أمريكي'}، تقدر تسمع كل جملة مرتين بس.`,`${LIS_N} clips in a ${S.accent==='uk'?'British':'American'} voice. Each plays twice at most.`)}</span></span></li>
       </ol>
+      <div>${accentPick()}</div>
       <p class="note">${L('متستخدمش قاموس ولا ترجمة، وجاوب بسرعة. لو مش عارف اختار أقرب إجابة. النتيجة هتكون مستواك في الإطار الأوروبي (CEFR) من A1 لـ C2.','No dictionary or translator, answer fast. If unsure, pick the closest answer. You get a CEFR level from A1 to C2.')}</p>
       <button class="btn big wide" id="tStart">${L('يلا نبدأ','Start')}</button>
      </div>`;
