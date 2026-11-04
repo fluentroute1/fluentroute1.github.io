@@ -448,6 +448,51 @@ html.motion.js .rv.in{opacity:1;transform:none}
 .chara svg.brow .brows{transform:translateY(-3.5px)}
 @keyframes breathe{50%{transform:scaleY(1.025)}}
 @keyframes sway{25%{transform:rotate(-1.8deg)}75%{transform:rotate(1.8deg)}}
+/* personal map */
+.maphead{display:flex;gap:14px;align-items:center}
+.maphead p{margin:0}
+.skchip{display:inline-block;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c);border-radius:99px;padding:2px 10px;font-weight:700;font-size:13px}
+.map{position:relative;max-width:460px;margin:12px auto 30px;padding-block:6px}
+.mpath{position:absolute;inset:0;width:100%;pointer-events:none;overflow:visible;z-index:0}
+.mpath path{fill:none;stroke:color-mix(in srgb,var(--accent) 38%,var(--line));stroke-width:12;stroke-linecap:round;stroke-dasharray:var(--len,3000);stroke-dashoffset:var(--len,3000);animation:drawp 2.6s var(--ease) .2s forwards}
+@keyframes drawp{to{stroke-dashoffset:0}}
+html:not(.motion) .mpath path{stroke-dashoffset:0}
+.mchap{position:relative;z-index:1;text-align:center;margin:22px auto 12px;font-weight:800;font-size:18px;background:var(--bg);width:max-content;max-width:100%;padding:4px 12px;border-radius:12px}
+.mchap b{background:var(--marker);color:var(--marker-ink);border-radius:10px;padding:2px 10px;margin-inline-end:6px}
+.mrow{position:relative;z-index:1;display:flex;justify-content:center;min-height:112px}
+.mnode{position:relative;transform:translateX(var(--x));background:none;border:0;display:grid;justify-items:center;align-content:start;gap:6px;cursor:pointer;color:var(--ink);animation:pop .5s var(--ease) both}
+.mnode .dot{width:68px;height:68px;border-radius:50%;background:var(--c);display:grid;place-items:center;box-shadow:0 6px 0 color-mix(in srgb,var(--c) 55%,#000);transition:transform .15s,box-shadow .15s}
+.mnode:hover .dot{transform:translateY(-3px)}
+.mnode:active .dot{transform:translateY(4px);box-shadow:0 2px 0 color-mix(in srgb,var(--c) 55%,#000)}
+.mnode .dot svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.mnode.done .dot{--c:#17885A}
+.mnode.done{--c:#17885A}
+.mnode .ml{font-size:13px;font-weight:600;max-width:150px;text-align:center;line-height:1.3;background:var(--bg);border-radius:8px;padding:0 4px}
+.mnode .ml i{font-style:normal;color:var(--bad);font-size:11px}
+.mnode.next .dot{animation:pulseN 1.6s infinite}
+@keyframes pulseN{0%{box-shadow:0 6px 0 color-mix(in srgb,var(--c) 55%,#000),0 0 0 0 color-mix(in srgb,var(--c) 55%,transparent)}100%{box-shadow:0 6px 0 color-mix(in srgb,var(--c) 55%,#000),0 0 0 20px transparent}}
+.guide{position:absolute;inset-inline-start:calc(100% + 4px);top:-14px;display:grid;justify-items:center;width:86px;pointer-events:none}
+.guide svg{width:72px;height:auto}
+.guide em{font-style:normal;font-size:12px;font-weight:700;background:var(--accent);color:var(--surface);padding:2px 8px;border-radius:99px;white-space:nowrap}
+.sheet-wrap{position:fixed;inset:0;z-index:40;background:rgba(5,8,20,.55);display:grid;place-items:end center;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
+.sheet{width:min(640px,100%);max-height:88vh;overflow:auto;background:var(--surface);border-radius:24px;padding:18px 18px 22px;display:grid;gap:12px;animation:rise .35s var(--ease)}
+@media (min-width:760px){.sheet-wrap{place-items:center}}
+.sh-top{display:flex;justify-content:space-between;align-items:center}
+.sh-x{border:0;background:var(--sunk);width:38px;height:38px;border-radius:50%;font-size:16px}
+.sh-hero{display:grid;justify-items:center;gap:2px;text-align:center}
+.sh-hero .cast{margin:0}
+.sh-hero .chara svg{width:96px}
+.sh-hero .nm{display:none}
+.exs{display:grid;gap:8px}
+.exb{display:flex;justify-content:space-between;align-items:center;gap:8px;border:0;background:var(--sunk);border-radius:12px;padding:10px 14px;font:600 17px var(--f-display);color:var(--ink);text-align:left}
+.exb svg{width:18px;height:18px;fill:var(--accent);flex:none}
+.mq{background:var(--sunk);border-radius:12px;padding:12px 14px;display:grid;gap:8px}
+.mq p{margin:0;font:600 17px var(--f-display)}
+.chip.right{background:var(--ok);color:#fff;border-color:var(--ok)}
+.chip.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.vw{border:0;background:var(--sunk);border-radius:12px;padding:10px;display:grid;gap:2px;text-align:center;color:var(--ink);cursor:pointer}
+.vw b{font-size:16px}
 .spot{display:grid;place-items:center;height:104px;border-radius:16px;background:var(--accent-soft)}
 .spot svg{height:84px;width:auto;overflow:visible;transition:transform .3s var(--ease)}
 .feat:hover .spot svg{transform:scale(1.08) rotate(-3deg)}
@@ -975,7 +1020,7 @@ $('v-today').addEventListener('click',e=>{
    ========================================================= */
 function renderPath(){
   const open=[...document.querySelectorAll('#stages details')].map(d=>d.open),cur=currentStage();
-  $('v-path').innerHTML=`<div class="sec-head"><h1 class="st">${L('المراحل السبعة','The seven stages')}</h1><small>${place?L(`حددت مستواك ${LV[place.level]} بالاختبار`,`Placed at ${LV[place.level]} by the test`):`<a href="#test">${L('اعرف مستواك بالاختبار','Find your level with the test')}</a>`}</small></div>
+  $('v-path').innerHTML=(pmap?mapHTML():`<div class="sec-head"><h1 class="st">${L('خريطتك','Your map')}</h1></div><div class="cta" style="margin-bottom:18px"><div><strong>${L('اعمل الاختبار عشان نعملك خريطتك','Take the test to get your map')}</strong><p>${L('خريطة دروس على قد مستواك ونقاط ضعفك: قواعد وكلمات واستماع وكلام ونطق وقراية وكتابة.','A lesson map for your level and weak spots: grammar, words, listening, speaking, pronunciation, reading and writing.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Take the test')}</a></div>`)+`<div class="sec-head" style="margin-top:34px"><h2>${L('المراحل السبعة','The seven stages')}</h2><small>${place?L(`حددت مستواك ${LV[place.level]} بالاختبار`,`Placed at ${LV[place.level]} by the test`):`<a href="#test">${L('اعرف مستواك بالاختبار','Find your level with the test')}</a>`}</small></div>
    <div class="stages" id="stages">${STAGES.map((s,i)=>{
     const n=stageDone(i),full=n===s.c.length,picks=Object.keys(TYPES).map(t=>forLevel(t,i)[0]).filter(Boolean);
     return `<details class="stage ${full?'done':''} ${i===cur?'current':''}" ${(open.length?open[i]:i===cur)?'open':''}>
@@ -988,13 +1033,14 @@ function renderPath(){
         <a class="more" href="#more" data-lv="${i}">${L(`كل مصادر ${LV[i]} ←`,`All ${LV[i]} resources →`)}</a>
       </div></details>`}).join('')}</div>
    <p class="honest" style="margin-top:16px">${L('بصراحة: النطق ١٠٠٪ زي اللي اتولد في أمريكا أو إنجلترا صعب جدًا على أي حد كبير. الهدف الحقيقي إنك تتكلم بسرعة وطبيعي من غير ما تترجم في دماغك، وده محتاج ساعة لساعتين كل يوم لمدة سنة ونص لسنتين.','Honestly: a perfect native accent is very hard for any adult. The real goal is to speak fast and naturally without translating in your head. That takes one to two hours a day for about 18 to 24 months.')}</p>`;
+  if(pmap)requestAnimationFrame(drawMapPath);
 }
 $('v-path').addEventListener('change',e=>{
   const k=e.target.dataset.k;if(!k)return;
   checks[k]=e.target.checked;store.set('fr-checks',checks);
   renderPath();renderShell();renderToday();$('c'+k)?.focus();
 });
-$('v-path').addEventListener('click',e=>{const a=e.target.closest('[data-lv]');if(a){fLv=+a.dataset.lv;moreTab='lib';renderMore()}});
+$('v-path').addEventListener('click',e=>{const n=e.target.closest('.mnode');if(n){openSheet(n.dataset.unit);return}const a=e.target.closest('[data-lv]');if(a){fLv=+a.dataset.lv;moreTab='lib';renderMore()}});
 
 /* =========================================================
    words (Leitner flashcards)
@@ -1518,7 +1564,7 @@ function renderTest(){
       ${bar(L('القراية بصوت عالي','Read aloud'),r.parts.speak)}
       <div class="scale en">${LV.slice(0,6).map(l=>`<span>${l}</span>`).join('')}</div></div>
      ${tst.wrong.length?`<details class="panel review" style="margin-top:14px"><summary>${L(`راجع أخطائك (${tst.wrong.length})`,`Review your mistakes (${tst.wrong.length})`)}</summary><ul dir="ltr">${tst.wrong.map(w=>`<li><span class="tag">${LV[w.lvl]}</span> ${esc(w.q.replace('___','_____'))}<br><span style="color:var(--bad)">${L('إجابتك','You')}: ${esc(w.you||'—')}</span> · <span style="color:var(--ok)">${L('الصح','Correct')}: ${esc(w.ans)}</span>${w.say?` · <button class="btn ghost" style="padding:2px 10px" data-say="${esc(w.say)}">▶</button>`:''}</li>`).join('')}</ul></details>`:''}
-     <div class="row" style="margin-top:14px"><button class="btn ghost" id="tAgain">${L('اعيد الاختبار','Retake')}</button><button class="btn" id="tApply">${L(`ابدأ من مرحلة ${LV[lvl]}`,`Start at ${LV[lvl]}`)}</button></div>`;
+     <div class="row" style="margin-top:14px"><button class="btn big" id="tMap">${L('شوف خريطتك','See your map')}</button><button class="btn ghost" id="tAgain">${L('اعيد الاختبار','Retake')}</button><button class="btn ghost" id="tApply">${L(`ابدأ من مرحلة ${LV[lvl]}`,`Start at ${LV[lvl]}`)}</button></div>`;
   }
 }
 function finishTest(){
@@ -1560,7 +1606,7 @@ $('v-test').addEventListener('click',e=>{
   else if(b.id==='sNext'){const s=[SENTS[2][0],SENTS[4][1]][tst.sIdx],hit=matchWords(toWords(s),toWords(tst.sHeard));tst.sAtt.push({pct:hit.filter(Boolean).length/hit.length});tst.sHeard='';tst.sIdx++;if(tst.sIdx>=2)finishTest()}
   else if(b.id==='sSkip'){finishTest()}
   else if(b.id==='tAgain'){tst=newTest()}
-  else if(b.id==='tApply'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);fLv=null;location.hash='today';renderAll();return}
+  else if(b.id==='tApply'||b.id==='tMap'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);pmap=buildMap(tst.res);store.set('fr-map',pmap);fLv=null;location.hash=b.id==='tMap'?'path':'today';renderAll();return}
   else return;
   renderTest();
 });
@@ -1576,6 +1622,191 @@ function confetti(){
   const ps=Array.from({length:140},()=>({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-12-4,r:Math.random()*6+4,c:cols[Math.floor(Math.random()*5)],a:Math.random()*6}));
   let f=0;(function tick(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++f<150)requestAnimationFrame(tick);else c.remove()})();
 }
+
+/* =========================================================
+   lesson content for the personal map
+   GRAMMAR[level] = [{t:[ar,en], x:[ar,en] explanation, ex:[examples], q:[[question, options (first = correct)],...]}]
+   ========================================================= */
+const GRAMMAR=[
+ [ // A1
+  {t:['am / is / are','am / is / are'],x:['فعل "يكون". I → am، he/she/it → is، you/we/they → are. في النفي حط not بعده، وفي السؤال قدّمه.','The verb "be": I am, he/she/it is, you/we/they are. Add not to deny; move it first to ask.'],ex:["I'm a designer.","She isn't at home.","Are you ready?"],q:[['They ___ my friends.',['are','is','am']],['___ he from Egypt?',['Is','Are','Am']]]},
+  {t:['المضارع البسيط','Present simple'],x:['للعادات والحقايق. مع he/she/it زوّد s للفعل. النفي don\'t/doesn\'t والسؤال Do/Does.','For habits and facts. Add -s with he/she/it. Use don\'t/doesn\'t and Do/Does.'],ex:['I drink coffee every morning.','He works in a bank.',"Does she speak English?"],q:[['My brother ___ football.',['plays','play','playing']],['___ you like tea?',['Do','Does','Are']]]},
+  {t:['a / an والجمع','a / an and plurals'],x:['a قبل الكلمة اللي بتبدأ بصوت ساكن، an قبل الصوت المتحرك. الجمع غالبًا بـ s، وفيه شواذ زي man → men.','a before a consonant sound, an before a vowel sound. Most plurals add -s; some are irregular.'],ex:['an apple, a car','one child, two children','an hour (h silent)'],q:[['I need ___ umbrella.',['an','a','the']],['three ___',['women','womans','woman']]]},
+  {t:['There is / There are','There is / There are'],x:['عشان تقول "فيه". is للمفرد و are للجمع.','To say something exists: is for one, are for many.'],ex:['There is a café near my house.','There are two cats in the garden.','Is there a bank here?'],q:[['There ___ three books on the table.',['are','is','be']],['___ there any milk?',['Is','Are','Do']]]},
+  {t:['can / can\'t','can / can\'t'],x:['للقدرة والإذن. بعدها الفعل من غير to ومن غير s.','For ability and permission. The next verb has no to and no -s.'],ex:['I can swim.',"She can't drive.",'Can I sit here?'],q:[['He can ___ three languages.',['speak','speaks','to speak']],['___ you help me?',['Can','Do','Are']]]},
+ ],
+ [ // A2
+  {t:['الماضي البسيط','Past simple'],x:['لحاجة خلصت في وقت معروف. المنتظم بـ ed، وفيه أفعال شاذة لازم تتحفظ (go → went). النفي والسؤال بـ did والفعل يرجع لأصله.','Finished actions at a known time. Regular verbs add -ed; irregular ones change. Use did/didn\'t + base verb.'],ex:['I watched a film last night.','We went to Alexandria.',"Did you call her?"],q:[['She ___ to work yesterday.',['went','goed','go']],['I ___ see him.',["didn't","don't","wasn't"]]]},
+  {t:['المضارع المستمر','Present continuous'],x:['لحاجة بتحصل دلوقتي أو خطة قريبة: am/is/are + فعل بـ ing.','For now or a near plan: am/is/are + -ing.'],ex:["I'm reading right now.",'They are coming tomorrow.','What are you doing?'],q:[['Listen! The baby ___.',['is crying','cries','cry']],['We ___ dinner at the moment.',['are having','have','has']]]},
+  {t:['المقارنة والتفضيل','Comparatives and superlatives'],x:['كلمة قصيرة: er / est. كلمة طويلة: more / the most. شواذ: good → better → the best.','Short words: -er / -est. Long words: more / the most. good → better → best.'],ex:['Cairo is bigger than Alexandria.','This is the most beautiful beach.','My English is better now.'],q:[['This bag is ___ than that one.',['cheaper','more cheap','cheapest']],['It was the ___ day of my life.',['best','better','most good']]]},
+  {t:['going to و will','going to and will'],x:['going to لخطة متقررة أو حاجة باينة إنها هتحصل. will لقرار لحظي أو توقع.','going to for plans and clear signs; will for instant decisions and predictions.'],ex:["I'm going to visit my aunt on Friday.","I'll get it!",'It will probably rain.'],q:[['Look at the clouds! It ___ rain.',["'s going to","will to","going"]],['The phone is ringing. I ___ answer it.',["'ll","'m going","am"]]]},
+  {t:['much / many / a lot of','much / many / a lot of'],x:['many للحاجات اللي بتتعد، much للي مبتتعدش (زي water)، و a lot of للاتنين.','many for countable, much for uncountable, a lot of for both.'],ex:['How many people came?','I don\'t have much time.','She has a lot of friends.'],q:[['How ___ sugar do you want?',['much','many','a lot']],['There aren\'t ___ chairs.',['many','much','a lot']]]},
+ ],
+ [ // B1
+  {t:['المضارع التام ولا الماضي؟','Present perfect or past simple?'],x:['have/has + التصريف التالت لحاجة ليها علاقة بدلوقتي أو من غير وقت محدد (ever, already, since). لو فيه وقت محدد في الماضي (yesterday, in 2020) استخدم الماضي البسيط.','have/has + past participle links past to now; with a finished time, use past simple.'],ex:["I've lived here since 2019.","I've never been to London.",'I visited Paris in 2022.'],q:[['I ___ this film three times.',["have seen","saw","see"]],['She ___ her keys yesterday.',['lost','has lost','loses']]]},
+  {t:['الشرطية الأولى والتانية','First and second conditionals'],x:['الأولى لحاجة ممكن تحصل: If + مضارع، will. التانية لحاجة خيالية: If + ماضي، would.','First: real possibility (If + present, will). Second: imaginary (If + past, would).'],ex:["If it rains, we'll stay home.",'If I had more time, I would learn Spanish.','If I were you, I would apologise.'],q:[['If I ___ rich, I would travel the world.',['were','am','will be']],["If you study, you ___ pass.",["'ll","would","did"]]]},
+  {t:['المبني للمجهول','The passive'],x:['لما المهم الحاجة نفسها مش مين عملها: be + التصريف التالت.','When the action matters more than who did it: be + past participle.'],ex:['The bridge was built in 1890.','English is spoken here.','My car is being repaired.'],q:[['The letters ___ every morning.',['are delivered','deliver','are deliver']],['This house ___ in 1950.',['was built','built','is build']]]},
+  {t:['who / which / whose','Relative clauses'],x:['who للناس، which للحاجات، whose للملكية، و that ينفع للاتنين في الكلام العادي.','who for people, which for things, whose for possession; that works for both in everyday speech.'],ex:['The man who called is my uncle.','The phone which I bought is great.','She\'s the girl whose bag was stolen.'],q:[['That\'s the woman ___ son is a doctor.',['whose','who','which']],['The book ___ you gave me is amazing.',['which','who','whose']]]},
+  {t:['used to و be used to','used to vs be used to'],x:['used to + فعل = كنت بعمل حاجة زمان. be/get used to + ing = متعود على حاجة.','used to + verb = past habit. be/get used to + -ing = accustomed to.'],ex:['I used to play football every day.',"I'm used to waking up early.",'You\'ll get used to it.'],q:[['I ___ live in Cairo, but now I live in Riyadh.',['used to','am used to','use to']],["She isn't used to ___ in English.",['speaking','speak','spoke']]]},
+ ],
+ [ // B2
+  {t:['الشرطية التالتة والمختلطة','Third and mixed conditionals'],x:['التالتة لندم على الماضي: If + had + التصريف التالت، would have + التصريف التالت. المختلطة: سبب في الماضي ونتيجة دلوقتي.','Third: unreal past (If + had done, would have done). Mixed: past cause, present result.'],ex:["If I had left earlier, I wouldn't have missed the train.","If I had studied medicine, I'd be a doctor now."],q:[['If she ___ harder, she would have passed.',['had worked','worked','would work']],["If I hadn't eaten so much, I ___ sick now.",["wouldn't feel","wouldn't have felt","don't feel"]]]},
+  {t:['الماضي التام','Past perfect'],x:['حاجة حصلت قبل حاجة تانية في الماضي: had + التصريف التالت.','An earlier past: had + past participle.'],ex:['When I arrived, the film had already started.','She had never seen snow before that trip.'],q:[['By the time we got there, they ___.',['had left','left','have left']],['I realised I ___ my wallet at home.',['had left','have left','leave']]]},
+  {t:['الكلام المنقول','Reported speech'],x:['لما تنقل كلام حد، الزمن بيرجع خطوة لورا عادة (is → was، will → would) والضماير بتتغير.','Reporting usually shifts tenses back and changes pronouns.'],ex:['"I\'m tired." → She said she was tired.','"Where do you live?" → He asked where I lived.'],q:[['He said he ___ come the next day.',['would','will','can']],['She asked me where I ___.',['worked','did I work','do I work']]]},
+  {t:['الاستنتاج بـ must / might / can\'t','Modals of deduction'],x:['must = أكيد، might/could = ممكن، can\'t = مستحيل. للماضي: must have + التصريف التالت.','must = sure, might = possible, can\'t = impossible; past: must have done.'],ex:['She must be tired.',"He can't have finished already.",'They might have missed the bus.'],q:[['The lights are off. They ___ be out.',['must','can\'t','should']],["You ___ have seen him; he was in Dubai.",["can't","must","might"]]]},
+  {t:['ing ولا to؟','Gerund or infinitive?'],x:['أفعال بعدها ing (enjoy, avoid, finish, mind) وأفعال بعدها to (want, decide, hope, plan). وفيه أفعال المعنى بيتغير معاها (stop, remember).','Some verbs take -ing, some take to; a few change meaning.'],ex:['I enjoy cooking.','She decided to leave.','I stopped smoking. / I stopped to smoke.'],q:[['He avoided ___ the question.',['answering','to answer','answer']],['We hope ___ you soon.',['to see','seeing','see']]]},
+ ],
+ [ // C1
+  {t:['القلب للتأكيد','Inversion for emphasis'],x:['بعد كلمات زي Hardly, Not only, Rarely, Never في أول الجملة، الفعل المساعد بييجي قبل الفاعل.','After negative adverbials at the start, the auxiliary comes before the subject.'],ex:['Hardly had I sat down when the phone rang.','Not only is it cheap, but it\'s also fast.','Rarely do we see such talent.'],q:[['Never ___ such a beautiful view.',['have I seen','I have seen','I saw']],['Not only ___ late, but he forgot the tickets.',['was he','he was','did he']]]},
+  {t:['جمل التركيز (Cleft)','Cleft sentences'],x:['عشان تركّز على جزء: What I need is... / It was ... who/that...','To focus on one part: What I need is... / It was X that...'],ex:['What I need is a long holiday.','It was Sara who solved the problem.'],q:[['___ I love about Cairo is the food.',['What','That','Which']],['It was in 2020 ___ we met.',['that','what','which']]]},
+  {t:['جمل اسم الفاعل','Participle clauses'],x:['تختصر جملتين: Having finished the work, I went home. / Built in 1890, the bridge is still strong.','Shorten clauses with -ing, having done, or a past participle.'],ex:['Having finished the report, she left.','Feeling tired, I went to bed early.','Written in 1949, the novel is still relevant.'],q:[['___ the email, he closed his laptop.',['Having sent','Sent','Having send']],['___ by millions, the app is free.',['Used','Using','Having used']]]},
+  {t:['المبني للمجهول المتقدم','Advanced passive'],x:['He is said to be... / She is believed to have... للكلام عن آراء الناس من غير ما تقول مين.','Report beliefs without naming the source: is said to / is believed to have.'],ex:['He is said to be the best chef in town.','The painting is believed to have been stolen.'],q:[['She is thought ___ the country last year.',['to have left','to leave','leaving']],['The company is said ___ huge profits.',['to be making','make','being made']]]},
+  {t:['wish / if only / it\'s time','wish, if only, it\'s time'],x:['wish + ماضي = نفسي الحاجة تبقى غير كده دلوقتي. wish + had = ندم على الماضي. It\'s (high) time + ماضي = آن الأوان.','wish + past for now; wish + had for regret; It\'s time + past.'],ex:['I wish I spoke French.','If only I had listened to you.',"It's high time we left."],q:[['I wish I ___ more money.',['had','have','would have']],["It's time you ___ to bed.",['went','go','going']]]},
+ ],
+ [ // C2
+  {t:['التراكيب الرسمية','Formal structures'],x:['Were it not for..., Should you need..., Had I known... بدل if في الكتابة الرسمية.','Inverted conditionals replace if in formal English.'],ex:['Were it not for her help, we would have failed.','Should you need anything, call me.','Had I known, I would have come.'],q:[['___ you require assistance, please ask.',['Should','Would','Did']],['___ it not for the rain, we would go out.',['Were','Was','If']]]},
+  {t:['التلطيف والتحفّظ','Hedging'],x:['الكلام الأكاديمي والمهني بيتجنب الجزم: It would seem that..., tends to, to some extent, arguably.','Soften claims: it would seem, tends to, arguably, to some extent.'],ex:['It would seem that the plan has failed.','Prices tend to rise in summer.','This is arguably his best work.'],q:[['The results ___ to suggest a link.',['would seem','would seems','seem to']],['Young people ___ to use social media more.',['tend','tends','tending']]]},
+  {t:['الحذف والاستبدال','Ellipsis and substitution'],x:['الناس بتختصر عشان ميكرروش: I hope so / I\'m afraid not / She can\'t, but I can.','Avoid repetition with so, not, do, one, and by leaving words out.'],ex:['"Is it going to rain?" "I hope not."','I wanted to go, but I couldn\'t.','This one is better than the old one.'],q:[['"Will they come?" "I think ___."',['so','it','that']],['"Did you like it?" "Yes, I ___."',['did','liked','do']]]},
+  {t:['المتلازمات الدقيقة','Precise collocations'],x:['الـ native بيقول heavy rain مش strong rain، و make a decision مش do a decision. الكلمات دي بتيجي مع بعض.','Natives say heavy rain, make a decision, deeply regret: words that belong together.'],ex:['a thinly veiled threat','to make a decision','bitterly disappointed'],q:[['We need to ___ a decision soon.',['make','do','take on']],['I was ___ disappointed.',['bitterly','strongly','heavily']]]},
+  {t:['أدوات الربط المتقدمة','Advanced discourse markers'],x:['That being said، By the same token، Be that as it may، بتخلي كلامك مترابط ومقنع.','Link ideas smoothly: that being said, by the same token, be that as it may.'],ex:["It's expensive. That being said, it's worth it.",'Be that as it may, we must act now.'],q:[['The plan is risky. ___, it may be our only option.',['That being said','Because','Unless']],['___ as it may, the decision is final.',['Be that','Being that','So that']]]},
+ ],
+];
+// vocabulary groups per level: [english, arabic]
+const VOCAB_SETS=[
+ {t:['يومك','Your day'],w:[['wake up','أصحى'],['have breakfast','أفطر'],['go to work','أروح الشغل'],['get home','أوصل البيت'],['cook','أطبخ'],['go to bed','أنام'],['busy','مشغول'],['tired','تعبان']]},
+ {t:['السفر','Travel'],w:[['book a ticket','أحجز تذكرة'],['luggage','شنط السفر'],['delay','تأخير'],['check in','أسجّل وصولي'],['abroad','بره البلد'],['sightseeing','أتفرج على المعالم'],['currency','العملة'],['passport','الباسبور']]},
+ {t:['الشغل','Work'],w:[['deadline','آخر ميعاد'],['apply for','أقدّم على'],['interview','مقابلة'],['salary','مرتب'],['colleague','زميل'],['promotion','ترقية'],['meeting','اجتماع'],['client','عميل']]},
+ {t:['الآراء والنقاش','Opinions and debate'],w:[['in my view','من وجهة نظري'],['I tend to think','بميل إني أفكر'],['on the whole','في المجمل'],['convince','أقنع'],['point of view','وجهة نظر'],['drawback','عيب'],['benefit','فايدة'],['debatable','فيه نقاش']]},
+ {t:['البيزنس والتكنولوجيا','Business and tech'],w:[['launch','أطلق'],['revenue','الإيرادات'],['stakeholder','صاحب مصلحة'],['streamline','أبسّط وأسرّع'],['leverage','أستغل'],['feasible','ممكن تنفيذه'],['roll out','أنزّل تدريجيًا'],['bottleneck','عنق الزجاجة']]},
+ {t:['التعبير الدقيق','Precise expression'],w:[['nuance','فرق دقيق'],['ubiquitous','موجود في كل حتة'],['meticulous','دقيق جدًا'],['candid','صريح'],['ambivalent','متردد بين رأيين'],['pragmatic','عملي'],['eloquent','فصيح'],['understatement','تهوين']]},
+];
+const WRITING=[['اكتب ٥ جمل عن نفسك وعيلتك.','Write 5 sentences about yourself and your family.'],['اكتب ٨ جمل عن آخر أجازة ليك بالماضي.','Write 8 sentences about your last holiday in the past tense.'],['اكتب إيميل ١٢٠ كلمة لصاحب شغل تسأله عن وظيفة.','Write a 120-word email asking an employer about a job.'],['اكتب مقال رأي ٢٠٠ كلمة: الشغل من البيت أحسن ولا لأ؟','Write a 200-word opinion essay: is working from home better?'],['اكتب تقرير ٢٥٠ كلمة عن مشكلة في مجالك واقتراح حل.','Write a 250-word report on a problem in your field and a solution.'],['اكتب مقال جدلي ٣٠٠ كلمة بأسلوب رسمي ومتوازن.','Write a 300-word balanced, formal argumentative essay.']];
+/* =========================================================
+   personal learning map: built from the placement test result.
+   It starts at your level and runs to C2. Each level is a chapter of lessons across every skill;
+   skills that came out weaker than your overall level get a "boost" chapter first and come first
+   inside each chapter.
+   ========================================================= */
+const SKILLS={
+ gram:{c:'#2F4FE0',n:['قواعد','Grammar'],i:'<path d="M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4z"/><path d="M9 9h6M9 13h4"/>'},
+ vocab:{c:'#F2B705',n:['كلمات','Words'],i:'<rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 10h8M8 14h5"/>'},
+ listen:{c:'#6F86F5',n:['استماع','Listening'],i:'<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="2"/><rect x="17" y="14" width="4" height="6" rx="2"/>'},
+ speak:{c:'#C9373B',n:['كلام','Speaking'],i:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'},
+ pron:{c:'#14A3A3',n:['نطق','Pronunciation'],i:'<path d="M7 9a5 5 0 1 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 0"/>'},
+ read:{c:'#17885A',n:['قراية','Reading'],i:'<path d="M3 5h7a3 3 0 0 1 2 1 3 3 0 0 1 2-1h7v14h-7a2 2 0 0 0-2 1 2 2 0 0 0-2-1H3z"/>'},
+ write:{c:'#E8833A',n:['كتابة','Writing'],i:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/>'},
+};
+const avgScore=(...p)=>{const v=p.filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+function buildMap(res){
+  const lvl=res.o.level,P=res.parts,all=res.o.score;
+  const skill={gram:P.uoe?.score,vocab:P.vocab?.score,listen:avgScore(P.listen?.score,P.dict?.score),read:P.ctest?.score,speak:P.speak?.score};
+  const weak=Object.entries(skill).filter(([,s])=>s!=null&&s<all-0.4).sort((a,b)=>a[1]-b[1]).map(([k])=>k);
+  const units=[],push=(type,L,i=0,boost=false)=>units.push({id:`${boost?'b':''}${L}-${type}-${i}`,type,lvl:L,i,boost});
+  if(weak.length){
+    units.push({chapter:'boost'});
+    const L=Math.max(0,lvl-1);
+    weak.forEach(k=>{if(k==='gram'){push('gram',L,0,true);push('gram',L,1,true)}else push(k,L,0,true)});
+  }
+  for(let L=lvl;L<=5;L++){
+    units.push({chapter:L});
+    const order=['gram:0','vocab','gram:1','listen','gram:2','speak','gram:3','read','gram:4','write'].concat(L<=2?['pron']:[]);
+    // weak skills move to the front of each chapter
+    const rank=s=>{const k=s.split(':')[0],w=weak.indexOf(k);return w<0?99:w};
+    order.map((s,i)=>[s,i]).sort((a,b)=>rank(a[0])-rank(b[0])||a[1]-b[1]).forEach(([s])=>{const [k,i]=s.split(':');push(k,L,+(i||0))});
+  }
+  return {built:today(),level:lvl,weak,units};
+}
+(function mapCheck(){
+  const fake={o:{level:2,score:2.6},parts:{uoe:{score:2.8},vocab:{score:3},listen:{score:1.8},dict:{score:1.9},ctest:{score:2.7}}};
+  const m=buildMap(fake);
+  console.assert(m.weak[0]==='listen','map: weakest skill is listening');
+  console.assert(m.units[0].chapter==='boost'&&m.units[1].type==='listen'&&m.units[1].lvl===1,'map: boost chapter starts with listening one level down');
+  const firstB1=m.units.findIndex(u=>u.chapter===2);
+  console.assert(m.units[firstB1+1].type==='listen','map: listening first inside the B1 chapter');
+  console.assert(m.units.filter(u=>u.chapter!==undefined).length===1+4,'map: boost + B1..C2 chapters');
+})();
+let pmap=store.get('fr-map',null),mapDone=store.get('fr-mapdone',{});
+const unitTitle=u=>u.type==='gram'?tx(GRAMMAR[u.lvl][u.i].t):u.type==='vocab'?tx(VOCAB_SETS[u.lvl].t):tx(SKILLS[u.type].n)+' '+LV[u.lvl];
+const nextUnit=()=>pmap?.units.find(u=>u.id&&!mapDone[u.id]);
+function mapHTML(){
+  const units=pmap.units.filter(u=>u.id),done=units.filter(u=>mapDone[u.id]).length,nx=nextUnit();
+  const xs=[0,70,105,70,0,-70,-105,-70];let k=0;
+  const rows=pmap.units.map(u=>{
+    if(u.chapter!==undefined)return `<div class="mchap">${u.chapter==='boost'?L('تقوية نقاط ضعفك','Boost your weak spots'):`<b class="en">${LV[u.chapter]}</b> ${tx(STAGES[u.chapter].n)}`}</div>`;
+    const s=SKILLS[u.type],isDone=!!mapDone[u.id],isNext=nx&&nx.id===u.id,x=xs[k++%xs.length];
+    return `<div class="mrow"><button class="mnode${isDone?' done':''}${isNext?' next':''}" data-unit="${u.id}" style="--x:${x}px;--c:${s.c}" aria-label="${esc(unitTitle(u))}">
+      <span class="dot"><svg viewBox="0 0 24 24">${isDone?'<path d="M5 12.5l4.5 4.5L19 7.5"/>':s.i}</svg></span>
+      <span class="ml">${esc(unitTitle(u))}${u.boost?` <i>${L('تقوية','boost')}</i>`:''}</span>
+      ${isNext?`<span class="guide">${charSVG('Emma')}<em>${L('ابدأ من هنا','Start here')}</em></span>`:''}</button></div>`;
+  }).join('');
+  return `<div class="sec-head"><h1 class="st">${L('خريطتك','Your map')}</h1><small class="en">${done} / ${units.length}</small></div>
+   <div class="panel maphead"><span class="badge en">${LV[pmap.level]}</span><div><p>${L('الخريطة دي اتعملت من نتيجة اختبارك، وبتمشي معاك من مستواك لحد C2.','Built from your test result, from your level up to C2.')}</p>
+   ${pmap.weak.length?`<p class="muted">${L('هنركّز الأول على: ','We focus first on: ')}${pmap.weak.map(w=>`<span class="skchip" style="--c:${SKILLS[w].c}">${tx(SKILLS[w].n)}</span>`).join(' ')}</p>`:`<p class="muted">${L('مستواك متوازن في كل المهارات.','Your skills are balanced.')}</p>`}</div></div>
+   <div class="line" style="margin:12px 0 4px"><i style="width:${done/units.length*100}%"></i></div>
+   <div class="map" id="map"><svg class="mpath" aria-hidden="true"><path id="mpathLine"/></svg>${rows}</div>`;
+}
+function drawMapPath(){
+  const box=$('map');if(!box)return;const r0=box.getBoundingClientRect();
+  const pts=[...box.querySelectorAll('.mnode .dot')].map(d=>{const r=d.getBoundingClientRect();return [r.left-r0.left+r.width/2,r.top-r0.top+r.height/2]});
+  const svg=box.querySelector('.mpath');svg.setAttribute('viewBox',`0 0 ${r0.width} ${r0.height}`);svg.style.height=r0.height+'px';
+  let d=pts.length?`M${pts[0][0]} ${pts[0][1]}`:'';
+  for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i],my=(y0+y1)/2;d+=` C${x0} ${my} ${x1} ${my} ${x1} ${y1}`}
+  const p=$('mpathLine');p.setAttribute('d',d);const len=p.getTotalLength?p.getTotalLength():2000;p.style.setProperty('--len',len);
+}
+addEventListener('resize',()=>{if(curView()==='path')drawMapPath()});
+
+/* lesson sheet */
+function goPractice(mode,lv){sp={...sp,mode,lv,heard:'',result:null,err:'',dIdx:0,dTyped:'',dCheck:false,ear:null};closeSheet();location.hash='speak'}
+function sheetBody(u){
+  const s=SKILLS[u.type],L_=u.lvl;
+  if(u.type==='gram'){const g=GRAMMAR[L_][u.i];
+    return `<p>${tx(g.x)}</p>
+      <div class="exs">${g.ex.map(e=>`<button class="exb" data-say="${esc(e)}"><span class="en" dir="ltr">${esc(e)}</span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>`).join('')}</div>
+      <h3 class="label">${L('اختبر نفسك','Check yourself')}</h3>
+      ${g.q.map((q,qi)=>`<div class="mq" data-q="${qi}"><p class="en" dir="ltr">${esc(q[0]).replace('___','<span class="gap"></span>')}</p><div class="row" style="justify-content:flex-start">${shuffle(q[1].map((o,oi)=>[o,oi])).map(([o,oi])=>`<button class="chip" data-ans="${oi}">${esc(o)}</button>`).join('')}</div></div>`).join('')}`}
+  if(u.type==='vocab'){const v=VOCAB_SETS[L_];
+    return `<p>${L('اسمع كل كلمة وقولها بصوتك، وبعدين اعمل جملة منها عن حياتك.','Hear each word, say it, then make a sentence about your own life.')}</p>
+      <div class="vgrid">${v.w.map(([e,a])=>`<button class="vw" data-say="${esc(e)}"><b class="en" dir="ltr">${esc(e)}</b><span>${a}</span></button>`).join('')}</div>`}
+  if(u.type==='listen'){const r=pick(L_<1?'yt':'pod',L_);
+    return `<p>${L('اسمع ١٠ دقايق من ده، وبعدين اعمل ٥ جمل إملاء من نفس المستوى.','Listen to this for 10 minutes, then do 5 dictations at the same level.')}</p>
+      ${r?itemHTML(r,true):''}<button class="btn wide" data-go-practice="dict" data-lv="${L_}">${L(`إملاء ${LV[L_]}`,`Dictation ${LV[L_]}`)}</button>`}
+  if(u.type==='speak')return `<p>${L('اتكلم دقيقة كاملة عن الموضوع ده، وبعدين قلّد ٥ جمل.','Talk for one full minute on this topic, then repeat 5 sentences.')}</p>
+      <p class="target en" dir="ltr">${esc(PROMPTS[L_][0])}</p>
+      <div class="row"><button class="btn" data-go-practice="free" data-lv="${L_}">${L('اتكلم دلوقتي','Talk now')}</button><button class="btn ghost" data-go-practice="repeat" data-lv="${L_}">${L('قلّد جمل','Repeat sentences')}</button></div>`;
+  if(u.type==='pron')return `<p>${L('جولة "ودنك" كاملة (١٠ كلمات)، وبعدين قول كل زوج كلمات بصوتك.','A full Ear round (10 words), then say each pair yourself.')}</p>
+      <div class="pairs">${['ship sheep','very berry','think sink','pin bin'].map(p=>`<button class="chip en" data-say="${p.replace(' ',', ')}">${p}</button>`).join('')}</div>
+      <button class="btn wide" data-go-practice="ear" data-lv="${L_}">${L('ابدأ "ودنك"','Start Ear training')}</button>`;
+  if(u.type==='read'){const r=pick('book',L_);
+    return `<p>${L('اقرا ١٠ صفحات، وكل كلمة جديدة مهمة اكتبها في جملة.','Read 10 pages; put every useful new word into a sentence.')}</p>${r?itemHTML(r,true):''}`}
+  if(u.type==='write')return `<p>${tx(WRITING[L_])}</p>
+      <textarea id="wrIn" rows="6" dir="ltr" aria-label="${L('اكتب هنا','Write here')}" placeholder="Write here...">${esc(store.get('fr-write-'+u.id,''))}</textarea>
+      <p class="muted" style="font-size:14px"><span id="wrCount" class="en">0</span> ${L('كلمة','words')} · <a href="https://writeandimprove.com" target="_blank" rel="noopener">${L('صحّحها ببلاش على Write & Improve','Get free feedback on Write & Improve')}</a></p>`;
+  return '';
+}
+function openSheet(id){
+  const u=pmap.units.find(x=>x.id===id);if(!u)return;const s=SKILLS[u.type];
+  let el=$('sheet');if(!el){el=document.createElement('div');el.id='sheet';el.className='sheet-wrap';document.body.appendChild(el)}
+  el.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">
+    <div class="sh-top"><span class="skchip" style="--c:${s.c}">${tx(s.n)} · <span class="en">${LV[u.lvl]}</span></span><button class="sh-x" data-close aria-label="${L('اقفل','Close')}">✕</button></div>
+    <div class="sh-hero">${castHTML([u.type==='listen'?'Jack':u.type==='speak'?'Sara':u.type==='read'||u.type==='write'?'Leo':'Emma'])}<h2 id="shT">${esc(unitTitle(u))}</h2></div>
+    <div class="sh-body stack">${sheetBody(u)}</div>
+    <button class="btn big wide" data-finish="${u.id}">${mapDone[u.id]?L('خلصته ✓','Done ✓'):L('خلصت الدرس','Mark as done')}</button></div>`;
+  el.hidden=false;document.body.style.overflow='hidden';
+  const ta=$('wrIn');if(ta){const c=()=>{$('wrCount').textContent=toWords(ta.value).length;store.set('fr-write-'+u.id,ta.value)};ta.addEventListener('input',c);c()}
+  el.querySelector('.sh-x').focus();
+}
+function closeSheet(){const el=$('sheet');if(el){el.hidden=true;el.innerHTML=''}document.body.style.overflow='';window.speechSynthesis?.cancel();mouthLoop(null)}
+document.addEventListener('click',e=>{
+  const w=e.target.closest('.sheet-wrap');if(!w)return;
+  if(e.target===w||e.target.closest('[data-close]')){closeSheet();return}
+  const a=e.target.closest('[data-ans]');
+  if(a){const box=a.closest('.mq');if(box.dataset.done)return;box.dataset.done=1;const ok=a.dataset.ans==='0';a.classList.add(ok?'right':'wrong');
+    if(!ok)box.querySelector('[data-ans="0"]').classList.add('right');return}
+  const gp=e.target.closest('[data-go-practice]');if(gp){goPractice(gp.dataset.goPractice,+gp.dataset.lv);return}
+  const f=e.target.closest('[data-finish]');
+  if(f){mapDone[f.dataset.finish]=true;store.set('fr-mapdone',mapDone);closeSheet();confetti();renderPath()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('sheet')&&!$('sheet').hidden)closeSheet()});
 
 /* =========================================================
    landing (#home): the same cards and tokens as the app
@@ -1668,7 +1899,7 @@ $('v-home').addEventListener('click',e=>{
    Until it is filled in, the sign-in button explains that it is not set up yet.
    ========================================================= */
 const FIREBASE_CONFIG={apiKey:'AIzaSyBd_zM8rg6D9x0gtQHk44AQc5uW1kxlBR4',authDomain:'fluent-route-ed587.firebaseapp.com',projectId:'fluent-route-ed587',storageBucket:'fluent-route-ed587.firebasestorage.app',messagingSenderId:'990654544590',appId:'1:990654544590:web:1b0ee75a81abaded8f6e9f'};
-const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv'];
+const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone'];
 const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 let fb=null,fbUser=null,pushTimer=null;
 const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
