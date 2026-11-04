@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fluent-route.github.io/sitemap.xml
+Sitemap: https://fluentroute1.github.io/https-fluent-route.github.io-/sitemap.xml

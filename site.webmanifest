@@ -4,7 +4,7 @@
   "description": "Learn English from A1 to fluency: placement test, speaking, dictation and ear training.",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#121935",
   "theme_color": "#121935",
