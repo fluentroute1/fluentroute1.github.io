@@ -574,6 +574,13 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .switches{display:flex;gap:8px;align-items:center}
 @media (max-width:420px){.theme-tgl{width:34px;height:34px;border-radius:10px}.theme-tgl svg{width:18px;height:18px}}
 .item .ext{font-size:12px;color:var(--muted);opacity:.85}
+.backbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;padding:10px 0;margin:-6px 0 8px;background:var(--bg)}
+.backbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 16px;font:700 15px var(--f-body);cursor:pointer;box-shadow:0 4px 12px -8px rgba(18,25,53,.4)}
+.backbtn:hover{border-color:var(--accent)}
+.watch{display:grid;gap:14px}
+.player{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 18px 40px -22px rgba(18,25,53,.6)}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.watch-tips ul{margin:8px 0;padding-inline-start:20px;display:grid;gap:4px}
 </style>
 
 <aside class="side">
@@ -582,6 +589,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 </aside>
 <div id="v-home" class="lp" hidden></div>
 <main><div class="wrap">
+  <div id="backbar" class="backbar" hidden><button class="backbtn" id="backBtn"></button></div>
   <noscript><h1>Fluent Route: اتعلم إنجليزي من الصفر للطلاقة</h1><p>مسار مجاني من A1 لـ C2: اختبار تحديد مستوى، تدريب كلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وأفلام وكتب لكل مستوى. شغّل JavaScript عشان تستخدم الموقع.</p></noscript>
   <section id="v-today" class="stack"></section>
   <section id="v-path" hidden></section>
@@ -590,6 +598,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
   <section id="v-more" hidden></section>
   <section id="v-test" hidden></section>
   <section id="v-read" hidden></section>
+  <section id="v-watch" hidden></section>
 </div></main>
 
 <script>
@@ -1005,7 +1014,16 @@ const skipped=i=>!!place&&i<place.level;
 const stageDone=i=>skipped(i)?STAGES[i].c.length:STAGES[i].c.filter((_,j)=>checks[i+'-'+j]).length;
 function currentStage(){const i=STAGES.findIndex((s,i)=>stageDone(i)<s.c.length);return i<0?STAGES.length-1:i}
 const forLevel=(t,lv)=>RES.filter(r=>r[0]===t&&r[2]<=lv&&lv<=r[3]);
-const link=r=>r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
+// podcasts and channels play inside the site: a YouTube playlist each (UU... = the channel's uploads, newest first)
+const YT={'Easy Stories in English':'UUCoLYcsDxFjnFPYF057l-7w','BBC 6 Minute English':'PLCzMpYYkPfXjQ3gPAVt6ne12Af0MTGR1N','All Ears English':'UUajKaiBJSwYcDFbfMICpSpA',
+ 'English Learning for Curious Minds':'UUa2aEN90vKFPyWcHsSMFKCA','BBC The English We Speak':'PLCDpTsTY44R7kUskk8A23KLElGcQEcqwp',"Luke's English Podcast":'UU2L7vR43LKuBXXV2AentEMw',
+ 'This American Life':'UU6BJEy3DdS5L5Sg6NfExbCw','Freakonomics Radio':'UUXjf7anLJA4NqUv8kPFIJWA','The Diary of a CEO':'UUGq-a57w-aPwyi3pW7XLiHw',
+ 'Extra English':'PL2NoCEI2ukubVF8rHFvkBeGJ_ZFLkMwah','Peppa Pig':'UUAOtE1V7Ots4DjM8JLlrYgg','Learn English with Bob the Canadian':'UUZJJTxA36ZPNTJ1WFIByaeA',
+ 'English with Lucy':'UUz4tgANd4yy8Oe0iXCdSWfA','Speak English With Vanessa':'UUxJGMJbjokfnr2-s4_RXPxQ','Easy English street interviews':'UUvgLaFuTGGRXl0eyvBRCifA',
+ 'Learn English With TV Series':'UUKgpamMlm872zkGDcBJHYDg',"Rachel's English":'UUvn_XCl_mgQmt3sD753zdJA','TED Talks':'UUAuUUnT6oDeKwE6v1NGQxug',
+ 'Kurzgesagt':'UUsXVk37bltHxD1rDPwtNM8Q','Hot Ones':'UUPD_bxCRGpmmeQcbe2kpPaA'};
+const slugOf=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const link=r=>YT[r[1]]?'#watch/'+slugOf(r[1]):r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
 const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'}><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small>${link(r)[0]!=='#'?`<small class="ext">${r[0]==='book'?L('↗ كتاب ليه حقوق نشر، بيفتح صفحته بره الموقع','↗ Copyrighted book: opens its page outside the site'):L('↗ بيفتح بره الموقع','↗ Opens outside the site')}</small>`:''}</a>`;
 
 /* =========================================================
@@ -1063,10 +1081,10 @@ const dayNum=Math.floor(Date.now()/864e5);
 function streakFrom(days,t){const has=new Set(days);let d=new Date(t+'T12:00:00'),n=0;if(!has.has(t))d.setDate(d.getDate()-1);while(has.has(d.toLocaleDateString('en-CA'))){n++;d.setDate(d.getDate()-1)}return n}
 console.assert(streakFrom(['2026-11-03','2026-11-04'],'2026-11-04')===2&&streakFrom(['2026-11-03'],'2026-11-04')===1&&streakFrom(['2026-11-01'],'2026-11-04')===0,'streak');
 const pick=(t,lv)=>{const l=forLevel(t,lv);return l.length?l[dayNum%l.length]:null};
-const resLink=r=>r?`<a href="${esc(link(r))}" target="_blank" rel="noopener" class="en" dir="ltr">${esc(r[1])}</a>`:'';
+const resLink=r=>r?`<a href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'} class="en" dir="ltr">${esc(r[1])}</a>`:'';
 function tasksFor(lv){return [
   {k:'anki',t:L('كلمات','Words'),m:15,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
-  {k:'listen',t:L('استماع','Listening'),m:20,s:L('النهارده: ','Today: ')+resLink(pick(lv<1?'yt':'pod',lv))},
+  {k:'listen',t:L('استماع','Listening'),m:20,s:L('النهارده: ','Today: ')+resLink(pick('pod',lv))},
   {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`}, // taste-skill-ignore: the word Shadowing, not a CSS shadow
   {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:30,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
   {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
@@ -1302,7 +1320,7 @@ function renderMore(){
   const tabs=`<div class="tabs"><button data-mt="lib" aria-pressed="${moreTab==='lib'}">${L('المكتبة','Library')}</button><button data-mt="tips" aria-pressed="${moreTab==='tips'}">${L('نصايح ونطق','Tips & sounds')}</button></div>`;
   if(moreTab==='lib'){
     const inSite=READS.map(b=>['book',b[1],b[3],b[4],'اقراه هنا في الموقع · '+b[5],'Read it here on the site · '+b[6],'#read/'+b[0]]);
-    const list=inSite.concat(RES.filter(r=>!link(r).startsWith('#'))).filter(r=>(fType==='all'||r[0]===fType)&&(fLv<0||(r[2]<=fLv&&fLv<=r[3])));
+    const list=inSite.concat(RES.filter(r=>!link(r).startsWith('#read'))).filter(r=>(fType==='all'||r[0]===fType)&&(fLv<0||(r[2]<=fLv&&fLv<=r[3])));
     v.innerHTML=tabs+`<div class="sec-head"><h1 class="st">${L('المكتبة','Library')}</h1><small>${L(`${list.length} مصدر`,`${list.length} resources`)}</small></div>
      <div class="chips">${[[-1,L('كل المستويات','All levels')],...LV.map((l,i)=>[i,l])].map(([k,t])=>`<button class="chip" data-l="${k}" aria-pressed="${k===fLv}">${t}</button>`).join('')}</div>
      <div class="chips">${[['all',L('الكل','All')],...Object.entries(TYPES).map(([k,p])=>[k,tx(p)])].map(([k,t])=>`<button class="chip" data-t="${k}" aria-pressed="${k===fType}">${t}</button>`).join('')}</div>
@@ -2161,13 +2179,13 @@ async function renderRead(){
   if(!slug||!bookFor(slug)){v.innerHTML=shelfHTML();stagger($('shelf'));return}
   const meta=bookFor(slug);
   if(bookSlug!==slug){v.innerHTML=`<p class="muted">${L('بيحمّل الكتاب...','Loading the book...')}</p>`;
-    try{await loadBook(slug)}catch(_){v.innerHTML=`<a href="#read" class="rd-back">${L('→ الكتب','← Books')}</a><p>${L('الكتاب مش راضي يتحمّل. اتأكد من النت أو افتح الموقع الأصلي fluentroute1.github.io.','The book did not load. Check your connection or open fluentroute1.github.io.')}</p>`;return}
+    try{await loadBook(slug)}catch(_){v.innerHTML=`<p>${L('الكتاب مش راضي يتحمّل. اتأكد من النت أو افتح الموقع الأصلي fluentroute1.github.io.','The book did not load. Check your connection or open fluentroute1.github.io.')}</p>`;return}
     if(curView()!=='read'||location.hash.split('/')[1]!==slug)return;}
   const pos=readPos[slug]||(readPos[slug]={ch:0,done:{},n:book.ch.length});pos.n=book.ch.length;
   const ci=Math.min(pos.ch,book.ch.length-1),c=book.ch[ci];
   store.set('fr-lastbook',slug);
   v.innerHTML=`<div class="reader">
-   <div class="rd-top"><a href="#read" class="rd-back">${L('→ الكتب','← Books')}</a>
+   <div class="rd-top"><span></span>
      <label class="rd-ch"><span class="sr">${L('الفصل','Chapter')}</span><select id="rdCh" dir="ltr">${book.ch.map((x,i)=>`<option value="${i}"${i===ci?' selected':''}>${pos.done[i]?'✓ ':''}${esc(x.h)}</option>`).join('')}</select></label></div>
    <div class="rd-head" dir="ltr"><p class="muted">${esc(meta[1])} · ${esc(meta[2])}</p><h1 class="st en">${esc(c.h)}</h1>
      <div class="row"><button class="btn ghost" id="rdListen">${L('اسمع الفصل','Listen')}</button><span class="muted" style="font-size:14px">${L(`فصل ${ci+1} من ${book.ch.length} · ${bookPct(slug)}٪ من الكتاب`,`Chapter ${ci+1} of ${book.ch.length} · ${bookPct(slug)}% of the book`)}</span></div></div>
@@ -2249,14 +2267,41 @@ $('v-read').addEventListener('click',e=>{
 $('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookSlug].ch=+e.target.value;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0)}});
 
 /* =========================================================
+   watch: a podcast or channel played inside the site
+   ========================================================= */
+function renderWatch(){
+  const slug=location.hash.split('/')[1],r=RES.find(x=>YT[x[1]]&&slugOf(x[1])===slug);
+  const v=$('v-watch');
+  if(!r){location.replace('#more');return}
+  const id=YT[r[1]],more=RES.filter(x=>x!==r&&x[0]===r[0]&&YT[x[1]]);
+  v.innerHTML=`<div class="watch">
+   <div class="sec-head"><h1 class="st en" dir="ltr">${esc(r[1])}</h1><small class="en">${LV[r[2]]}–${LV[r[3]]}</small></div>
+   <p class="muted">${esc(L(r[4],r[5]))}</p>
+   <div class="player"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${id}&cc_load_policy=1&cc_lang_pref=en&hl=en&rel=0" title="${esc(r[1])}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+   <div class="panel watch-tips"><strong>${L('إزاي تسمع صح','How to listen well')}</strong>
+     <ul><li>${L('الحلقات بتشتغل ورا بعض. من زرار القايمة جوه الفيديو تختار أي حلقة.','Episodes play one after another. Use the list button inside the player to pick one.')}</li>
+     <li>${L('شغّل الترجمة الإنجليزية (CC)، مش العربي.','Turn on English subtitles (CC), not Arabic.')}</li>
+     <li>${L('لو فهمت أقل من ٧٠٪، اختار حاجة أسهل من تحت.','Understand less than 70%? Pick something easier below.')}</li>
+     <li>${L('وقّف بعد جملة حلوة وقولها بنفس الطريقة (shadowing).','Pause after a good sentence and say it the same way (shadowing).')}</li></ul>
+     <a class="muted" style="font-size:13px" href="https://www.youtube.com/playlist?list=${id}" target="_blank" rel="noopener">${L('لو الفيديو مش راضي يشتغل هنا، افتحه على يوتيوب ↗','If it will not play here, open it on YouTube ↗')}</a></div>
+   <div class="sec-head"><h2>${L(r[0]==='pod'?'بودكاست تاني':'قنوات تانية','More like this')}</h2></div>
+   <div class="list">${more.map(x=>itemHTML(x,true)).join('')}</div></div>`;
+}
+// back bar: on screens you go into (a book, a player, the test) a back button stays at the top
+let navCount=0;
+window.addEventListener('hashchange',()=>navCount++);
+const PARENT={read:h=>h.includes('/')?'#read':'#more',watch:()=>'#more',test:()=>'#today'};
+function drawBackbar(v){const b=$('backbar');b.hidden=!PARENT[v];if(!b.hidden)$('backBtn').textContent=L('→ رجوع','← Back')}
+$('backBtn').addEventListener('click',()=>{const v=curView();if(navCount>0){navCount-=2;history.back()}else location.hash=PARENT[v](location.hash)});
+/* =========================================================
    routing
    ========================================================= */
-const VIEWS=['home','today','path','speak','words','more','test','read'];
+const VIEWS=['home','today','path','speak','words','more','test','read','watch'];
 let shown=null;
 // new visitors land on the landing page; returning learners go straight to Today
 const hasProgress=()=>!!place||Object.keys(checks).length>0||Object.keys(srs).length>0||!!store.get('fr-lastTest',null);
 const curView=()=>{const h=location.hash.slice(1).split('/')[0];return VIEWS.includes(h)?h:'home'};
-function markNav(){const v=curView()==='read'?'more':curView();document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
+function markNav(){const v=['read','watch'].includes(curView())?'more':curView();document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
 function route(){
   const v=curView();
   document.body.classList.toggle('on-home',v==='home');
@@ -2265,14 +2310,14 @@ function route(){
   if($('sheet')&&!$('sheet').hidden)closeSheet(); // a link inside a lesson goes to another screen
   // only the screen in view is in the page (one h1 per screen, less work); the others are emptied
   VIEWS.forEach(x=>{const el=$('v-'+x);el.hidden=x!==v;if(x!==v)el.innerHTML=''});
-  DRAW[v]();
+  drawBackbar(v);DRAW[v]();
   const el=$('v-'+v);el.classList.remove('view');void el.offsetWidth;el.classList.add('view');
   markNav();if(shown!==null)window.scrollTo(0,0);shown=v;
 }
 // each screen draws itself only while it is the one in view
-const DRAW={home:renderHome,today:renderToday,path:renderPath,speak:renderSpeak,words:renderWords,more:renderMore,test:renderTest,read:renderRead};
+const DRAW={home:renderHome,today:renderToday,path:renderPath,speak:renderSpeak,words:renderWords,more:renderMore,test:renderTest,read:renderRead,watch:renderWatch};
 const onlyIf=(k,f)=>(...a)=>{if(curView()===k)return f(...a)};
-renderHome=onlyIf('home',renderHome);renderToday=onlyIf('today',renderToday);renderPath=onlyIf('path',renderPath);renderWords=onlyIf('words',renderWords);renderSpeak=onlyIf('speak',renderSpeak);renderMore=onlyIf('more',renderMore);renderTest=onlyIf('test',renderTest);renderRead=onlyIf('read',renderRead);
+renderHome=onlyIf('home',renderHome);renderToday=onlyIf('today',renderToday);renderPath=onlyIf('path',renderPath);renderWords=onlyIf('words',renderWords);renderSpeak=onlyIf('speak',renderSpeak);renderMore=onlyIf('more',renderMore);renderTest=onlyIf('test',renderTest);renderRead=onlyIf('read',renderRead);renderWatch=onlyIf('watch',renderWatch);
 function renderAll(){renderShell();route()}
 window.addEventListener('hashchange',route);
 renderAll();
