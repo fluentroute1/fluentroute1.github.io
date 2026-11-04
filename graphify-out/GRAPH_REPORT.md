@@ -1,7 +1,7 @@
 # Graph Report - fluent-route  (2026-11-04)
 
 ## Corpus Check
-- Corpus is ~14,658 words - fits in a single context window. You may not need a graph.
+- Corpus is ~14,721 words - fits in a single context window. You may not need a graph.
 
 ## Summary
 - 82 nodes · 126 edges · 8 communities
@@ -23,11 +23,11 @@
 2. `renderSpeak()` - 10 edges
 3. `renderAll()` - 9 edges
 4. `say() + accentVoices()/vScore(): clearest voice of the chosen accent only (Natural > Google > local), natural pitch` - 8 edges
-5. `renderShell() header + nav` - 8 edges
-6. `finishTest()` - 8 edges
+5. `finishTest()` - 8 edges
+6. `renderShell() header + nav` - 8 edges
 7. `Accent choice accentPick() in Practice, test and tips (not in header)` - 7 edges
-8. `Google sign-in + sync: Firebase project fluent-route-ed587 (europe-west1), users/{uid} doc, Sign in / Sign up button; auth change redraws the open screen` - 7 edges
-9. `renderHome() app-style landing (hero with talking characters, features, route, steps)` - 7 edges
+8. `renderHome() app-style landing (hero with talking characters, features, route, steps)` - 7 edges
+9. `Google sign-in + sync: Firebase project fluent-route-ed587 (europe-west1), users/{uid} doc, Sign in / Sign up button; auth change redraws the open screen` - 7 edges
 10. `renderToday()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
@@ -65,7 +65,7 @@ Nodes (10): Published artifact claude.ai/artifact/67Qn5XzDPdmhtZhCMaVHUF, Fluent
 
 ### Community 4 - "Characters And Lip Sync"
 Cohesion: 0.24
-Nodes (10): CANDO level descriptors, CHARS + charSVG(): illustrated 2D Emma (wavy bob + clip), Jack, Sara, Leo with 8 mouth visemes, CTESTS word-completion passages A2-C2, DIALOGS conversation bank (12), Lip sync + life engine: VISEME, visemesFor, lipWord, lipLine, lookAt gaze, random blinks and glances, playLines() + voiceFor(): per-character voice of the chosen accent, clarity before gender, word-boundary lip sync, renderTest(), Test mistakes review (tst.wrong) (+2 more)
+Nodes (10): CANDO level descriptors, CHARS + charSVG(): illustrated 2D Emma (wavy bob + clip), Jack, Sara, Leo with 8 mouth visemes, CTESTS word-completion passages A2-C2, DIALOGS conversation bank (12), Lip sync + life engine: VISEME, visemesFor, lipWord, lipLine, lookAt gaze, random blinks and glances, playLines() + voiceFor() + voiceGender(): voice always matches the character gender, distinct voice per character, word-boundary lip sync, renderTest(), Test mistakes review (tst.wrong) (+2 more)
 
 ### Community 5 - "Sign-in And Sync"
 Cohesion: 0.31
@@ -80,7 +80,7 @@ Cohesion: 0.50
 Nodes (4): CEFR levels, LV levels A1-Native, STAGES with checklists, UOE grammar and reading item bank
 
 ## Knowledge Gaps
-- **25 isolated node(s):** `micMsg() mic errors`, `PROMPTS free-talk topics`, `High-variability phonetic training`, `Shadowing`, `ROUTE_SVG: illustrated landscape route with drawing road and flag` (+20 more)
+- **25 isolated node(s):** `micMsg() mic errors`, `PROMPTS free-talk topics`, `High-variability phonetic training`, `Shadowing`, `curView(): no hash always opens the landing (#home); hasProgress() switches its main button to Continue` (+20 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 28 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 
 ## Suggested Questions

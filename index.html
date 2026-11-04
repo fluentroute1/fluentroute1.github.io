@@ -1344,18 +1344,21 @@ const ROUTE_SVG=`<svg class="route-svg" viewBox="0 0 1200 220" preserveAspectRat
   <g transform="translate(1150 110)"><path d="M0 0V-46" stroke="${INK}" stroke-width="3"/><path d="M0 -46l30 9-30 9z" fill="#C9373B" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/></g>
 </svg>`;
 // one distinct voice per character where the browser has several; otherwise pitch tells them apart
-const F_RE=/female|aria|jenny|zira|samantha|sonia|libby|hazel|susan|emma|ava|michelle|natasha|karen|moira|tessa|fiona|serena|maisie|mia|clara/i;
-const M_RE=/\bmale|guy|david|mark|ryan|daniel|george|alex|fred|thomas|oliver|arthur|christopher|eric|roger|steffan|andrew|brian|liam/i;
+const F_RE=/aria|jenny|zira|samantha|sonia|libby|hazel|susan|emma|ava|michelle|natasha|karen|moira|tessa|fiona|serena|maisie|mia|clara|google us english|victoria|allison|susan/i;
+const M_RE=/guy|david|mark|ryan|daniel|george|alex|fred|thomas|oliver|arthur|christopher|eric|roger|steffan|andrew|brian|liam|james|william/i;
+// the voice's gender: the words female/male win, then known voice names; "Google US English" is a woman's voice
+const voiceGender=v=>/female/i.test(v.name)?'f':/\bmale\b/i.test(v.name)?'m':F_RE.test(v.name)?'f':M_RE.test(v.name)?'m':'?';
+console.assert(voiceGender({name:'Google UK English Female'})==='f'&&voiceGender({name:'Google UK English Male'})==='m'&&voiceGender({name:'Google US English'})==='f'&&voiceGender({name:'Microsoft Guy Online (Natural) - English (United States)'})==='m'&&voiceGender({name:'Microsoft David - English (United States)'})==='m','voice gender');
 function voiceFor(name){
-  // best voices of the chosen accent first; each character gets its own voice of the right gender when there are several.
-  // pitch stays almost natural (a big change makes voices sound robotic)
+  // the voice always matches the character's gender; within that, the clearest voice of the chosen accent.
+  // two characters of the same gender get two different voices when the browser has them,
+  // otherwise the second one speaks a little higher or lower so you can still tell them apart
   const c=CHARS[name],all=accentVoices();
-  const pool=all.filter(v=>(c.g==='f'?F_RE:M_RE).test(v.name)&&!(c.g==='f'?M_RE:/$^/).test(v.name));
+  const pool=all.filter(v=>voiceGender(v)===c.g);
   const same=Object.keys(CHARS).filter(k=>CHARS[k].g===c.g).indexOf(name);
-  // clarity beats gender: a robotic voice of the right gender loses to a clear voice of the other one
-  const good=pool.filter(v=>all[0]&&vScore(v)>=vScore(all[0])-20);
-  if(good.length)return {voice:good[same%good.length],pitch:1};
-  return {voice:all[0]||null,pitch:c.g==='f'?1.06:.92};
+  if(pool.length)return {voice:pool[same%pool.length],pitch:pool.length>1||same===0?1:(c.g==='f'?1.1:.88)};
+  // no voice of that gender in this accent: the closest we can do is a deeper or higher version of what exists
+  return {voice:all[0]||null,pitch:c.g==='m'?.72:1.15};
 }
 /* ---------- lifelike animation engine ----------
    lip sync: each spoken word (from the speech engine's word-boundary events) is turned into a
