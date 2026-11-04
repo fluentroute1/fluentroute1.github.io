@@ -109,8 +109,13 @@ body{font-variant-numeric:tabular-nums}
 .seg.light button{color:var(--muted);font:500 14px var(--f-body);padding:6px 12px}
 .seg.light button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .pb{display:flex;align-items:center;gap:12px}
-.authbox{display:none}
-@media (min-width:1000px){.side .authbox{display:grid;gap:10px;order:4}}
+.authbox{display:flex;align-items:center;gap:8px}
+.authbox .motion-tgl{display:none}
+.l-short{display:none}
+@media (max-width:520px){header .pb{display:none}}
+@media (max-width:999px){.authbox .l-long{display:none}.authbox .l-short{display:inline}.authbox .who span{display:none}}
+@media (max-width:420px){.lp-bar .l-long{display:none}.lp-bar .l-short{display:inline}}
+@media (min-width:1000px){.side .authbox{display:grid;gap:10px;order:4}.side .authbox .motion-tgl{display:block}}
 .pb-text{display:none}
 .pb-text strong{display:block;font:700 16px var(--f-display)}
 .pb-text small{color:var(--band-muted);font-size:13px}
@@ -925,7 +930,7 @@ function renderToday(){
   const T=tasksFor(lv),n=T.filter(t=>day.done[t.k]).length;
   const v=$('v-today');
   v.innerHTML=`<div class="today-grid"><div class="stack">
-   ${fbUser?'':`<div class="panel" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${L('سجّل بجوجل عشان تقدمك يتحفظ على كل أجهزتك','Sign in with Google to keep your progress on every device')}</span><button class="gbtn" data-auth="in">${G_ICON}${L('دخول بجوجل','Sign in with Google')}</button></div>`}
+   ${fbUser?'':`<div class="panel" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${L('سجّل بجوجل عشان تقدمك يتحفظ على كل أجهزتك','Sign in with Google to keep your progress on every device')}</span><button class="gbtn" data-auth="in">${G_ICON}${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</button></div>`}
    ${place?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٣ أجزاء في حوالي ٢٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 3-part placement test, about 20 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
      <div class="lvl"><span class="badge en">${LV[lv]}</span><div><h1 class="st">${L('النهارده','Today')}</h1><p class="muted">${L('انت في مرحلة','Your stage')}: <strong>${tx(s.n)}</strong></p></div></div>
@@ -1520,12 +1525,12 @@ $('v-home').addEventListener('click',e=>{
    Paste the web config from Firebase console > Project settings > Your apps.
    Until it is filled in, the sign-in button explains that it is not set up yet.
    ========================================================= */
-const FIREBASE_CONFIG={apiKey:'',authDomain:'',projectId:'',appId:''};
+const FIREBASE_CONFIG={apiKey:'AIzaSyBd_zM8rg6D9x0gtQHk44AQc5uW1kxlBR4',authDomain:'fluent-route-ed587.firebaseapp.com',projectId:'fluent-route-ed587',storageBucket:'fluent-route-ed587.firebasestorage.app',messagingSenderId:'990654544590',appId:'1:990654544590:web:1b0ee75a81abaded8f6e9f'};
 const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv'];
 const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 let fb=null,fbUser=null,pushTimer=null;
 const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
-  :`<button class="gbtn" data-auth="in">${G_ICON}${L('دخول بجوجل','Sign in with Google')}</button>`;
+  :`<button class="gbtn" data-auth="in">${G_ICON}<span class="l-long">${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</span><span class="l-short">${L('دخول','Sign in')}</span></button>`;
 async function fbInit(){
   if(!FIREBASE_CONFIG.apiKey)return null;if(fb)return fb;
   const base='https://www.gstatic.com/firebasejs/10.12.2/';
@@ -1536,7 +1541,7 @@ async function fbInit(){
 }
 async function signIn(){
   let f;try{f=await fbInit()}catch(e){f=null}
-  if(!f){toast(L('الدخول بجوجل لسه مش متفعّل على الموقع ده.','Google sign-in is not set up on this site yet.'));return}
+  if(!f){toast(L('الدخول مش متاح هنا. افتح الموقع على fluentroute1.github.io.','Sign-in is not available here. Open the site on fluentroute1.github.io.'));return}
   try{await f.A.signInWithPopup(f.auth,new f.A.GoogleAuthProvider())}
   catch(e){if(e.code!=='auth/popup-closed-by-user')toast(L('مقدرتش أسجّل الدخول: ','Could not sign in: ')+(e.code||e.message))}
 }
