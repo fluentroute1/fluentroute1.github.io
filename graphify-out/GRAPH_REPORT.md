@@ -1,7 +1,7 @@
 # Graph Report - fluent-route  (2026-11-04)
 
 ## Corpus Check
-- Corpus is ~10,303 words - fits in a single context window. You may not need a graph.
+- Corpus is ~10,332 words - fits in a single context window. You may not need a graph.
 
 ## Summary
 - 71 nodes · 105 edges · 7 communities
@@ -36,10 +36,10 @@
   index.html → index.html  _Bridges community 0 → community 2_
 - `renderAll()` --calls--> `renderMore() library + tips`  [EXTRACTED]
   index.html → index.html  _Bridges community 0 → community 3_
-- `renderShell() header + nav` --calls--> `currentStage()`  [EXTRACTED]
-  index.html → index.html  _Bridges community 3 → community 1_
-- `renderToday()` --calls--> `dueCards()`  [EXTRACTED]
-  index.html → index.html  _Bridges community 5 → community 3_
+- `Google sign-in + sync: Firebase project fluent-route-ed587 (europe-west1), users/{uid} doc, Sign in / Sign up button` --shares_data_with--> `store (localStorage wrapper)`  [EXTRACTED]
+  index.html → index.html  _Bridges community 1 → community 5_
+- `renderTest()` --calls--> `playLines() + voiceFor() + mouthLoop(): named speakers with own voices and moving mouths`  [EXTRACTED]
+  index.html → index.html  _Bridges community 1 → community 2_
 
 ## Import Cycles
 - None detected.
@@ -52,7 +52,7 @@ Nodes (14): Accent choice accentPick() in Practice, test and tips (not in header
 
 ### Community 1 - "Sign-in And Sync"
 Cohesion: 0.16
-Nodes (14): Published artifact claude.ai/artifact/67Qn5XzDPdmhtZhCMaVHUF, Google sign-in: fbInit, signIn, pullCloud, pushCloud (Firebase, config empty until set), CHARS + charSVG(): Emma, Jack, Sara, Leo characters, Desktop sidebar layout (.side, .today-grid) + phone bottom bar, Fluent Route site, Fonts: Baloo Bhaijaan 2 + Readex Pro, Logo: route ending in speech bubble (LOGO, logo.svg), Motion switch: html.motion, motionPref(), fr-motion (+6 more)
+Nodes (14): Published artifact claude.ai/artifact/67Qn5XzDPdmhtZhCMaVHUF, Google sign-in + sync: Firebase project fluent-route-ed587 (europe-west1), users/{uid} doc, Sign in / Sign up button, CHARS + charSVG(): Emma, Jack, Sara, Leo characters, Desktop sidebar layout (.side, .today-grid) + phone bottom bar, Fluent Route site, Fonts: Baloo Bhaijaan 2 + Readex Pro, Logo: route ending in speech bubble (LOGO, logo.svg), Motion switch: html.motion, motionPref(), fr-motion (+6 more)
 
 ### Community 2 - "Placement Test Scoring"
 Cohesion: 0.20
