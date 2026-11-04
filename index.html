@@ -7,6 +7,7 @@
 <meta name="description" content="اتعلم الإنجليزي ببلاش من A1 لحد ما تتكلم بطلاقة: اختبار تحديد مستوى، تدريب على الكلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وكتب لكل مستوى.">
 <link rel="canonical" href="https://fluentroute1.github.io/">
 <meta name="theme-color" content="#121935">
+<script id="themeInit">try{var t=JSON.parse(localStorage.getItem("fr-theme"));if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="icon" href="icon-512.png" type="image/png" sizes="512x512">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -115,7 +116,7 @@ body{font-variant-numeric:tabular-nums}
 @media (max-width:520px){header .pb{display:none}}
 @media (max-width:999px){.authbox .l-long{display:none}.authbox .l-short{display:inline}.authbox .who span{display:none}}
 @media (max-width:420px){.lp-bar .l-long{display:none}.lp-bar .l-short{display:inline}}
-@media (max-width:420px){header .gbtn{padding:8px 10px;font-size:13px;gap:6px}header .brand b{font-size:21px}header .brand svg{width:34px;height:34px}header .wrap{gap:8px}}
+@media (max-width:420px){header .gbtn{padding:8px 10px;font-size:13px;gap:6px}header .brand b{font-size:21px}header .brand svg{width:34px;height:34px}header .wrap{gap:8px}header .gbtn .l-short{display:none}header .gbtn{padding:8px}}
 @media (min-width:1000px){.side .authbox{display:grid;gap:10px;order:4}.side .authbox .motion-tgl{display:block}}
 .pb-text{display:none}
 .pb-text strong{display:block;font:700 16px var(--f-display)}
@@ -566,6 +567,12 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .lt-list{display:grid;gap:8px;padding-inline-start:22px;margin:6px 0}.lt-list li{line-height:1.5}.lt-list s{color:var(--muted)}
 .lt-ok{color:var(--ok);font-weight:700}.lt-sum{font-weight:700;margin:4px 0}
 #wrFix,#talkFix,#pwFix{display:grid;gap:4px;text-align:start}
+.theme-tgl{flex:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--band-line);background:transparent;color:var(--band-fg);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s}
+.theme-tgl:hover{background:var(--band-line)}.theme-tgl:active{transform:scale(.94)}
+.theme-tgl svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lp-act .theme-tgl{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.switches{display:flex;gap:8px;align-items:center}
+@media (max-width:420px){.theme-tgl{width:34px;height:34px;border-radius:10px}.theme-tgl svg{width:18px;height:18px}}
 </style>
 
 <aside class="side">
@@ -1011,13 +1018,22 @@ const ICONS={
  more:'<path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h13"/>'};
 // logo: a winding route that ends in a speech bubble (same as logo.svg)
 const LOGO='<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#2F4FE0"/><path d="M14 50c0-10 8-12 15-13s13-4 13-12" fill="none" stroke="#FFD84A" stroke-width="6" stroke-linecap="round"/><circle cx="14" cy="50" r="5.5" fill="#FFFFFF"/><path d="M45 6a11 11 0 1 1-5.6 20.5L33 29l2.4-6.2A11 11 0 0 1 45 6z" fill="#FFFFFF"/><circle cx="40.5" cy="17" r="1.9" fill="#2F4FE0"/><circle cx="45.5" cy="17" r="1.9" fill="#2F4FE0"/><circle cx="50.5" cy="17" r="1.9" fill="#2F4FE0"/></svg>';
+// dark / light: follows the device until you choose; the choice is saved on this device
+const isDark=()=>{const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
+const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+const themeBtn=()=>`<button class="theme-tgl" data-theme-tgl aria-label="${isDark()?L('الوضع الفاتح','Light mode'):L('الوضع الغامق','Dark mode')}" title="${isDark()?L('الوضع الفاتح','Light mode'):L('الوضع الغامق','Dark mode')}">${isDark()?SUN:MOON}</button>`;
+document.addEventListener('click',e=>{if(!e.target.closest('[data-theme-tgl]'))return;const t=isDark()?'light':'dark';document.documentElement.setAttribute('data-theme',t);store.set('fr-theme',t);
+  document.querySelectorAll('[data-theme-tgl]').forEach(b=>b.outerHTML=themeBtn())});
+// the device switching modes redraws the icon while no choice is saved
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>document.querySelectorAll('[data-theme-tgl]').forEach(b=>b.outerHTML=themeBtn()));
 const NAV=[['today','النهارده','Today'],['path','المسار','Path'],['speak','تدريب','Practice'],['words','الكلمات','Words'],['more','المكتبة','Library']];
 function renderShell(){
   document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
   const total=STAGES.reduce((a,s)=>a+s.c.length,0),n=STAGES.reduce((a,_,i)=>a+stageDone(i),0),p=Math.round(n/total*100);
   $('head').innerHTML=`<a class="brand" href="#home" style="color:inherit;text-decoration:none">${LOGO}<div><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div></a>
    <div class="switches">
-    <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">عربي</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
+    <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">عربي</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>${themeBtn()}
    </div>
    <div class="authbox">${authHTML()}<button class="motion-tgl" data-motion>${motionPref()?L('وقّف الحركة','Turn motion off'):L('شغّل الحركة','Turn motion on')}</button></div>
    <div class="pb"><div class="ring" style="--p:${p}" aria-label="${p}%"><div><strong class="en">${p}%</strong><em>${LV[currentStage()]}</em></div></div>
@@ -1927,7 +1943,7 @@ function renderHome(){
   <div class="lp-bar"><div class="wrap">
     <a class="lp-brand" href="#home">${LOGO}<span dir="ltr">Fluent <span>Route</span></span></a>
     <div class="lp-links" role="navigation" aria-label="${L('أقسام الصفحة','On this page')}"><a href="#home" data-go="lp-feats">${L('المميزات','Features')}</a><a href="#home" data-go="lp-route">${L('المسار','The route')}</a><a href="#home" data-go="lp-steps">${L('ازاي بتمشي','How it works')}</a></div>
-    <div class="lp-act"><button class="seg-lang gbtn" data-lang="${S.lang==='ar'?'en':'ar'}">${S.lang==='ar'?'EN':'عربي'}</button>${authHTML()}</div>
+    <div class="lp-act">${themeBtn()}<button class="seg-lang gbtn" data-lang="${S.lang==='ar'?'en':'ar'}">${S.lang==='ar'?'EN':'عربي'}</button>${authHTML()}</div>
   </div></div>
 
   <div class="wrap">
@@ -2007,7 +2023,7 @@ const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest
 const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 let fb=null,fbUser=null,pushTimer=null;
 const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
-  :`<button class="gbtn" data-auth="in">${G_ICON}<span class="l-long">${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</span><span class="l-short">${L('دخول','Sign in')}</span></button>`;
+  :`<button class="gbtn" data-auth="in" aria-label="${L('تسجيل الدخول بجوجل','Sign in with Google')}">${G_ICON}<span class="l-long">${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</span><span class="l-short">${L('دخول','Sign in')}</span></button>`;
 async function fbInit(){
   if(!FIREBASE_CONFIG.apiKey)return null;if(fb)return fb;
   const base='https://www.gstatic.com/firebasejs/10.12.2/';
