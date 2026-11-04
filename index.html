@@ -573,6 +573,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .lp-act .theme-tgl{border-color:var(--line);color:var(--ink);background:var(--surface)}
 .switches{display:flex;gap:8px;align-items:center}
 @media (max-width:420px){.theme-tgl{width:34px;height:34px;border-radius:10px}.theme-tgl svg{width:18px;height:18px}}
+.item .ext{font-size:12px;color:var(--muted);opacity:.85}
 </style>
 
 <aside class="side">
@@ -1005,7 +1006,7 @@ const stageDone=i=>skipped(i)?STAGES[i].c.length:STAGES[i].c.filter((_,j)=>check
 function currentStage(){const i=STAGES.findIndex((s,i)=>stageDone(i)<s.c.length);return i<0?STAGES.length-1:i}
 const forLevel=(t,lv)=>RES.filter(r=>r[0]===t&&r[2]<=lv&&lv<=r[3]);
 const link=r=>r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
-const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'}><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small></a>`;
+const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'}><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small>${link(r)[0]!=='#'?`<small class="ext">${r[0]==='book'?L('↗ كتاب ليه حقوق نشر، بيفتح صفحته بره الموقع','↗ Copyrighted book: opens its page outside the site'):L('↗ بيفتح بره الموقع','↗ Opens outside the site')}</small>`:''}</a>`;
 
 /* =========================================================
    shell: header + nav
@@ -1069,7 +1070,7 @@ function tasksFor(lv){return [
   {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`}, // taste-skill-ignore: the word Shadowing, not a CSS shadow
   {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:30,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
   {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
-  {k:'read',t:L('قراية','Reading'),m:10,s:L('١٠ صفحات من ','10 pages of ')+resLink(pick('book',lv))},
+  {k:'read',t:L('قراية','Reading'),m:10,s:(()=>{const b=bookFor(lastBook()||recBook()[0]);return L('فصل من ','A chapter of ')+`<a href="#read/${b[0]}" class="en" dir="ltr">${esc(b[1])}</a>`+L(' هنا في الموقع',' here on the site')})()},
 ]}
 let day=store.get('fr-day',{d:today(),done:{}});if(day.d!==today())day={d:today(),done:{}};
 let fullDays=store.get('fr-days',[]);
@@ -1300,7 +1301,8 @@ function renderMore(){
   const v=$('v-more');
   const tabs=`<div class="tabs"><button data-mt="lib" aria-pressed="${moreTab==='lib'}">${L('المكتبة','Library')}</button><button data-mt="tips" aria-pressed="${moreTab==='tips'}">${L('نصايح ونطق','Tips & sounds')}</button></div>`;
   if(moreTab==='lib'){
-    const list=RES.filter(r=>(fType==='all'||r[0]===fType)&&(fLv<0||(r[2]<=fLv&&fLv<=r[3])));
+    const inSite=READS.map(b=>['book',b[1],b[3],b[4],'اقراه هنا في الموقع · '+b[5],'Read it here on the site · '+b[6],'#read/'+b[0]]);
+    const list=inSite.concat(RES.filter(r=>!link(r).startsWith('#'))).filter(r=>(fType==='all'||r[0]===fType)&&(fLv<0||(r[2]<=fLv&&fLv<=r[3])));
     v.innerHTML=tabs+`<div class="sec-head"><h1 class="st">${L('المكتبة','Library')}</h1><small>${L(`${list.length} مصدر`,`${list.length} resources`)}</small></div>
      <div class="chips">${[[-1,L('كل المستويات','All levels')],...LV.map((l,i)=>[i,l])].map(([k,t])=>`<button class="chip" data-l="${k}" aria-pressed="${k===fLv}">${t}</button>`).join('')}</div>
      <div class="chips">${[['all',L('الكل','All')],...Object.entries(TYPES).map(([k,p])=>[k,tx(p)])].map(([k,t])=>`<button class="chip" data-t="${k}" aria-pressed="${k===fType}">${t}</button>`).join('')}</div>
