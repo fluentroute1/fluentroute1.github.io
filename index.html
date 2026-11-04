@@ -1,0 +1,988 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fluent Route</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: app shell. Ink header band (brand, language + accent switches, progress ring); one column of views; tab bar fixed at the bottom on phones, sticky on top on desktop */
+:root{
+  --bg:#EEF1F7; --surface:#FFFFFF; --sunk:#F5F7FB; --ink:#121935; --muted:#5D6684; --line:#DCE1EC;
+  --band:#121935; --band-fg:#F4F6FC; --band-muted:#A9B1CF; --band-line:rgba(255,255,255,.16);
+  --accent:#2F4FE0; --accent-soft:#E4E9FF; --marker:#FFD84A; --marker-ink:#121935;
+  --ok:#17885A; --ok-soft:#DDF3E8; --bad:#C9373B; --bad-soft:#FBE3E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --r:16px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1020; --surface:#151C32; --sunk:#10162A; --ink:#E8ECF6; --muted:#98A1BE; --line:#262F4C;
+  --band:#151C32; --band-fg:#F4F6FC; --band-muted:#98A1BE; --band-line:rgba(255,255,255,.12);
+  --accent:#8FA3FF; --accent-soft:#222C55; --marker:#F2CC3D; --marker-ink:#121935;
+  --ok:#4BC48A; --ok-soft:#173A2B; --bad:#FF7A7E; --bad-soft:#3E1B22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1020; --surface:#151C32; --sunk:#10162A; --ink:#E8ECF6; --muted:#98A1BE; --line:#262F4C;
+  --band:#151C32; --band-fg:#F4F6FC; --band-muted:#98A1BE; --band-line:rgba(255,255,255,.12);
+  --accent:#8FA3FF; --accent-soft:#222C55; --marker:#F2CC3D; --marker-ink:#121935;
+  --ok:#4BC48A; --ok-soft:#173A2B; --bad:#FF7A7E; --bad-soft:#3E1B22; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 var(--f-body);text-align:start}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.en{unicode-bidi:isolate;font-family:var(--f-display)}
+.ltr{direction:ltr;text-align:left}
+a{color:var(--accent)}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h2{font:700 20px/1.35 var(--f-body);margin:0;text-wrap:balance}
+p{margin:0}
+.muted{color:var(--muted)}
+.stack{display:grid;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:28px 0 12px}
+.sec-head:first-child{margin-top:0}
+.sec-head small{color:var(--muted);font-size:13px}
+
+/* motion */
+@keyframes rise{from{opacity:.001;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6);opacity:.001}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
+@keyframes shimmer{to{background-position:-200% 0}}
+.view{animation:rise .38s var(--ease) both}
+.stagger>*{animation:rise .45s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* header band */
+header{background:var(--band);color:var(--band-fg)}
+header .wrap{padding-block:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{flex:1;min-width:150px}
+.brand b{display:block;font:800 26px/1 var(--f-display);letter-spacing:-.01em}
+.brand b span{color:var(--marker)}
+.brand small{color:var(--band-muted);font-size:13px}
+.switches{display:flex;gap:8px}
+@media (max-width:520px){.switches{order:3;flex-basis:100%}}
+.seg{display:inline-flex;border:1px solid var(--band-line);border-radius:99px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--band-muted);padding:4px 10px;border-radius:99px;font:500 13px var(--f-mono)}
+.seg button[aria-pressed="true"]{background:var(--band-fg);color:var(--band)}
+.ring{--p:0;width:60px;height:60px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--marker) calc(var(--p)*1%),var(--band-line) 0);transition:--p .8s}
+.ring div{width:47px;height:47px;border-radius:50%;background:var(--band);display:grid;place-items:center;text-align:center;line-height:1.05}
+.ring strong{font:600 16px var(--f-display)}
+.ring em{font:normal 10px var(--f-mono);color:var(--band-muted)}
+
+/* nav */
+nav{position:fixed;inset:auto 0 0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav .wrap{display:grid;grid-template-columns:repeat(5,1fr)}
+nav a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding-block:8px 6px;text-decoration:none;color:var(--muted);font-size:12px;font-weight:500;transition:color .2s}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s var(--ease)}
+nav a[aria-current="page"]{color:var(--accent)}
+nav a[aria-current="page"] svg{transform:translateY(-2px)}
+main .wrap{padding-block:22px 110px}
+@media (min-width:760px){
+  nav{position:sticky;top:env(safe-area-inset-top,0px);inset-inline:auto;bottom:auto;border-top:0;border-bottom:1px solid var(--line);padding-bottom:0}
+  nav .wrap{display:flex;gap:6px;padding-block:8px}
+  nav a{flex-direction:row;gap:8px;font-size:15px;padding:8px 14px;border-radius:99px}
+  nav a[aria-current="page"]{background:var(--accent-soft)}
+  nav a[aria-current="page"] svg{transform:none}
+  nav svg{width:18px;height:18px}
+  main .wrap{padding-block:28px 64px}
+}
+
+/* buttons */
+.btn{border:0;border-radius:12px;padding:12px 20px;font-weight:700;background:var(--accent);color:var(--surface);transition:transform .15s,filter .15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.good{background:var(--ok);color:#fff}
+.btn.big{padding:16px 22px;font-size:17px}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* today */
+.now{display:grid;gap:12px}
+.lvl{display:flex;align-items:center;gap:14px}
+.badge{font:700 22px/1 var(--f-display);background:var(--marker);color:var(--marker-ink);border-radius:12px;padding:12px;min-width:64px;text-align:center}
+.line{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.line i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .6s var(--ease)}
+.next{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);border-radius:12px;padding:12px 14px}
+.next b{color:var(--accent);flex:none}
+.cta{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#7b3fe4));color:#fff;border-radius:var(--r);padding:18px}
+.cta p{opacity:.85;font-size:14px}
+.cta .btn{background:#fff;color:#1b2559}
+.tasks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;transition:background .25s,border-color .25s}
+.task.done{background:var(--ok-soft);border-color:transparent}
+.task.done .t-title{text-decoration:line-through;color:var(--muted)}
+.tick{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:transparent;display:grid;place-items:center;padding:0;transition:background .2s,border-color .2s}
+.task.done .tick{background:var(--ok);border-color:var(--ok);color:#fff;animation:pop .35s var(--ease)}
+.tick svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:3}
+.task:not(.done) .tick svg{opacity:0}
+.t-title{font-weight:700}
+.t-sub{display:block;font-size:14px;color:var(--muted)}
+.mins{font:500 13px var(--f-mono);color:var(--muted)}
+.statrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;text-decoration:none;color:inherit}
+.stat strong{display:block;font:700 28px/1.1 var(--f-display)}
+.stat span{font-size:14px;color:var(--muted)}
+a.stat:hover{border-color:var(--accent)}
+
+/* stages */
+.stages{display:grid;gap:10px}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stage.current{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.stage summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px}
+.stage summary::-webkit-details-marker{display:none}
+.code{font:700 15px/1 var(--f-display);width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:var(--sunk)}
+.stage.current .code{background:var(--marker);color:var(--marker-ink)}
+.stage.done .code{background:var(--ok);color:#fff}
+.s-name{font-weight:700;font-size:17px;display:block}
+.s-meta{font-size:13px;color:var(--muted)}
+.s-count{font:500 13px var(--f-mono);color:var(--muted)}
+.s-body{display:grid;gap:16px;border-top:1px solid var(--line);padding:16px 16px 18px}
+.label{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.checks label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 0}
+.checks input{margin:4px 0 0;width:20px;height:20px;accent-color:var(--ok);flex:none}
+.checks input:checked+span{color:var(--muted);text-decoration:line-through}
+.picks,.list{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
+.list{grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+.more{justify-self:start;font-weight:700;text-decoration:none}
+.honest{border-inline-start:4px solid var(--marker);background:var(--surface);border-radius:12px;padding:14px 16px;font-size:15px}
+
+/* resources */
+.item{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-decoration:none;color:inherit;min-width:0;transition:border-color .2s,transform .2s var(--ease)}
+a.item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.item .en{font-weight:600;overflow-wrap:anywhere}
+.item small{color:var(--muted);font-size:13px}
+.tag{font:500 11px var(--f-mono);color:var(--muted);white-space:nowrap}
+
+/* chips + segmented tabs */
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 14px;font-size:14px;transition:background .2s,color .2s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:3px;margin-bottom:16px}
+.tabs button{border:0;background:transparent;padding:9px;border-radius:9px;font-weight:700;color:var(--muted)}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* tips */
+.methods{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.methods .panel{padding:14px 16px}
+.methods strong{display:block;margin-bottom:2px}
+.methods p{color:var(--muted);font-size:15px}
+.pairs{display:flex;flex-wrap:wrap;gap:8px}
+.pair{display:inline-flex;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.pair button{border:0;background:transparent;padding:7px 12px}
+.pair button+button{border-inline-start:1px solid var(--line);color:var(--muted);font-size:12px}
+.pair button:hover{background:var(--accent-soft)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:start}
+th{font-size:13px;color:var(--muted);font-weight:700}
+tr:last-child td{border-bottom:0}
+td button{border:0;background:transparent;padding:0;color:var(--accent);font-family:var(--f-display);font-weight:600}
+
+/* flashcard flip */
+.flip{perspective:1200px}
+.flip-in{position:relative;min-height:270px;transition:transform .55s var(--ease);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px 20px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center}
+.face.back{transform:rotateY(180deg)}
+.word{font:800 clamp(30px,8vw,42px)/1.15 var(--f-display)}
+.word span{background:linear-gradient(transparent 58%,var(--marker) 58%);padding:0 .1em}
+.ex{font-size:17px;color:var(--muted);font-family:var(--f-display)}
+.ar{font-size:21px;font-weight:700}
+.kind{font:500 12px var(--f-mono);color:var(--muted)}
+.empty-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:40px 20px;text-align:center;display:grid;gap:6px}
+
+/* speak */
+.speak-card{display:grid;gap:16px;text-align:center;justify-items:center}
+.target{font:600 clamp(20px,5vw,26px)/1.45 var(--f-display);max-width:32ch}
+.target span{transition:color .25s,background .25s;border-radius:4px;padding:0 .08em}
+.target .hit{color:var(--ok)}
+.target .miss{color:var(--bad);background:var(--bad-soft)}
+.mic{width:92px;height:92px;border-radius:50%;border:0;background:var(--accent);color:var(--surface);display:grid;place-items:center;transition:transform .2s var(--ease),background .2s}
+.mic svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.mic:active{transform:scale(.94)}
+.mic.rec{background:var(--bad);animation:pulse 1.1s infinite}
+.heard{min-height:1.6em;color:var(--muted);font-family:var(--f-display)}
+.score{font:800 44px/1 var(--f-display);animation:pop .45s var(--ease)}
+.note{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:14px;text-align:start}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.statgrid div{background:var(--sunk);border-radius:12px;padding:10px}
+.statgrid strong{display:block;font:700 22px var(--f-display)}
+.statgrid span{font-size:12px;color:var(--muted)}
+.timer{font:500 15px var(--f-mono);color:var(--muted)}
+
+/* test */
+.t-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-size:14px;color:var(--muted)}
+.t-bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.t-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--marker));transition:width .4s var(--ease)}
+.q{font:600 clamp(19px,4.6vw,23px)/1.5 var(--f-display);margin-bottom:18px}
+.q .gap{display:inline-block;min-width:3.2em;border-bottom:2px solid var(--accent);height:1em;vertical-align:baseline}
+.passage{background:var(--sunk);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-family:var(--f-display);line-height:1.6}
+.opts{display:grid;gap:8px}
+.opt{text-align:start;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 16px;font:500 17px var(--f-display);transition:border-color .15s,background .15s,transform .15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt:active{transform:scale(.99)}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.lex{font:800 clamp(34px,10vw,52px)/1.1 var(--f-display);text-align:center;padding:36px 0;animation:pop .3s var(--ease)}
+.play{width:84px;height:84px;border-radius:50%;border:0;background:var(--accent);color:var(--surface);display:grid;place-items:center;margin:0 auto 10px}
+.play svg{width:34px;height:34px;fill:currentColor}
+.result-badge{font:800 72px/1 var(--f-display);color:var(--marker-ink);background:var(--marker);border-radius:24px;width:150px;height:150px;display:grid;place-items:center;margin:0 auto;animation:pop .7s var(--ease)}
+.bars{display:grid;gap:12px}
+.bars .b{display:grid;gap:4px}
+.bars .b div:first-child{display:flex;justify-content:space-between;font-size:14px}
+.scale{display:grid;grid-template-columns:repeat(6,1fr);font:500 11px var(--f-mono);color:var(--muted);text-align:center}
+.intro-list{display:grid;gap:10px;counter-reset:s;margin:0;padding:0;list-style:none}
+.intro-list li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--sunk);border-radius:12px;padding:12px 14px}
+.intro-list li::before{counter-increment:s;content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font:600 13px var(--f-mono)}
+</style>
+
+<header><div class="wrap" id="head"></div></header>
+<nav aria-label="Sections"><div class="wrap" id="nav"></div></nav>
+<main><div class="wrap">
+  <section id="v-today" class="stack"></section>
+  <section id="v-path" hidden></section>
+  <section id="v-speak" hidden></section>
+  <section id="v-words" hidden></section>
+  <section id="v-more" hidden></section>
+  <section id="v-test" hidden></section>
+</div></main>
+
+<script>
+/* =========================================================
+   state + i18n
+   ========================================================= */
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const S={lang:store.get('fr-lang','ar'),accent:store.get('fr-accent','us')};
+const L=(ar,en)=>S.lang==='ar'?ar:en;          // inline bilingual text
+const tx=p=>Array.isArray(p)?p[S.lang==='ar'?0:1]:p; // [ar,en] pair
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LV=['A1','A2','B1','B2','C1','C2','Native'];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const stagger=el=>{[...el.children].forEach((c,i)=>c.style.setProperty('--i',Math.min(i,12)));el.classList.add('stagger')};
+
+/* =========================================================
+   content
+   ========================================================= */
+const TYPES={pod:['بودكاست','Podcasts'],yt:['يوتيوب','YouTube'],tv:['مسلسلات','Series'],mov:['أفلام','Movies'],book:['كتب','Books'],tool:['أدوات','Tools']};
+// [type, name, fromLevel, toLevel, ar note, en note, url?]  no url = YouTube search
+const RES=[
+ ['pod','Easy Stories in English',0,2,'قصص بسيطة بصوت بطيء وواضح','Simple stories, read slowly and clearly','https://www.easystoriesinenglish.com'],
+ ['pod','BBC 6 Minute English',1,3,'حلقة ٦ دقايق، كلمات جديدة ومعاها النص','Six-minute episodes with new words and a transcript','https://www.bbc.co.uk/learningenglish/english/features/6-minute-english'],
+ ['pod','All Ears English',2,4,'إنجليزي أمريكي يومي وتعبيرات طبيعية','Everyday American English and natural phrases','https://www.allearsenglish.com'],
+ ['pod','English Learning for Curious Minds',2,4,'مواضيع شيقة بإنجليزي واضح','Interesting topics in clear English','https://www.leonardoenglish.com'],
+ ['pod','BBC The English We Speak',2,4,'تعبير عامي واحد في كل حلقة','One everyday expression per episode','https://www.bbc.co.uk/learningenglish/english/features/the-english-we-speak'],
+ ["pod","Luke's English Podcast",3,5,'بريطاني وكوميدي وطويل','British, funny and long: great for lots of listening','https://teacherluke.co.uk'],
+ ['pod','This American Life',4,6,'قصص حقيقية بكلام native طبيعي','Real stories told in natural native speech','https://www.thisamericanlife.org'],
+ ['pod','Freakonomics Radio',4,6,'أفكار واقتصاد بكلام سريع','Ideas and economics at native speed','https://freakonomics.com'],
+ ['pod','The Diary of a CEO',4,6,'لقاءات طويلة، مفيدة للبيزنس','Long interviews, useful for business English'],
+ ['yt','Extra English',0,1,'سيتكوم معمول مخصوص للمبتدئين','A sitcom made for beginners'],
+ ['yt','Peppa Pig',0,1,'جمل قصيرة ونطق بريطاني واضح','Short sentences, clear British accent'],
+ ['yt','Learn English with Bob the Canadian',1,2,'بطيء وواضح ومريح','Slow, clear and relaxed'],
+ ['yt','English with Lucy',1,3,'قواعد ونطق بريطاني','British grammar and pronunciation'],
+ ['yt','Speak English With Vanessa',1,3,'أمريكي وتعبيرات يومية','American English and daily expressions'],
+ ['yt','Easy English street interviews',2,4,'لقاءات في الشارع بترجمة','Street interviews with subtitles'],
+ ['yt','Learn English With TV Series',2,4,'بيشرح مشاهد من مسلسلات وأفلام','Explains scenes from series and films'],
+ ["yt","Rachel's English",2,6,'أهم قناة للنطق الأمريكي','The best channel for American pronunciation'],
+ ['yt','TED Talks',3,6,'محاضرات قصيرة بترجمة إنجليزي','Short talks; turn on English subtitles'],
+ ['yt','Kurzgesagt',4,6,'علوم بكلام سريع ومكثف','Science explained fast and dense'],
+ ['yt','Hot Ones',5,6,'لقاءات مشاهير بكلام عامي سريع','Celebrity interviews in fast casual speech'],
+ ['tv','Friends',2,3,'جمل يومية قصيرة','The classic: short everyday lines'],
+ ['tv','Young Sheldon',2,3,'كلام واضح وجو عيلة','Clear speech, family setting'],
+ ['tv','How I Met Your Mother',2,3,'كلام صحاب يومي','Everyday talk between friends'],
+ ['tv','Modern Family',3,4,'سريع وطبيعي جدًا','Fast and very natural'],
+ ['tv','The Office (US)',3,4,'إنجليزي الشغل والمواقف المحرجة','Workplace English and awkward moments'],
+ ['tv','Brooklyn Nine-Nine',3,4,'كوميدي وكلام عامي','Comedy and slang'],
+ ['tv','Ted Lasso',3,5,'أمريكي وبريطاني مع بعض','American and British side by side'],
+ ['tv','Suits',4,5,'نقاش وإقناع سريع','Fast arguing and persuasion'],
+ ['tv','Breaking Bad',4,5,'مفردات كتير','Natural American English, wide vocabulary'],
+ ['tv','Sherlock',4,6,'بريطاني سريع وذكي','Fast, clever British English'],
+ ['tv','Succession',5,6,'حوارات حادة وسريعة جدًا','Sharp, very fast dialogue'],
+ ['tv','Peaky Blinders',5,6,'لهجات بريطانية تقيلة','Heavy British accents'],
+ ['tv','Gilmore Girls',5,6,'من أسرع الكلام في التليفزيون','Some of the fastest talk on TV'],
+ ['mov','Toy Story',1,2,'كرتون وكلام واضح','Animated, clear speech'],
+ ['mov','Finding Nemo',1,2,'كرتون وجمل بسيطة','Animated, simple sentences'],
+ ['mov','Inside Out',2,3,'كلام عن المشاعر','Talking about feelings'],
+ ['mov','Forrest Gump',2,4,'بطيء نسبيًا ومؤثر','Fairly slow and moving'],
+ ['mov','The Pursuit of Happyness',2,4,'كلام يومي وشغل','Everyday and work English'],
+ ['mov','The Social Network',4,6,'حوار سريع جدًا','Very fast dialogue: a good challenge'],
+ ['mov','Good Will Hunting',4,6,'لهجة بوسطن ونقاشات','Boston accent and debates'],
+ ['mov','The Big Short',5,6,'مصطلحات وكلام سريع','Jargon at speed'],
+ ['mov','Snatch',5,6,'لهجات لندن الصعبة','Hard London accents'],
+ ['book','Essential Grammar in Use (Murphy)',0,1,'القواعد الأساسية، وحدة كل يوم','Core grammar, one unit a day'],
+ ['book','Oxford Bookworms (Starter → Stage 3)',0,2,'روايات مبسطة بالمستوى ومعاها صوت','Graded readers with audio'],
+ ['book','English Grammar in Use (Murphy)',2,3,'القواعد المتوسطة','Intermediate grammar'],
+ ['book','English Vocabulary in Use',2,5,'سلسلة كلمات بالمستويات','Vocabulary series by level'],
+ ['book','Diary of a Wimpy Kid',2,3,'سهل ومضحك ورسومات','Easy, funny, illustrated'],
+ ['book','Wonder — R. J. Palacio',2,3,'قصة جميلة وجمل بسيطة','A lovely story in simple sentences'],
+ ["book","Harry Potter and the Philosopher's Stone",3,4,'اقراه وانت سامع الأوديو بوك','Read it along with the audiobook'],
+ ['book','Atomic Habits — James Clear',3,5,'كتاب تطوير بلغة سهلة','Self-improvement in plain English'],
+ ['book','Word Power Made Easy',4,6,'كلمات متقدمة بالجذور','Advanced words through roots'],
+ ['book','Sapiens — Yuval Noah Harari',4,6,'non-fiction ممتع','Gripping non-fiction'],
+ ['book','1984 — George Orwell',5,6,'رواية أدبية','A literary classic'],
+ ['book','The Great Gatsby',5,6,'أسلوب أدبي غني','Rich literary style'],
+ ['tool','Anki',0,6,'بطاقات كلمات بالتكرار المتباعد، مجاني','Free spaced-repetition flashcards','https://apps.ankiweb.net'],
+ ['tool','Oxford 3000 / 5000',0,5,'أهم الكلمات مترتبة بالمستوى','The key words, sorted by level','https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000'],
+ ['tool','Cambridge Dictionary',0,6,'المعنى ونطق أمريكي وبريطاني','Meanings with US and UK audio','https://dictionary.cambridge.org'],
+ ['tool','BBC Learning English',0,4,'كورسات كاملة ببلاش بالمستويات','Full free courses by level','https://www.bbc.co.uk/learningenglish'],
+ ['tool','Forvo',0,6,'نطق أي كلمة بصوت native','Any word pronounced by natives','https://forvo.com'],
+ ['tool','YouGlish',1,6,'اسمع الكلمة من ناس حقيقيين على يوتيوب','Hear any word in real YouTube clips','https://youglish.com'],
+ ['tool','Language Reactor',1,6,'ترجمتين مع بعض على يوتيوب ونتفليكس','Dual subtitles on YouTube and Netflix','https://www.languagereactor.com'],
+ ['tool','HelloTalk',2,6,'كلم native speakers وهما بيتعلموا عربي','Chat with natives who learn Arabic','https://www.hellotalk.com'],
+ ['tool','Tandem',2,6,'تبادل لغة بالصوت والفيديو','Language exchange by voice and video','https://www.tandem.net'],
+ ['tool','Write & Improve (Cambridge)',2,5,'اكتب وهو يصححلك ببلاش','Free feedback on your writing','https://writeandimprove.com'],
+ ['tool','Claude',2,6,'اتكلم معاه وقوله: صحح أخطائي','Talk to it and ask it to correct you','https://claude.ai'],
+];
+
+const STAGES=[
+ {n:['البداية','The Start'],d:['٦ أسابيع','6 weeks'],g:['تفهم وتقول جمل بسيطة عن نفسك وعن الحاجات اللي حواليك.','Understand and say simple sentences about yourself and what is around you.'],c:[
+  ['بقدّم نفسي دقيقة كاملة من غير ما أقف','I can introduce myself for a full minute without stopping'],['خلصت أول ٥٠٠ كلمة من Oxford 3000','I learned the first 500 words of the Oxford 3000'],['بفهم حلقة Extra English بترجمة إنجليزي','I understand an Extra English episode with English subtitles'],['بنطق p و v و th صح','I pronounce p, v and th correctly'],['خلصت نص Essential Grammar in Use','I finished half of Essential Grammar in Use']]},
+ {n:['الأساس المتين','Solid Ground'],d:['شهرين','2 months'],g:['تتكلم عن يومك وعن اللي حصل امبارح وعن خططك.','Talk about your day, what happened yesterday and your plans.'],c:[
+  ['وصلت ١٠٠٠ كلمة','I know 1,000 words'],['حكيت يومي امبارح دقيقتين بالماضي وسجلت صوتي','I told yesterday\'s story for 2 minutes in the past tense and recorded it'],['قريت أول رواية مبسطة كاملة','I finished my first graded reader'],['عملت shadowing كل يوم لمدة أسبوعين','I shadowed every day for two weeks'],['بفهم معظم 6 Minute English','I understand most of 6 Minute English']]},
+ {n:['الانطلاق','Take-off'],d:['٣ شهور','3 months'],g:['تمسك محادثة عادية وتفهم مسلسل بترجمة إنجليزي. من هنا ممنوع الترجمة العربي.','Hold a normal conversation and follow a series with English subtitles. No Arabic subtitles from here on.'],c:[
+  ['وصلت ٢٠٠٠ كلمة و١٠٠ phrasal verb','I know 2,000 words and 100 phrasal verbs'],['خلصت سيزون من Friends بترجمة إنجليزي','I watched a season of Friends with English subtitles'],['عملت محادثة ١٥ دقيقة مع حد','I had a 15-minute conversation with someone'],['بكتب ٥ سطور يوميات كل يوم','I write a 5-line diary every day'],['قريت Wonder أو Diary of a Wimpy Kid','I read Wonder or Diary of a Wimpy Kid']]},
+ {n:['الطلاقة','Fluency'],d:['٤ شهور','4 months'],g:['تتكلم براحة في أي موضوع يومي، وتبدأ تفكر بالإنجليزي.','Speak comfortably about everyday topics and start thinking in English.'],c:[
+  ['خلصت Oxford 3000 كاملة','I finished the Oxford 3000'],['بتفرج على Modern Family من غير ترجمة وفاهم ٨٠٪','I watch Modern Family without subtitles and get 80%'],['بوصف اللي بعمله في دماغي بالإنجليزي كل يوم','I narrate what I do in my head in English every day'],['بكلم حد ٣ مرات في الأسبوع','I talk to someone 3 times a week'],['قريت Harry Potter الأول','I read the first Harry Potter']]},
+ {n:['زي المحترفين','Like a Pro'],d:['٦ شهور','6 months'],g:['تفهم أي فيلم أو بودكاست أصلي، وتعبّر عن آراء معقدة.','Understand any native film or podcast and express complex opinions.'],c:[
+  ['خلصت Oxford 5000','I finished the Oxford 5000'],['بسمع This American Life من غير نص وفاهم','I follow This American Life without a transcript'],['شرحت شغلي ٥ دقايق بالإنجليزي وسجلته','I explained my work for 5 minutes and recorded it'],['بعرف ٢٠٠ idiom وبستخدمهم','I know and use 200 idioms'],['قريت كتاب non-fiction كامل','I read a full non-fiction book']]},
+ {n:['الإتقان','Mastery'],d:['٦ شهور+','6+ months'],g:['دقة وأسلوب: تختار الكلمة الصح وتفهم الهزار والتلميح.','Precision and style: the right word, the joke and the hint.'],c:[
+  ['بفهم stand-up comedy وبضحك','I get the jokes in stand-up comedy'],['كتبت مقال ٥٠٠ كلمة وصححته','I wrote and corrected a 500-word essay'],['اتكلمت ساعة من غير ما أدوّر على كلمة','I talked for an hour without hunting for words'],['قريت رواية أدبية','I read a literary novel'],['بفهم لهجة بريطانية تقيلة','I understand a heavy British accent']]},
+ {n:['كأنها لغتك الأم','Like a Native'],d:['مستمرة','Ongoing'],g:['النطق والإيقاع والكلام المتوصل والعامية، لحد ما الإنجليزي يطلع لوحده.','Sound, rhythm, connected speech and slang, until English just comes out.'],c:[
+  ['اخترت لهجة والتزمت بيها','I picked one accent and stuck to it'],['اتعلمت gonna و wanna والـ flap T','I learned gonna, wanna and the flap T'],['قلّدت مشهد كامل لحد ما صوتي بقى زيه','I shadowed a full scene until I sounded the same'],['بحلم وبفكر بالإنجليزي','I dream and think in English'],['الأجانب بيكلموني بسرعتهم العادية','Native speakers talk to me at full speed']]},
+];
+
+// [category, english, arabic, example, english definition]
+const CARDS=[
+ ['pv','figure out','أفهم / ألاقي حل',"I can't figure out how this works.",'to understand or solve something'],
+ ['pv','give up','أستسلم',"Don't give up, you're almost there.",'to stop trying'],
+ ['pv','run out of','يخلص مني','We ran out of coffee.','to have none left'],
+ ['pv','look forward to','مستني بشوق',"I'm looking forward to the weekend.",'to feel happy about something coming'],
+ ['pv','come up with','أطلع بفكرة','She came up with a great idea.','to think of an idea'],
+ ['pv','get along with','أتفاهم مع','I get along with my coworkers.','to have a good relationship with'],
+ ['pv','put off','أأجّل','Stop putting it off and just do it.','to delay doing something'],
+ ['pv','turn down','أرفض','He turned down the job offer.','to refuse an offer'],
+ ['pv','end up','في الآخر لقيت نفسي','We ended up staying home.','to finally be in a situation'],
+ ['pv','catch up','نتكلم بعد غياب','Let\'s catch up over coffee.','to talk after not seeing someone'],
+ ['pv','hang out','أخرج مع صحابي','Wanna hang out later?','to spend relaxed time together'],
+ ['pv','bring up','أفتح موضوع',"Don't bring up politics at dinner.",'to start talking about a topic'],
+ ['pv','work out','تتحل / أتمرن',"Don't worry, it'll work out.",'to end well; to exercise'],
+ ['pv','pick up','أتعلم من غير قصد','I picked up some Spanish on vacation.','to learn without studying'],
+ ['pv','show up','أوصل / أظهر','He showed up an hour late.','to arrive'],
+ ['pv','find out','أعرف / أكتشف',"I just found out she's moving.",'to discover information'],
+ ['pv','go through','أعدّي بتجربة صعبة',"She's going through a lot right now.",'to experience something hard'],
+ ['pv','hold on','استنى ثانية','Hold on, let me check.','to wait a moment'],
+ ['pv','deal with','أتعامل مع',"I'll deal with it tomorrow.",'to handle a problem'],
+ ['pv','make up','أألّف حجة / نتصالح','He made up an excuse.','to invent; to become friends again'],
+ ['id','a piece of cake','سهلة جدًا','The test was a piece of cake.','very easy'],
+ ['id','break the ice','أكسر الحاجز','He told a joke to break the ice.','to make people feel relaxed'],
+ ['id','hit the sack','أروح أنام',"I'm exhausted, I'm gonna hit the sack.",'to go to bed'],
+ ['id','on the same page','متفقين',"Let's make sure we're on the same page.",'agreeing and understanding each other'],
+ ['id','under the weather','تعبان شوية',"I'm feeling a bit under the weather.",'slightly ill'],
+ ['id','call it a day','نكتفي كده النهارده',"It's late, let's call it a day.",'to stop working for today'],
+ ['id','the ball is in your court','القرار عندك','I made my offer. The ball is in your court.','it is your decision now'],
+ ['id','cost an arm and a leg','غالي جدًا','That phone cost an arm and a leg.','very expensive'],
+ ['id','once in a blue moon','نادرًا جدًا','I eat fast food once in a blue moon.','very rarely'],
+ ['id','get the hang of it','أتعود عليها',"Don't worry, you'll get the hang of it.",'to learn how to do it'],
+ ['id','beat around the bush','ألف وأدوّر','Stop beating around the bush.','to avoid saying something directly'],
+ ['id','a blessing in disguise','ضارة نافعة','Losing that job was a blessing in disguise.','a bad thing that turns out good'],
+ ['id','spill the beans','أفشي السر','Come on, spill the beans!','to tell a secret'],
+ ['id',"it's not rocket science",'مش صعبة يعني',"Relax, it's not rocket science.",'it is not complicated'],
+ ['id','no wonder','مش غريب إن',"No wonder you're tired, you worked all night.",'it is not surprising'],
+ ['ex','I mean...','يعني / أقصد',"I mean, it's not bad, but it's not great.",'used to explain or correct yourself'],
+ ['ex','You know what?','بص بقى',"You know what? Let's just order pizza.",'used before a new idea'],
+ ['ex','That makes sense.','منطقي','Oh, that makes sense now.','that is logical'],
+ ['ex','Fair enough.','ماشي، معاك حق','Fair enough, we can do it your way.','I accept your point'],
+ ['ex','No worries.','ولا يهمك','No worries, it happens.','it is not a problem'],
+ ['ex',"I'm down.",'أنا معاك / جاي',"Movies tonight? I'm down.",'I want to join'],
+ ['ex','Sounds good.','تمام كده',"Eight o'clock? Sounds good.",'I agree'],
+ ['ex',"It's up to you.",'براحتك',"Pizza or burgers? It's up to you.",'you decide'],
+ ['ex','Never mind.','خلاص مش مهم','Never mind, I found it.','forget it, it is not important'],
+ ['ex','kind of','نوعًا ما',"I'm kind of hungry.",'a little; somewhat'],
+ ['ex',"I'm not gonna lie...",'بصراحة',"I'm not gonna lie, that was amazing.",'honestly'],
+ ['ex',"I'll pass.",'لا شكرًا',"Thanks, but I'll pass this time.",'no, thank you'],
+ ['ex',"That's a good point.",'نقطة حلوة',"That's a good point, I didn't think of that.",'you said something smart'],
+ ['ex','How come?','إزاي يعني؟ ليه؟',"How come you didn't call me?",'why?'],
+ ['ex',"I couldn't care less.",'ولا فارق معايا خالص',"I couldn't care less about football.",'I do not care at all'],
+ ['ex','My bad.','غلطتي','Oh, my bad, I took your seat.','my mistake'],
+ ['ex','Just kidding.','بهزر',"You're fired. Just kidding!",'I am joking'],
+ ['cn','Actually','في الحقيقة (مش "حاليًا")','Actually, I changed my mind.','in fact (not "currently")'],
+ ['cn','Eventually','في الآخر (مش "احتمال")','Eventually, he found a job.','in the end (not "possibly")'],
+ ['cn','Anyway','المهم','Anyway, how was your trip?','used to change the topic'],
+ ['cn','Besides','وكمان',"It's too expensive. Besides, I don't need it.",'also; in addition'],
+ ['cn','though','بس (في آخر الجملة)','It was hard. Fun, though.','however (at the end)'],
+ ['cn','On the other hand','من ناحية تانية',"It's cheap. On the other hand, it's slow.",'used to compare'],
+ ['cn','As far as I know','على حد علمي','As far as I know, the shop is closed.','from what I know'],
+ ['cn','That being said','ومع ذلك',"It's risky. That being said, let's try.",'however'],
+ ['cn','In other words','بمعنى تاني',"In other words, we're out of time.",'said differently'],
+ ['cn','By the way','على فكرة','By the way, I loved your website.','used to add a new topic'],
+];
+const CATS={all:['الكل','All'],pv:['Phrasal verbs','Phrasal verbs'],id:['Idioms','Idioms'],ex:['تعبيرات يومية','Everyday phrases'],cn:['كلمات ربط','Linking words']};
+
+// pairs Arabic speakers mix up: p/b, v/f, th/s, short/long vowels, clusters
+const PAIRS=['pin','bin','people','very','ferry','van','fan','think','sink','this','that','ship','sheep','full','fool','street','world','word','comfortable','vegetable'];
+// [US, UK, Arabic]
+const USUK=[['apartment','flat','شقة'],['elevator','lift','أسانسير'],['truck','lorry','لوري'],['cookie','biscuit','بسكوت'],['fall','autumn','الخريف'],['vacation','holiday','أجازة'],['sidewalk','pavement','الرصيف'],['gas','petrol','بنزين'],['line','queue','طابور'],['trash','rubbish','زبالة'],['cell phone','mobile phone','موبايل'],['french fries','chips','بطاطس محمرة'],['subway','underground','مترو'],['color','colour','لون (الكتابة)']];
+
+// Speak: sentences to repeat, 4 per level
+const SENTS=[
+ ['Nice to meet you.','What time is it?',"I'd like a cup of tea, please.",'I live in a small house near the city.'],
+ ['I went to the market yesterday and bought some fruit.','Could you tell me where the station is?',"I'm going to visit my friends this weekend.",'It was really cold last night.'],
+ ["I've been learning English for about six months now.","If I have time tomorrow, I'll give you a call.","To be honest, I didn't expect the movie to be that good.","I'm looking forward to seeing you next week."],
+ ["I'd rather stay in tonight, if you don't mind.",'It turned out to be a lot harder than I thought.',"I wish I'd known about this earlier.","Whatever happens, we'll figure it out together."],
+ ["I couldn't help noticing that you seemed a bit distracted.","It's not that I disagree, it's just that I see it differently.",'Had I known, I would have handled it differently.','The more I think about it, the less sense it makes.'],
+ ["I'd hardly call it a success, but it was better than nothing.",'Far be it from me to judge, but that seems a little unfair.',"For what it's worth, I think you made the right call.","It goes without saying that we'll need to rethink our approach."],
+];
+const PROMPTS=[
+ ['Introduce yourself.','Describe your room.'],
+ ['What did you do last weekend?','Talk about your favourite food.'],
+ ["Describe a trip you'll never forget.",'What would you do with a free day?'],
+ ['Is social media good or bad for people? Why?','Talk about a challenge you overcame.'],
+ ['How will AI change the work you do?','Argue for and against working from home.'],
+ ['What makes a website truly great? Defend your view.','Is it ever right to break a rule? Give examples.'],
+];
+
+/* ---------- placement test item banks ----------
+   Use of English + reading: [level, question (use ___ for the gap), passage|null, options (first = correct)] */
+const UOE=[
+ [0,'She ___ a teacher.',null,['is','are','am','be']],
+ [0,'I ___ coffee every morning.',null,['drink','drinks','drinking','am drink']],
+ [0,'There ___ two cats in the garden.',null,['are','is','be','has']],
+ [0,'Where ___ you from?',null,['are','is','do','does']],
+ [0,'My brother ___ like fish.',null,["doesn't","don't","isn't",'not']],
+ [0,'This is ___ umbrella.',null,['an','a','the a','some']],
+ [0,'How does Tom go to work?','Tom gets up at seven. He has breakfast and goes to work by bus.',['By bus','By car','On foot','By train']],
+ [1,'Yesterday we ___ to the beach.',null,['went','go','have gone','goes']],
+ [1,'She is ___ than her sister.',null,['taller','more tall','tallest','the tallest']],
+ [1,'I ___ TV when you called.',null,['was watching','watched','am watching','have watched']],
+ [1,'We ___ visit our grandparents next weekend.',null,['are going to','going to','will to','are go']],
+ [1,'You ___ wear a seatbelt. It\'s the law.',null,['must','can','might','would']],
+ [1,'How ___ sugar do you want?',null,['much','many','a lot','few']],
+ [1,'Can you visit the museum at 3 pm on a Monday?','The museum is open from 9 to 5, but on Mondays it closes at 1.',['No, it closes at 1 pm','Yes, it is open until 5 pm','Yes, but only for one hour',"The text doesn't say"]],
+ [2,"I've lived here ___ 2019.",null,['since','for','from','during']],
+ [2,'If it rains tomorrow, we ___ the picnic.',null,['will cancel','would cancel','cancelled','cancel would']],
+ [2,'The bridge ___ in 1890.',null,['was built','built','has built','is building']],
+ [2,'She asked me where ___.',null,['I lived','did I live','I do live','do I live']],
+ [2,"I'm not used to ___ up so early.",null,['getting','get','got','have got']],
+ [2,"He's the man ___ car was stolen.",null,['whose','who','which',"that's"]],
+ [2,'What did Maria think?',"Although the hotel was expensive, Maria didn't regret staying there; the view alone made it worth every penny.",['The hotel was worth the price','The hotel was too expensive to enjoy','She wanted a cheaper hotel','The view was disappointing']],
+ [3,'If I ___ about the traffic, I would have left earlier.',null,['had known','knew','would know','have known']],
+ [3,'By the time we arrived, the film ___.',null,['had already started','already started','has already started','was already starting']],
+ [3,'I wish you ___ making that noise.',null,['would stop','will stop','stopped to','stop']],
+ [3,'She denied ___ the money.',null,['taking','to take','take','that take']],
+ [3,'The report needs ___ by Friday.',null,['to be finished','finishing to','to finish being','be finished']],
+ [3,"It's high time we ___ a decision.",null,['made','make','will make','have made']],
+ [3,'What did the board decide to do?',"The company's profits fell sharply last year, prompting the board to rethink its strategy rather than simply cut costs.",['Review its overall approach','Reduce costs only','Increase prices','Replace the CEO']],
+ [4,'Hardly ___ the house when it started to rain.',null,['had we left','we had left','did we leave','we left']],
+ [4,'Not only ___ late, but he also forgot the documents.',null,['was he','he was','he is','did he']],
+ [4,"___ I known you were coming, I'd have cooked.",null,['Had','If','Should','Were']],
+ [4,'The proposal was turned down, ___ came as no surprise.',null,['which','what','that','it']],
+ [4,'Her explanation was so ___ that nobody could follow it.',null,['convoluted','concise','lucid','candid']],
+ [4,'He is said ___ a fortune in the nineties.',null,['to have made','to make','having made','that he made']],
+ [4,'What does the writer think of the novel?','Critics have been quick to dismiss the novel as mere entertainment, yet its portrait of a family in decline is anything but superficial.',['It is deeper than critics suggest','It is purely entertaining','It is superficial','It is poorly written']],
+ [5,'Little ___ that his decision would change everything.',null,['did he realise','he realised','he did realise','realised he']],
+ [5,"She's not ___ to admit she was wrong.",null,['one','someone','the one who','a person that']],
+ [5,"The minister's remarks were seen as a thinly ___ attack on his rival.",null,['veiled','covered','hidden','masked']],
+ [5,'___ as it may seem, the plan actually worked.',null,['Strange','Strangely','However strange','How strange']],
+ [5,"We'd rather you ___ mention this to anyone.",null,["didn't","don't","won't",'not']],
+ [5,'The evidence was so ___ that the jury reached a verdict within an hour.',null,['compelling','compulsive','compulsory','complacent']],
+ [5,'What does the speaker mean?','"To say the reforms were unpopular would be something of an understatement."',['The reforms were extremely unpopular','The reforms were slightly unpopular','The reforms were popular','The speaker is unsure']],
+];
+// Listening: [level, spoken text, question, options (first = correct)]
+const LISTEN=[
+ [0,"My name is Sara and I'm twenty years old.",'How old is Sara?',['20','12','22','30']],
+ [0,'The shop opens at nine o\'clock.','When does the shop open?',['At 9:00','At 5:00','At 9:30','At 10:00']],
+ [0,'I have two brothers and one sister.','How many sisters does the speaker have?',['One','Two','Three','None']],
+ [1,'I usually take the train, but today I walked because it was sunny.','How did the speaker travel today?',['On foot','By train','By bus','By car']],
+ [1,"Can you buy some milk on your way home? We don't have any left.",'What does the speaker want?',['Milk','Bread','To go home','A lift']],
+ [1,'The meeting was on Tuesday, but they moved it to Thursday.','When is the meeting now?',['Thursday','Tuesday','Wednesday','Friday']],
+ [2,"I'd have come to the party, but I had to finish a report for work.","Why didn't the speaker go to the party?",['Work','Illness','Not invited','Forgot']],
+ [2,"The flight's been delayed by two hours, so we won't land until ten.",'When was the flight supposed to land?',["At 8 o'clock","At 10 o'clock","At 12 o'clock","At 2 o'clock"]],
+ [2,'Honestly, the food was great, but the service let it down.','What is the speaker\'s opinion?',['Good food, poor service','Bad food, good service','Everything was great','Everything was bad']],
+ [3,'Had it not been for her quick thinking, the whole project would have fallen apart.','What happened?',['Her quick thinking saved the project','The project failed','She caused the problem','The project was cancelled']],
+ [3,"I'm not saying it's a bad idea, I'm just not convinced it's worth the cost.",'What does the speaker think?',["They doubt it's worth the money","They think it's a terrible idea",'They fully support it',"They think it's cheap"]],
+ [3,"They were supposed to call back by noon, but I still haven't heard a thing.",'What is the situation?',["They haven't called",'They called at noon','They called early','The speaker forgot to call']],
+ [4,"It's not that I don't appreciate the offer; it's just that the timing couldn't be worse.",'How does the speaker feel?',['They like the offer but the timing is bad','They dislike the offer','They accept immediately','The timing is perfect']],
+ [4,'For all its flaws, the plan is the only realistic option on the table.','What does the speaker say about the plan?',["It's imperfect but the best available",'It is flawless','It was rejected','There are many better options']],
+ [4,"She came across as rather aloof at first, but she's actually incredibly warm once you get to know her.",'What is she really like?',['Friendly, though she seemed cold','Cold and distant','Friendly at first, then cold','Shy and unfriendly']],
+ [5,"I'd hardly call it a resounding success, but it beat everyone's expectations, mine included.",'How did it go?',['Not a big success, but better than expected','A huge success','A complete failure','Exactly as expected']],
+ [5,'Far be it from me to tell you how to run your business, but you might want to rethink that pricing.','What is the speaker doing?',['Politely suggesting a price change','Refusing to give advice','Praising the pricing','Offering to run the business']],
+ [5,"The upshot of all this wrangling is that we're right back where we started.",'What was the result of the discussion?',['Nothing changed after a long argument','The problem was solved','Good progress was made','The argument was avoided']],
+];
+// Vocabulary check (X_Lex style): real words by frequency band (1 = first 1,000 ... 5 = 5,000; 6 = rare/C2) + made-up words
+const VOCAB=[
+ [1,'house'],[1,'water'],[1,'money'],[1,'friend'],[1,'important'],[1,'family'],[1,'open'],[1,'child'],[1,'morning'],[1,'answer'],
+ [2,'borrow'],[2,'honest'],[2,'kitchen'],[2,'shout'],[2,'cheap'],[2,'lazy'],[2,'remind'],[2,'destroy'],[2,'wedding'],[2,'flight'],
+ [3,'ancient'],[3,'harvest'],[3,'gentle'],[3,'rescue'],[3,'overcome'],[3,'cottage'],[3,'swallow'],[3,'accurate'],[3,'grief'],[3,'stubborn'],
+ [4,'reluctant'],[4,'dwell'],[4,'vague'],[4,'thrive'],[4,'plead'],[4,'cunning'],[4,'insight'],[4,'bleak'],[4,'ponder'],[4,'cluster'],
+ [5,'drowsy'],[5,'wary'],[5,'scarce'],[5,'flaunt'],[5,'brittle'],[5,'linger'],[5,'vow'],[5,'haughty'],[5,'feeble'],[5,'smear'],
+ [6,'ubiquitous'],[6,'quandary'],[6,'obfuscate'],[6,'cantankerous'],[6,'ephemeral'],[6,'recalcitrant'],[6,'perfunctory'],[6,'lugubrious'],[6,'sycophant'],[6,'obsequious'],
+ [0,'plome'],[0,'brastle'],[0,'clandish'],[0,'mensible'],[0,'threbe'],[0,'scorful'],[0,'gralter'],[0,'wimply'],[0,'fendle'],[0,'proctive'],
+ [0,'slibber'],[0,'denigrance'],[0,'quindle'],[0,'morphent'],[0,'trudlow'],[0,'vorden'],[0,'ablishment'],[0,'carfule'],[0,'snorrow'],[0,'plintive'],
+];
+const CANDO=[
+ ['تفهم وتستخدم جمل يومية بسيطة جدًا، وتقدّم نفسك وتسأل أسئلة بسيطة.','You can use very basic everyday phrases, introduce yourself and ask simple questions.'],
+ ['تتعامل في المواقف اليومية البسيطة وتتكلم عن نفسك وعيلتك وشغلك بجمل قصيرة.','You can handle simple routine situations and talk about yourself, family and work in short sentences.'],
+ ['تفهم الأفكار الأساسية في الكلام الواضح، وتتصرف في السفر، وتحكي تجاربك وآراءك ببساطة.','You understand the main points of clear speech, cope while travelling and describe experiences and opinions simply.'],
+ ['تتكلم بطلاقة وتلقائية مع native speakers من غير ما حد يتعب، وتفهم النصوص المعقدة.','You can talk fluently and spontaneously with native speakers without strain and follow complex texts.'],
+ ['بتعبّر عن نفسك بطلاقة من غير ما تدوّر على الكلمات، وتستخدم اللغة بمرونة في الشغل والدراسة.','You express yourself fluently without searching for words and use English flexibly at work and in study.'],
+ ['بتفهم تقريبًا كل حاجة بتسمعها أو بتقراها، وبتعبّر بدقة عن أدق الفروق في المعنى.','You understand virtually everything you hear or read and express fine shades of meaning precisely.'],
+];
+
+/* =========================================================
+   scoring (pure functions + self-checks)
+   ========================================================= */
+// Adaptive test: 3-parameter-style model with fixed guessing (4 options), EAP ability estimate on a grid
+const GRID=[];for(let t=-4;t<=4.0001;t+=0.1)GRID.push(+t.toFixed(1));
+const GUESS=0.25;
+const pCorrect=(th,b)=>GUESS+(1-GUESS)/(1+Math.exp(-1.7*(th-b)));
+function eap(resp){ // resp: [{b, ok}] -> {theta, sd}
+  const w=GRID.map(t=>{let l=Math.exp(-t*t/(2*2.25));for(const r of resp){const p=pCorrect(t,r.b);l*=r.ok?p:1-p}return l});
+  const den=w.reduce((a,b)=>a+b,0);
+  const m=GRID.reduce((a,t,i)=>a+t*w[i],0)/den;
+  return {theta:m,sd:Math.sqrt(GRID.reduce((a,t,i)=>a+(t-m)**2*w[i],0)/den)};
+}
+const bOf=(lvl,j)=>lvl-2.5+((j%5)-2)*0.12;              // A1..C2 centred at -2.5..2.5
+const thetaScore=th=>Math.max(0,Math.min(5.99,th+3));    // continuous 0..6; floor = level index
+function pickItem(bank,used,theta){
+  let best=-1,bd=1e9;
+  bank.forEach((it,i)=>{if(used.has(i))return;const d=Math.abs(it.b-theta)+Math.random()*0.2;if(d<bd){bd=d;best=i}});
+  return best;
+}
+// Vocabulary: per-band hit rate corrected by false alarms on made-up words, scaled to Milton's 5,000-word CEFR bands
+const VCUTS=[0,1500,2500,3250,3750,4500,5000];
+function vocabScore(ans){ // ans: [{band, yes}]
+  const rate=b=>{const a=ans.filter(x=>x.band===b);return a.length?a.filter(x=>x.yes).length/a.length:0};
+  const fa=rate(0);
+  const adj=b=>fa>=0.99?0:Math.max(0,Math.min(1,(rate(b)-fa)/(1-fa)));
+  const size=Math.round([1,2,3,4,5].reduce((s,b)=>s+adj(b)*1000,0));
+  const rare=adj(6);
+  let score;
+  if(size>=4500)score=rare>=0.6?5+Math.min(0.99,(rare-0.6)/0.4):4.99;
+  else{let i=0;while(size>=VCUTS[i+1])i++;score=i+(size-VCUTS[i])/(VCUTS[i+1]-VCUTS[i])}
+  return {size,rare,fa,score:Math.min(5.99,score)};
+}
+function overall(v,u,l){ // weighted by how much each section tells us
+  const s=0.45*u.score+0.30*l.score+0.25*v.score;
+  const spread=Math.max(u.score,l.score,v.score)-Math.min(u.score,l.score,v.score);
+  const conf=(spread<1.2&&u.sd<0.7&&v.fa<0.25)?'high':(spread<2&&v.fa<0.4)?'mid':'low';
+  return {score:s,level:Math.floor(s),conf};
+}
+// Speaking: longest common subsequence between target words and what the mic heard
+const toWords=s=>s.toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9' ]+/g,' ').split(/\s+/).filter(Boolean);
+function matchWords(target,heard){
+  const n=target.length,m=heard.length,dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=target[i]===heard[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const hit=new Array(n).fill(false);let i=0,j=0;
+  while(i<n&&j<m){if(target[i]===heard[j]){hit[i]=true;i++;j++}else if(dp[i+1][j]>=dp[i][j+1])i++;else j++}
+  return hit;
+}
+(function selfCheck(){
+  const sim=trueTh=>{const bank=UOE.map((x,j)=>({b:bOf(x[0],j)}));const used=new Set(),resp=[];let th=-0.5;
+    for(let k=0;k<16;k++){const i=pickItem(bank,used,th);used.add(i);resp.push({b:bank[i].b,ok:bank[i].b<trueTh});th=eap(resp).theta}
+    return Math.floor(thetaScore(th))};
+  console.assert(sim(9)===5,'cat: all correct -> C2');
+  console.assert(sim(-9)===0,'cat: all wrong -> A1');
+  console.assert(sim(0.5)===3,'cat: B2 responder -> B2');
+  const allYes=VOCAB.map(([band])=>({band,yes:true}));
+  console.assert(vocabScore(allYes).size===0,'vocab: saying yes to everything scores 0');
+  const honest=VOCAB.map(([band])=>({band,yes:band>=1&&band<=3}));
+  console.assert(Math.floor(vocabScore(honest).score)===2,'vocab: knows 3,000 words -> B1');
+  console.assert(matchWords(['i','like','tea'],['i','tea']).join()===[true,false,true].join(),'speak: word match');
+})();
+
+/* =========================================================
+   speech out (accent aware)
+   ========================================================= */
+let voices=[];
+function loadVoices(){try{voices=speechSynthesis.getVoices()}catch(e){}}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+const accentLang=a=>(a||S.accent)==='uk'?'en-GB':'en-US';
+function say(text,{slow=false,rate,accent,onend}={}){
+  if(!('speechSynthesis' in window)){onend&&onend();return}
+  speechSynthesis.cancel();
+  const lang=accentLang(accent),re=new RegExp(lang.replace('-','[-_]'),'i');
+  const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate||(slow?.7:.95);
+  const v=voices.find(v=>re.test(v.lang)&&/natural|neural|google|aria|jenny|guy|sonia|ryan|libby/i.test(v.name))||voices.find(v=>re.test(v.lang));
+  if(v)u.voice=v;
+  if(onend)u.onend=onend;
+  speechSynthesis.speak(u);
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b)say(b.dataset.say,{slow:!!b.dataset.slow,accent:b.dataset.accent})});
+
+/* speech in */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function listen({continuous=false,onText,onEnd,onError}){
+  const r=new SR();r.lang=accentLang();r.interimResults=true;r.continuous=continuous;r.maxAlternatives=1;
+  let finalText='';
+  r.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalText+=t+' ';else interim+=t}onText(finalText+interim)};
+  r.onerror=e=>onError&&onError(e.error);
+  r.onend=()=>onEnd&&onEnd(finalText.trim());
+  try{r.start()}catch(e){onError&&onError('start')}
+  return r;
+}
+const micMsg=code=>code==='not-allowed'||code==='service-not-allowed'||code==='start'
+  ?L('المتصفح أو الصفحة مش سامحين بالمايك. لو فاتح من claude.ai افتح نسخة الموقع المنشورة على GitHub Pages، أو اسمح للمايك من إعدادات المتصفح.','The microphone is blocked here. If you opened this inside claude.ai, use the GitHub Pages version, or allow the microphone in your browser settings.')
+  :code==='no-speech'?L('ماسمعتش حاجة. قرّب من المايك وجرّب تاني.','I didn\'t hear anything. Move closer to the mic and try again.')
+  :L('حصلت مشكلة في المايك: ','Microphone problem: ')+code;
+
+/* =========================================================
+   progress
+   ========================================================= */
+let checks=store.get('fr-checks',{});
+let place=store.get('fr-place',null); // {level, score, date, v, u, l}
+const skipped=i=>!!place&&i<place.level;
+const stageDone=i=>skipped(i)?STAGES[i].c.length:STAGES[i].c.filter((_,j)=>checks[i+'-'+j]).length;
+function currentStage(){const i=STAGES.findIndex((s,i)=>stageDone(i)<s.c.length);return i<0?STAGES.length-1:i}
+const forLevel=(t,lv)=>RES.filter(r=>r[0]===t&&r[2]<=lv&&lv<=r[3]);
+const link=r=>r[6]||'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]+(r[0]==='book'?' book':''));
+const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}" target="_blank" rel="noopener"><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small></a>`;
+
+/* =========================================================
+   shell: header + nav
+   ========================================================= */
+const ICONS={
+ today:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ path:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7"/>',
+ speak:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+ words:'<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/>',
+ more:'<path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h13"/>'};
+const NAV=[['today','النهارده','Today'],['path','المسار','Path'],['speak','اتكلم','Speak'],['words','الكلمات','Words'],['more','المكتبة','Library']];
+function renderShell(){
+  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
+  document.title='Fluent Route';
+  const total=STAGES.reduce((a,s)=>a+s.c.length,0),n=STAGES.reduce((a,_,i)=>a+stageDone(i),0),p=Math.round(n/total*100);
+  $('head').innerHTML=`<div class="brand"><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div>
+   <div class="switches">
+    <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">ع</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
+    <div class="seg" role="group" aria-label="Accent"><button data-accent="us" aria-pressed="${S.accent==='us'}">US</button><button data-accent="uk" aria-pressed="${S.accent==='uk'}">UK</button></div>
+   </div>
+   <div class="ring" style="--p:${p}" aria-label="${p}%"><div><strong class="en">${p}%</strong><em>${LV[currentStage()]}</em></div></div>`;
+  $('nav').innerHTML=NAV.map(([k,ar,en])=>`<a href="#${k}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${L(ar,en)}</a>`).join('');
+  markNav();
+}
+$('head').addEventListener('click',e=>{
+  const l=e.target.closest('[data-lang]'),a=e.target.closest('[data-accent]');
+  if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang)}
+  else if(a){S.accent=a.dataset.accent;store.set('fr-accent',S.accent);say(S.accent==='uk'?'Hello, this is British English.':'Hi, this is American English.')}
+  else return;
+  renderAll();
+});
+
+/* =========================================================
+   today
+   ========================================================= */
+const today=()=>new Date().toLocaleDateString('en-CA');
+const dayNum=Math.floor(Date.now()/864e5);
+function streakFrom(days,t){const has=new Set(days);let d=new Date(t+'T12:00:00'),n=0;if(!has.has(t))d.setDate(d.getDate()-1);while(has.has(d.toLocaleDateString('en-CA'))){n++;d.setDate(d.getDate()-1)}return n}
+console.assert(streakFrom(['2026-11-03','2026-11-04'],'2026-11-04')===2&&streakFrom(['2026-11-03'],'2026-11-04')===1&&streakFrom(['2026-11-01'],'2026-11-04')===0,'streak');
+const pick=(t,lv)=>{const l=forLevel(t,lv);return l.length?l[dayNum%l.length]:null};
+const resLink=r=>r?`<a href="${esc(link(r))}" target="_blank" rel="noopener" class="en" dir="ltr">${esc(r[1])}</a>`:'';
+function tasksFor(lv){return [
+  {k:'anki',t:L('كلمات','Words'),m:15,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
+  {k:'listen',t:L('استماع','Listening'),m:20,s:L('النهارده: ','Today: ')+resLink(pick(lv<1?'yt':'pod',lv))},
+  {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح اتكلم','Open Speak')}</a>`},
+  {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:30,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
+  {k:'speak',t:L('كلام','Speaking'),m:10,s:L('اتكلم دقيقة عن موضوع في صفحة اتكلم','Talk for one minute on the Speak page')},
+  {k:'read',t:L('قراية','Reading'),m:10,s:L('١٠ صفحات من ','10 pages of ')+resLink(pick('book',lv))},
+]}
+let day=store.get('fr-day',{d:today(),done:{}});if(day.d!==today())day={d:today(),done:{}};
+let fullDays=store.get('fr-days',[]);
+const tick='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function renderToday(){
+  const lv=currentStage(),s=STAGES[lv],done=stageDone(lv),nextJ=s.c.findIndex((_,j)=>!checks[lv+'-'+j]);
+  const T=tasksFor(lv),n=T.filter(t=>day.done[t.k]).length;
+  const v=$('v-today');
+  v.innerHTML=`
+   ${place?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٣ أجزاء في حوالي ٢٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 3-part placement test, about 20 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
+   <div class="panel now">
+     <div class="lvl"><span class="badge en">${LV[lv]}</span><div><p class="muted">${L('انت دلوقتي في مرحلة','You are now at')}</p><h2>${tx(s.n)}</h2></div></div>
+     <p>${tx(s.g)}</p>
+     <div class="line"><i style="width:${done/s.c.length*100}%"></i></div>
+     <p class="muted" style="font-size:14px">${L(`${done} من ${s.c.length} اتعملت · المدة المتوقعة ${tx(s.d)}`,`${done} of ${s.c.length} done · expected ${tx(s.d)}`)}${place?` · <a href="#test">${L('اعيد الاختبار','Retake the test')}</a>`:''}</p>
+     ${nextJ>=0?`<div class="next"><b>${L('الجاية:','Next:')}</b><span>${tx(s.c[nextJ])}</span></div>`:''}
+   </div>
+   <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده 👏','All done today 👏'):L(`${n} من ${T.length}`,`${n} of ${T.length}`)}</small></div>
+   <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><button class="tick" data-task="${t.k}" aria-pressed="${!!day.done[t.k]}" aria-label="${esc(t.t)}">${tick}</button><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span></span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
+   <div class="statrow"><a class="stat" href="#words"><strong class="en">${dueCards('all').length}</strong><span>${L('كلمة مستنية مراجعة','cards to review')}</span></a><div class="stat"><strong class="en">${streakFrom(fullDays,today())}</strong><span>${L('يوم ورا بعض','day streak')}</span></div></div>`;
+  stagger(v);
+}
+$('v-today').addEventListener('click',e=>{
+  const b=e.target.closest('[data-task]');if(!b)return;
+  day.done[b.dataset.task]=!day.done[b.dataset.task];store.set('fr-day',day);
+  const all=tasksFor(currentStage()).every(t=>day.done[t.k]);
+  fullDays=fullDays.filter(d=>d!==day.d);if(all)fullDays.push(day.d);store.set('fr-days',fullDays.slice(-400));
+  renderToday();$('v-today').classList.remove('stagger');
+});
+
+/* =========================================================
+   path (stages)
+   ========================================================= */
+function renderPath(){
+  const open=[...document.querySelectorAll('#stages details')].map(d=>d.open),cur=currentStage();
+  $('v-path').innerHTML=`<div class="sec-head"><h2>${L('المراحل السبعة','The seven stages')}</h2><small>${place?L(`حددت مستواك ${LV[place.level]} بالاختبار`,`Placed at ${LV[place.level]} by the test`):`<a href="#test">${L('اعرف مستواك بالاختبار','Find your level with the test')}</a>`}</small></div>
+   <div class="stages" id="stages">${STAGES.map((s,i)=>{
+    const n=stageDone(i),full=n===s.c.length,picks=Object.keys(TYPES).map(t=>forLevel(t,i)[0]).filter(Boolean);
+    return `<details class="stage ${full?'done':''} ${i===cur?'current':''}" ${(open.length?open[i]:i===cur)?'open':''}>
+      <summary><span class="code en">${full?'✓':LV[i]}</span><span><span class="s-name">${tx(s.n)}</span><span class="s-meta">${skipped(i)?L('عدّيتها بالاختبار','Passed by the test'):tx(s.d)}</span></span><span class="s-count en">${n}/${s.c.length}</span></summary>
+      <div class="s-body">
+        <p><strong>${L('الهدف:','Goal:')}</strong> ${tx(s.g)}</p>
+        <div><p class="label">${L('علّم عليها لما تخلصها','Tick each one when done')}</p>
+        <ul class="checks">${s.c.map((c,j)=>`<li><label><input type="checkbox" id="c${i}-${j}" data-k="${i}-${j}" ${checks[i+'-'+j]||skipped(i)?'checked':''} ${skipped(i)?'disabled':''}><span>${tx(c)}</span></label></li>`).join('')}</ul></div>
+        <div><p class="label">${L('ابدأ بدول','Start with these')}</p><div class="picks">${picks.map(r=>itemHTML(r)).join('')}</div></div>
+        <a class="more" href="#more" data-lv="${i}">${L(`كل مصادر ${LV[i]} ←`,`All ${LV[i]} resources →`)}</a>
+      </div></details>`}).join('')}</div>
+   <p class="honest" style="margin-top:16px">${L('بصراحة: النطق ١٠٠٪ زي اللي اتولد في أمريكا أو إنجلترا صعب جدًا على أي حد كبير. الهدف الحقيقي إنك تتكلم بسرعة وطبيعي من غير ما تترجم في دماغك، وده محتاج ساعة لساعتين كل يوم لمدة سنة ونص لسنتين.','Honestly: a perfect native accent is very hard for any adult. The real goal is to speak fast and naturally without translating in your head. That takes one to two hours a day for about 18 to 24 months.')}</p>`;
+}
+$('v-path').addEventListener('change',e=>{
+  const k=e.target.dataset.k;if(!k)return;
+  checks[k]=e.target.checked;store.set('fr-checks',checks);
+  renderPath();renderShell();renderToday();$('c'+k)?.focus();
+});
+$('v-path').addEventListener('click',e=>{const a=e.target.closest('[data-lv]');if(a){fLv=+a.dataset.lv;moreTab='lib';renderMore()}});
+
+/* =========================================================
+   words (Leitner flashcards)
+   ========================================================= */
+const DAY=864e5, GAPS=[0,1,3,7,16,35];
+function grade(st,known,now){const box=known?Math.min((st?.box??0)+1,GAPS.length-1):0;return {box,due:now+GAPS[box]*DAY}}
+console.assert(grade(undefined,true,0).box===1&&grade({box:3},false,5).due===5&&grade({box:5},true,0).box===5,'grade');
+let srs=store.get('fr-srs',{}), cat='all', cur=null;
+function dueCards(c){const now=Date.now();return CARDS.filter(x=>(c==='all'||x[0]===c)&&(!srs[x[1]]||srs[x[1]].due<=now))}
+function renderWords(){
+  const pool=CARDS.filter(c=>cat==='all'||c[0]===cat),due=dueCards(cat),learned=pool.filter(c=>(srs[c[1]]?.box||0)>=3).length;
+  if(!cur||!due.includes(cur))cur=due[Math.floor(Math.random()*due.length)]||null;
+  $('v-words').innerHTML=`<div class="sec-head"><h2>${L('كلمات بيقولها الـ native كل يوم','Words natives use every day')}</h2><small>${L(`${due.length} للمراجعة · ${learned}/${pool.length} اتحفظت`,`${due.length} to review · ${learned}/${pool.length} learned`)}</small></div>
+   <div class="chips">${Object.entries(CATS).map(([k,v])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${tx(v)}</button>`).join('')}</div>
+   ${cur?`<div class="flip" id="flip"><div class="flip-in">
+      <div class="face"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ex" dir="ltr">${esc(cur[3])}</p><p class="muted">${L('قول الجملة بصوت عالي وخمّن المعنى','Say the sentence out loud and guess the meaning')}</p></div>
+      <div class="face back"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ar"${S.lang==='en'?' dir="ltr"':''}>${esc(S.lang==='ar'?cur[2]:cur[4])}</p>${S.lang==='en'?`<p class="muted" dir="rtl">${esc(cur[2])}</p>`:''}<p class="ex" dir="ltr">${esc(cur[3])}</p></div>
+     </div></div>
+     <div class="row" style="margin-top:14px" id="cardBtns"><button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn" id="flipBtn">${L('اعرض المعنى','Show meaning')}</button></div>`
+   :`<div class="empty-card"><p class="ar">${L('خلصت مراجعة النهارده 👏','Done for today 👏')}</p><p class="muted">${L('ارجع بكرة، البطاقات هترجعلك في ميعادها.','Come back tomorrow. Cards return when they are due.')}</p></div>`}`;
+}
+$('v-words').addEventListener('click',e=>{
+  const c=e.target.closest('[data-cat]');if(c){cat=c.dataset.cat;cur=null;renderWords();return}
+  if(e.target.id==='flipBtn'){$('flip').classList.add('on');$('cardBtns').innerHTML=`<button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn ghost" id="again">${L('لسه','Not yet')}</button><button class="btn good" id="know">${L('عارفها','I know it')}</button>`;return}
+  if(e.target.id==='know'||e.target.id==='again'){srs[cur[1]]=grade(srs[cur[1]],e.target.id==='know',Date.now());store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
+});
+
+/* =========================================================
+   speak (mic)
+   ========================================================= */
+const micIcon='<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+let sp={mode:'repeat',lv:null,idx:0,rec:null,heard:'',result:null,err:'',prompt:0,t0:0,timer:null,secs:0};
+function speakLevel(){return sp.lv??Math.min(currentStage(),5)}
+function renderSpeak(){
+  const lv=speakLevel(),v=$('v-speak');
+  const head=`<div class="sec-head"><h2>${L('اتكلم','Speak')}</h2><small>${L(`اللهجة: ${S.accent==='uk'?'بريطاني':'أمريكي'}`,`Accent: ${S.accent==='uk'?'British':'American'}`)}</small></div>
+   <div class="tabs"><button data-mode="repeat" aria-pressed="${sp.mode==='repeat'}">${L('قلّد الجملة','Repeat after me')}</button><button data-mode="free" aria-pressed="${sp.mode==='free'}">${L('كلام حر','Free talk')}</button></div>
+   <div class="chips">${LV.slice(0,6).map((l,i)=>`<button class="chip en" data-slv="${i}" aria-pressed="${i===lv}">${l}</button>`).join('')}</div>`;
+  const noSR=!SR?`<p class="note">${L('المتصفح ده مش بيدعم التعرّف على الصوت. استخدم Chrome أو Edge على الكمبيوتر أو الموبايل.','This browser does not support speech recognition. Use Chrome or Edge on desktop or Android.')}</p>`:'';
+  const err=sp.err?`<p class="note">${esc(sp.err)}</p>`:'';
+  if(sp.mode==='repeat'){
+    const target=SENTS[lv][sp.idx%SENTS[lv].length],tw=toWords(target);
+    const hits=sp.result?matchWords(tw,toWords(sp.heard)):null;
+    let wi=0;
+    const shown=target.split(/(\s+)/).map(tok=>{if(!tok.trim())return tok;const cls=hits?(hits[wi]?'hit':'miss'):'';wi++;return `<span class="${cls}">${esc(tok)}</span>`}).join('');
+    const pct=hits?Math.round(hits.filter(Boolean).length/hits.length*100):null;
+    v.innerHTML=head+`<div class="panel speak-card">
+      <p class="muted">${L('اسمع الجملة، وبعدين دوس على المايك وقولها بنفس الطريقة.','Listen, then tap the mic and say it the same way.')}</p>
+      <p class="target" dir="ltr">${shown}</p>
+      <div class="row"><button class="btn ghost" data-say="${esc(target)}">${L('اسمع','Listen')}</button><button class="btn ghost" data-say="${esc(target)}" data-slow="1">${L('بالبطيء','Slow')}</button></div>
+      <button class="mic ${sp.rec?'rec':''}" id="micBtn" aria-label="${L('سجّل','Record')}" ${SR?'':'disabled'}>${micIcon}</button>
+      <p class="heard" dir="ltr">${esc(sp.heard)||(sp.rec?L('بسمعك…','Listening…'):'')}</p>
+      ${pct!==null?`<p class="score en">${pct}%</p><p class="muted">${pct>=90?L('ممتاز! نطقك اتفهم كله.','Excellent! Every word came through.'):pct>=60?L('كويس. ركّز على الكلمات الحمرا وجرّب تاني.','Good. Focus on the red words and try again.'):L('جرّب تاني بالبطيء، كلمة كلمة.','Try again slowly, word by word.')}</p>`:''}
+      ${noSR}${err}
+      <div class="row"><button class="btn ghost" id="again2">${L('تاني','Try again')}</button><button class="btn" id="nextSent">${L('الجملة الجاية','Next sentence')}</button></div>
+     </div>
+     <p class="muted" style="font-size:13px;margin-top:10px">${L('النسبة دي بتقيس هل المايك فهم كل كلمة قلتها، مش بتقيس اللهجة بالظبط.','The score shows whether each word was understood. It does not grade your accent exactly.')}</p>`;
+  }else{
+    const prompt=PROMPTS[lv][sp.prompt%PROMPTS[lv].length];
+    const w=toWords(sp.heard),mins=Math.max(sp.secs,1)/60,uniq=new Set(w).size;
+    v.innerHTML=head+`<div class="panel speak-card">
+      <p class="muted">${L('اتكلم دقيقة كاملة عن الموضوع ده من غير ما تقف:','Talk for one full minute about this without stopping:')}</p>
+      <p class="target" dir="ltr">${esc(prompt)}</p>
+      <button class="btn ghost" id="newPrompt">${L('موضوع تاني','Another topic')}</button>
+      <button class="mic ${sp.rec?'rec':''}" id="micBtn" aria-label="${L('سجّل','Record')}" ${SR?'':'disabled'}>${micIcon}</button>
+      <p class="timer en">${String(Math.floor(sp.secs/60)).padStart(1,'0')}:${String(sp.secs%60).padStart(2,'0')} / 1:00</p>
+      <p class="heard ltr" style="max-width:100%">${esc(sp.heard)}</p>
+      ${sp.result?`<div class="statgrid"><div><strong class="en">${Math.round(w.length/mins)}</strong><span>${L('كلمة في الدقيقة','words / min')}</span></div><div><strong class="en">${uniq}</strong><span>${L('كلمة مختلفة','different words')}</span></div><div><strong class="en">${w.length}</strong><span>${L('كلمة','words')}</span></div></div>
+       <p class="muted" style="font-size:14px">${L('الـ native بيتكلم حوالي ١٢٠ لـ ١٦٠ كلمة في الدقيقة. لو انت تحت ٨٠ ركّز على الـ shadowing.','Natives speak about 120 to 160 words a minute. Under 80? Do more shadowing.')}</p>`:''}
+      ${noSR}${err}
+     </div>`;
+  }
+}
+function stopRec(){if(sp.rec){try{sp.rec.stop()}catch(e){}}}
+$('v-speak').addEventListener('click',e=>{
+  const m=e.target.closest('[data-mode]'),lv=e.target.closest('[data-slv]');
+  if(m){stopRec();sp={...sp,mode:m.dataset.mode,heard:'',result:null,err:'',secs:0};renderSpeak();return}
+  if(lv){stopRec();sp={...sp,lv:+lv.dataset.slv,idx:0,prompt:0,heard:'',result:null,err:'',secs:0};renderSpeak();return}
+  const id=e.target.closest('button')?.id;
+  if(id==='nextSent'){sp={...sp,idx:sp.idx+1,heard:'',result:null,err:''};renderSpeak();return}
+  if(id==='again2'){sp={...sp,heard:'',result:null,err:''};renderSpeak();return}
+  if(id==='newPrompt'){stopRec();sp={...sp,prompt:sp.prompt+1,heard:'',result:null,err:'',secs:0};renderSpeak();return}
+  if(id!=='micBtn'||!SR)return;
+  if(sp.rec){stopRec();return}
+  window.speechSynthesis?.cancel();
+  sp={...sp,heard:'',result:null,err:'',secs:0};
+  const free=sp.mode==='free';
+  sp.rec=listen({continuous:free,
+    onText:t=>{sp.heard=t;const h=document.querySelector('#v-speak .heard');if(h)h.textContent=t},
+    onError:code=>{sp.err=micMsg(code)},
+    onEnd:t=>{clearInterval(sp.timer);sp.rec=null;sp.heard=t||sp.heard;sp.result=!!sp.heard;renderSpeak()}});
+  if(free){sp.timer=setInterval(()=>{sp.secs++;const el=document.querySelector('#v-speak .timer');if(el)el.textContent=`${Math.floor(sp.secs/60)}:${String(sp.secs%60).padStart(2,'0')} / 1:00`;if(sp.secs>=60)stopRec()},1000)}
+  renderSpeak();
+});
+
+/* =========================================================
+   more: library + tips
+   ========================================================= */
+let moreTab='lib', fType='all', fLv=store.get('fr-lv',null);
+function renderMore(){
+  if(fLv===null)fLv=currentStage();
+  const v=$('v-more');
+  const tabs=`<div class="tabs"><button data-mt="lib" aria-pressed="${moreTab==='lib'}">${L('المكتبة','Library')}</button><button data-mt="tips" aria-pressed="${moreTab==='tips'}">${L('نصايح ونطق','Tips & sounds')}</button></div>`;
+  if(moreTab==='lib'){
+    const list=RES.filter(r=>(fType==='all'||r[0]===fType)&&(fLv<0||(r[2]<=fLv&&fLv<=r[3])));
+    v.innerHTML=tabs+`<div class="sec-head"><h2>${L('المكتبة','Library')}</h2><small>${L(`${list.length} مصدر`,`${list.length} resources`)}</small></div>
+     <div class="chips">${[[-1,L('كل المستويات','All levels')],...LV.map((l,i)=>[i,l])].map(([k,t])=>`<button class="chip" data-l="${k}" aria-pressed="${k===fLv}">${t}</button>`).join('')}</div>
+     <div class="chips">${[['all',L('الكل','All')],...Object.entries(TYPES).map(([k,p])=>[k,tx(p)])].map(([k,t])=>`<button class="chip" data-t="${k}" aria-pressed="${k===fType}">${t}</button>`).join('')}</div>
+     <div class="list" id="libList">${list.map(r=>itemHTML(r,true)).join('')||`<p class="muted">${L('مفيش حاجة بالاختيار ده.','Nothing matches.')}</p>`}</div>`;
+    stagger($('libList'));
+  }else{
+    const M=[[L('استماع كتير تفهمه','Lots of listening you understand'),L('الكلام بييجي من الاستماع. لو فاهم أقل من ٧٠٪ انزل مستوى.','Speaking grows from listening. Understand under 70%? Go one level down.')],
+      ['Shadowing',L('اسمع جملة، وقّف، قولها بنفس السرعة والنغمة. أسرع طريقة للنطق.','Hear a sentence, pause, say it with the same speed and tune. The fastest route to good pronunciation.')],
+      [L('جمل مش كلمات','Sentences, not words'),L('"I ran out of time" أحسن من "run out = يخلص".','Learn "I ran out of time", not "run out = finish".')],
+      [L('سجّل صوتك','Record yourself'),L('دقيقة كل أسبوع، واسمع القديم. هتلاقي أخطاءك بنفسك.','One minute a week. Compare with old recordings and spot your own mistakes.')],
+      [L('فكّر بالإنجليزي','Think in English'),L('اوصف اللي بتعمله في دماغك: "I\'m making coffee".','Narrate in your head: "I\'m making coffee". This removes translation.')],
+      [L('اختار لهجة واحدة','Pick one accent'),L('أمريكي أو بريطاني، والتزم بيها في الاستماع والتقليد.','American or British, and stay with it while listening and shadowing.')]];
+    v.innerHTML=tabs+`<div class="sec-head"><h2>${L('الطرق اللي بتفرق فعلًا','What actually works')}</h2></div>
+     <div class="methods">${M.map(([a,b])=>`<div class="panel"><strong>${a}</strong><p>${b}</p></div>`).join('')}</div>
+     <div class="sec-head"><h2>${L('أصوات بتتعب العرب','Sounds Arabic speakers find hard')}</h2><small>${L('دوس واسمع، وبعدين قولها','Tap, listen, then say it')}</small></div>
+     <div class="pairs">${PAIRS.map(w=>`<span class="pair"><button class="en" data-say="${w}">${w}</button><button data-say="${w}" data-slow="1">${L('بطيء','slow')}</button></span>`).join('')}</div>
+     <div class="sec-head"><h2>${L('أمريكي ولا بريطاني؟','American or British?')}</h2><small>${L('دوس على الكلمة تسمعها باللهجة بتاعتها','Tap a word to hear it in its accent')}</small></div>
+     <div class="tablewrap"><table><thead><tr><th>🇺🇸 US</th><th>🇬🇧 UK</th><th>${L('المعنى','Meaning')}</th></tr></thead><tbody>${USUK.map(([u,k,a])=>`<tr><td><button data-say="${u}" data-accent="us">${u}</button></td><td><button data-say="${k}" data-accent="uk">${k}</button></td><td>${a}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+}
+$('v-more').addEventListener('click',e=>{
+  const t=e.target.closest('[data-t]'),l=e.target.closest('[data-l]'),mt=e.target.closest('[data-mt]');
+  if(mt)moreTab=mt.dataset.mt;else if(t)fType=t.dataset.t;else if(l){fLv=+l.dataset.l;store.set('fr-lv',fLv)}else return;
+  renderMore();
+});
+
+/* =========================================================
+   placement test
+   ========================================================= */
+const UOE_N=16, LIS_N=8;
+let tst=null;
+function newTest(){
+  return {step:'intro',
+    vocab:shuffle(VOCAB.map(([band,w])=>({band,w}))),vi:0,vans:[],
+    ubank:UOE.map((x,j)=>({lvl:x[0],q:x[1],p:x[2],opts:x[3],b:bOf(x[0],j)})),uused:new Set(),uresp:[],ucur:null,
+    lbank:LISTEN.map((x,j)=>({lvl:x[0],text:x[1],q:x[2],opts:x[3],b:bOf(x[0],j*2)})),lused:new Set(),lresp:[],lcur:null,plays:0,
+    order:null};
+}
+function testBar(done,total,label){return `<div class="t-top"><span>${label}</span><span class="en">${done} / ${total}</span></div><div class="t-bar"><i style="width:${done/total*100}%"></i></div>`}
+function renderTest(){
+  if(!tst)tst=newTest();
+  const v=$('v-test');
+  if(tst.step==='intro'){
+    v.innerHTML=`<div class="stack">
+      <div class="sec-head"><h2>${L('اختبار تحديد المستوى','Placement test')}</h2><small>${L('حوالي ٢٠ دقيقة','About 20 minutes')}</small></div>
+      <p>${L('الاختبار بيتغير على حسب إجاباتك زي الاختبارات الرسمية: لو جاوبت صح السؤال الجاي بيصعب، ولو غلط بيسهل. كده بيوصل لمستواك بأسئلة أقل وبدقة أعلى.','The test adapts like official computer tests: a right answer makes the next question harder, a wrong one makes it easier. This finds your level with fewer questions and more accuracy.')}</p>
+      <ol class="intro-list">
+        <li><span><strong>${L('الكلمات','Vocabulary')}</strong><br><span class="muted">${L('٨٠ كلمة: قول لو عارف معناها. فيه كلمات مش حقيقية متحطوطة عشان تكشف التخمين، فمتقولش "عارفها" غير لو متأكد.','80 words: say if you know the meaning. Some are fake words that catch guessing, so only say yes if you are sure.')}</span></span></li>
+        <li><span><strong>${L('القواعد والقراية','Grammar & reading')}</strong><br><span class="muted">${L(`${UOE_N} سؤال بتتكيّف على مستواك.`,`${UOE_N} questions that adapt to you.`)}</span></span></li>
+        <li><span><strong>${L('الاستماع','Listening')}</strong><br><span class="muted">${L(`${LIS_N} جمل بصوت ${S.accent==='uk'?'بريطاني':'أمريكي'}، تقدر تسمع كل جملة مرتين بس.`,`${LIS_N} clips in a ${S.accent==='uk'?'British':'American'} voice. Each plays twice at most.`)}</span></span></li>
+      </ol>
+      <p class="note">${L('متستخدمش قاموس ولا ترجمة، وجاوب بسرعة. لو مش عارف اختار أقرب إجابة. النتيجة هتكون مستواك في الإطار الأوروبي (CEFR) من A1 لـ C2.','No dictionary or translator, answer fast. If unsure, pick the closest answer. You get a CEFR level from A1 to C2.')}</p>
+      <button class="btn big wide" id="tStart">${L('يلا نبدأ','Start')}</button>
+     </div>`;
+  }else if(tst.step==='vocab'){
+    const it=tst.vocab[tst.vi];
+    v.innerHTML=testBar(tst.vi,tst.vocab.length,L('١ · الكلمات','1 · Vocabulary'))+`
+      <p class="muted" style="text-align:center">${L('تعرف معنى الكلمة دي؟','Do you know what this word means?')}</p>
+      <p class="lex" dir="ltr" key="${tst.vi}">${esc(it.w)}</p>
+      <div class="yn"><button class="btn big ghost" data-yn="0">${L('لأ / مش كلمة','No / not a word')}</button><button class="btn big" data-yn="1">${L('أيوه، عارفها','Yes, I know it')}</button></div>`;
+  }else if(tst.step==='uoe'){
+    if(tst.ucur===null){const th=tst.uresp.length?eap(tst.uresp).theta:-0.5;tst.ucur=pickItem(tst.ubank,tst.uused,th);tst.order=shuffle(tst.ubank[tst.ucur].opts.map((o,i)=>i))}
+    const it=tst.ubank[tst.ucur];
+    const q=esc(it.q).replace('___','<span class="gap"></span>');
+    v.innerHTML=testBar(tst.uresp.length,UOE_N,L('٢ · القواعد والقراية','2 · Grammar & reading'))+`<div dir="ltr" class="ltr view">
+      ${it.p?`<div class="passage">${esc(it.p)}</div>`:''}<p class="q">${q}</p>
+      <div class="opts">${tst.order.map(i=>`<button class="opt" data-opt="${i}">${esc(it.opts[i])}</button>`).join('')}</div></div>`;
+  }else if(tst.step==='listen'){
+    if(tst.lcur===null){const th=tst.lresp.length?eap(tst.lresp).theta:-0.5;tst.lcur=pickItem(tst.lbank,tst.lused,th);tst.order=shuffle([0,1,2,3]);tst.plays=0}
+    const it=tst.lbank[tst.lcur];
+    v.innerHTML=testBar(tst.lresp.length,LIS_N,L('٣ · الاستماع','3 · Listening'))+`
+      <button class="play" id="tPlay" aria-label="Play" ${tst.plays>=2?'disabled style="opacity:.4"':''}><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <p class="muted" style="text-align:center;margin-bottom:18px">${tst.plays===0?L('دوس واسمع الجملة','Tap to hear the clip'):L(`فاضل ${2-tst.plays} مرة`,`${2-tst.plays} play(s) left`)}</p>
+      <div dir="ltr" class="ltr" ${tst.plays?'':'hidden'}><p class="q">${esc(it.q)}</p>
+      <div class="opts">${tst.order.map(i=>`<button class="opt" data-lopt="${i}">${esc(it.opts[i])}</button>`).join('')}</div></div>
+      ${'speechSynthesis' in window?'':`<p class="note">${L('المتصفح ده مش بيشغّل صوت، فجزء الاستماع مش هينفع.','This browser cannot play speech, so listening will not work.')}</p>`}`;
+  }else if(tst.step==='result'){
+    const r=tst.res,lvl=r.o.level;
+    const bar=(name,score,extra)=>`<div class="b"><div><span>${name}</span><strong class="en">${LV[Math.floor(score)]}</strong></div><div class="line"><i style="width:${Math.max(4,score/6*100)}%;background:var(--accent)"></i></div>${extra?`<small class="muted">${extra}</small>`:''}</div>`;
+    v.innerHTML=`<div class="stack" style="text-align:center">
+      <p class="muted">${L('مستواك','Your level')}</p>
+      <div class="result-badge en">${LV[lvl]}</div>
+      <p style="max-width:52ch;margin:0 auto">${tx(CANDO[lvl])}</p>
+      <p class="muted" style="font-size:14px">${L('دقة النتيجة: ','Confidence: ')}<strong>${{high:L('عالية','high'),mid:L('متوسطة','medium'),low:L('ضعيفة، يُفضل تعيد الاختبار','low, consider retaking')}[r.o.conf]}</strong></p>
+     </div>
+     <div class="panel bars" style="margin-top:18px">
+      ${bar(L('الكلمات','Vocabulary'),r.v.score,L(`حوالي ${r.v.size.toLocaleString()} كلمة من أشهر ٥٠٠٠`,`About ${r.v.size.toLocaleString()} of the 5,000 most common words`)+(r.v.fa>=0.25?L(' · قلت "عارفها" لكلمات مش حقيقية، فالجزء ده أقل دقة',' · you said yes to fake words, so this part is less precise'):''))}
+      ${bar(L('القواعد والقراية','Grammar & reading'),r.u.score)}
+      ${bar(L('الاستماع','Listening'),r.l.score)}
+      <div class="scale en">${LV.slice(0,6).map(l=>`<span>${l}</span>`).join('')}</div>
+     </div>
+     <p class="note" style="margin-top:14px">${L('الاختبار ده بيقيس الفهم والقواعد والكلمات. الكلام نفسه اتدرب عليه وقيسه في صفحة "اتكلم" بالمايك.','This test measures understanding, grammar and vocabulary. Practise and measure speaking on the Speak page with the mic.')}</p>
+     <div class="row" style="margin-top:14px"><button class="btn ghost" id="tAgain">${L('اعيد الاختبار','Retake')}</button><button class="btn" id="tApply">${L(`ابدأ من مرحلة ${LV[lvl]}`,`Start at ${LV[lvl]}`)}</button></div>`;
+  }
+}
+function finishTest(){
+  const v=vocabScore(tst.vans);
+  const ue=eap(tst.uresp),le=eap(tst.lresp);
+  const u={score:thetaScore(ue.theta),sd:ue.sd},l={score:thetaScore(le.theta),sd:le.sd};
+  tst.res={v,u,l,o:overall(v,u,l)};tst.step='result';
+  store.set('fr-lastTest',{date:today(),level:tst.res.o.level,score:+tst.res.o.score.toFixed(2),v:+v.score.toFixed(2),u:+u.score.toFixed(2),l:+l.score.toFixed(2)});
+}
+$('v-test').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||!tst)return;
+  if(b.id==='tStart'){tst.step='vocab'}
+  else if(b.dataset.yn!==undefined){tst.vans.push({band:tst.vocab[tst.vi].band,yes:b.dataset.yn==='1'});tst.vi++;if(tst.vi>=tst.vocab.length)tst.step='uoe'}
+  else if(b.dataset.opt!==undefined){const it=tst.ubank[tst.ucur];tst.uused.add(tst.ucur);tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)tst.step='listen'}
+  else if(b.id==='tPlay'){if(tst.plays>=2)return;const it=tst.lbank[tst.lcur];tst.plays++;say(it.text,{rate:[.85,.9,.98,1.05,1.1,1.15][it.lvl]})}
+  else if(b.dataset.lopt!==undefined){const it=tst.lbank[tst.lcur];tst.lused.add(tst.lcur);tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();if(tst.lresp.length>=LIS_N)finishTest()}
+  else if(b.id==='tAgain'){tst=newTest()}
+  else if(b.id==='tApply'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);fLv=null;location.hash='today';renderAll();return}
+  else return;
+  renderTest();
+});
+document.addEventListener('keydown',e=>{if(location.hash!=='#test'||!tst||tst.step!=='vocab')return;const k=e.key.toLowerCase();if(k==='y'||k==='n'){const btn=document.querySelector(`[data-yn="${k==='y'?1:0}"]`);btn&&btn.click()}});
+
+/* =========================================================
+   routing
+   ========================================================= */
+const VIEWS=['today','path','speak','words','more','test'];
+let shown=null;
+function markNav(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
+function route(){
+  const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';
+  if(v!=='speak')stopRec();
+  VIEWS.forEach(x=>{const el=$('v-'+x);el.hidden=x!==v});
+  const el=$('v-'+v);el.classList.remove('view');void el.offsetWidth;el.classList.add('view');
+  if(v==='test')renderTest();
+  markNav();if(shown!==null)window.scrollTo(0,0);shown=v;
+}
+function renderAll(){renderShell();renderToday();renderPath();renderWords();renderSpeak();renderMore();if(tst)renderTest();route()}
+window.addEventListener('hashchange',route);
+renderAll();
+</script>
