@@ -57,7 +57,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a{color:var(--accent)}
 button{font:inherit;cursor:pointer;color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-h2{font:700 20px/1.35 var(--f-body);margin:0;text-wrap:balance}
+h2,h1.st{font:700 20px/1.35 var(--f-body);margin:0;text-wrap:balance}
+h1.st{font-size:24px}
 p{margin:0}
 .muted{color:var(--muted)}
 .stack{display:grid;gap:14px}
@@ -69,7 +70,7 @@ p{margin:0}
 /* motion */
 @keyframes rise{from{opacity:.001;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes pop{0%{transform:scale(.6);opacity:.001}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}100%{box-shadow:0 0 0 22px transparent}} /* taste-skill-ignore: pulse only while the mic records */
 @keyframes shimmer{to{background-position:-200% 0}}
 .view{animation:rise .38s var(--ease) both}
 .stagger>*{animation:rise .45s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
@@ -80,7 +81,7 @@ header{background:var(--band);color:var(--band-fg)}
 header .wrap{padding-block:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 body{font-variant-numeric:tabular-nums}
 .brand{flex:1;min-width:150px;display:flex;align-items:center;gap:12px}
-.brand svg{width:46px;height:46px;flex:none;border-radius:13px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.brand svg{width:46px;height:46px;flex:none;border-radius:13px}
 .brand b{display:block;font:800 28px/1 var(--f-display);letter-spacing:-.01em;padding-top:4px}
 .brand b span{color:var(--marker)}
 .brand b{white-space:nowrap}
@@ -113,13 +114,13 @@ body{font-variant-numeric:tabular-nums}
 .pb-text strong{display:block;font:700 16px var(--f-display)}
 .pb-text small{color:var(--band-muted);font-size:13px}
 .ring{--p:0;width:60px;height:60px;border-radius:50%;flex:none;display:grid;place-items:center;
-  background:conic-gradient(var(--marker) calc(var(--p)*1%),var(--band-line) 0);transition:--p .8s}
+  background:conic-gradient(var(--marker) calc(var(--p)*1%),var(--band-line) 0);transition:--p .8s} /* taste-skill-ignore: progress ring is a chart */
 .ring div{width:47px;height:47px;border-radius:50%;background:var(--band);display:grid;place-items:center;text-align:center;line-height:1.05}
 .ring strong{font:600 16px var(--f-display)}
 .ring em{font:normal 10px var(--f-mono);color:var(--band-muted)}
 
 /* nav */
-nav{position:fixed;inset:auto 0 0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav{position:fixed;inset:auto 0 0;z-index:6;background:var(--sunk);padding-bottom:env(safe-area-inset-bottom,0px)}
 nav .wrap{display:grid;grid-template-columns:repeat(5,1fr)}
 nav a{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding-block:8px 6px;text-decoration:none;color:var(--muted);font-size:12px;font-weight:500;transition:color .2s}
 nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s var(--ease)}
@@ -127,7 +128,7 @@ nav a[aria-current="page"]{color:var(--accent)}
 nav a[aria-current="page"] svg{transform:translateY(-2px)}
 main .wrap{padding-block:22px 110px}
 @media (min-width:760px){
-  nav{position:sticky;top:env(safe-area-inset-top,0px);inset-inline:auto;bottom:auto;border-top:0;border-bottom:1px solid var(--line);padding-bottom:0}
+  nav{position:sticky;top:env(safe-area-inset-top,0px);inset-inline:auto;bottom:auto;border-top:0;padding-bottom:0}
   nav .wrap{display:flex;gap:6px;padding-block:8px}
   nav a{flex-direction:row;gap:8px;font-size:15px;padding:8px 14px;border-radius:99px}
   nav a[aria-current="page"]{background:var(--accent-soft)}
@@ -180,9 +181,9 @@ main .wrap{padding-block:22px 110px}
 .line i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .6s var(--ease)}
 .next{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);border-radius:12px;padding:12px 14px}
 .next b{color:var(--accent);flex:none}
-.cta{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#7b3fe4));color:#fff;border-radius:var(--r);padding:18px}
-.cta p{opacity:.85;font-size:14px}
-.cta .btn{background:#fff;color:#1b2559}
+.cta{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:var(--marker);color:var(--marker-ink);border-radius:var(--r);padding:18px}
+.cta p{font-size:15px}
+.cta .btn{background:var(--marker-ink);color:var(--marker)}
 .tasks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;transition:background .25s,border-color .25s}
 .task.done{background:var(--ok-soft);border-color:transparent}
@@ -203,7 +204,7 @@ a.stat:hover{border-color:var(--accent)}
 /* stages */
 .stages{display:grid;gap:10px}
 .stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.stage.current{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.stage.current{border:2px solid var(--accent)}
 .stage summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px}
 .stage summary::-webkit-details-marker{display:none}
 .code{font:700 15px/1 var(--f-display);width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:var(--sunk)}
@@ -212,7 +213,7 @@ a.stat:hover{border-color:var(--accent)}
 .s-name{font-weight:700;font-size:17px;display:block}
 .s-meta{font-size:13px;color:var(--muted)}
 .s-count{font:500 13px var(--f-mono);color:var(--muted)}
-.s-body{display:grid;gap:16px;border-top:1px solid var(--line);padding:16px 16px 18px}
+.s-body{display:grid;gap:16px;padding:4px 16px 18px}
 .label{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px}
 .checks{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .checks label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 0}
@@ -237,7 +238,7 @@ a.item:hover{border-color:var(--accent);transform:translateY(-2px)}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:3px;margin-bottom:16px}
 .tabs button{border:0;background:transparent;padding:9px;border-radius:9px;font-weight:700;color:var(--muted)}
-.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
 
 /* tips */
 .methods{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
@@ -262,8 +263,9 @@ td button{border:0;background:transparent;padding:0;color:var(--accent);font-fam
 .flip.on .flip-in{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px 20px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center}
 .face.back{transform:rotateY(180deg)}
+.face.back{visibility:hidden;transition:visibility 0s .27s}.flip.on .face.back{visibility:visible}.flip.on .face:not(.back){visibility:hidden;transition:visibility 0s .27s}
 .word{font:800 clamp(30px,8vw,42px)/1.15 var(--f-display)}
-.word span{background:linear-gradient(transparent 58%,var(--marker) 58%);padding:0 .1em}
+.word span{text-decoration:underline .32em var(--marker);text-underline-offset:-.12em;text-decoration-skip-ink:none}
 .ex{font-size:17px;color:var(--muted);font-family:var(--f-display)}
 .ar{font-size:21px;font-weight:700}
 .kind{font:500 12px var(--f-mono);color:var(--muted)}
@@ -291,7 +293,7 @@ td button{border:0;background:transparent;padding:0;color:var(--accent);font-fam
 /* test */
 .t-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-size:14px;color:var(--muted)}
 .t-bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
-.t-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--marker));transition:width .4s var(--ease)}
+.t-bar i{display:block;height:100%;background:var(--accent);transition:width .4s var(--ease)}
 .q{font:600 clamp(19px,4.6vw,23px)/1.5 var(--f-display);margin-bottom:18px}
 .q .gap{display:inline-block;min-width:3.2em;border-bottom:2px solid var(--accent);height:1em;vertical-align:baseline}
 .passage{background:var(--sunk);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-family:var(--f-display);line-height:1.6}
@@ -302,7 +304,7 @@ td button{border:0;background:transparent;padding:0;color:var(--accent);font-fam
 .opt.right{border-color:var(--ok);background:var(--ok-soft);animation:pop .35s var(--ease)}
 .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
 textarea{width:100%;font:500 18px/1.5 var(--f-display);color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:12px 14px;resize:vertical}
-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea:focus{outline:none;border-color:var(--accent);outline:3px solid var(--accent-soft)}
 .review{display:grid;gap:8px;text-align:start}
 .review li{list-style:none;background:var(--sunk);border-radius:12px;padding:12px 14px;font-family:var(--f-display)}
 .review ul{margin:0;padding:0;display:grid;gap:8px}
@@ -319,12 +321,163 @@ textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(
 .intro-list{display:grid;gap:10px;counter-reset:s;margin:0;padding:0;list-style:none}
 .intro-list li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--sunk);border-radius:12px;padding:12px 14px}
 .intro-list li::before{counter-increment:s;content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font:600 13px var(--f-mono)}
+
+/* =========================================================
+   Landing (#home). Direction: colour chapters. One fixed colour world (same in light and dark):
+   each chapter is one flat field; the hero's swatch column links to them in the same colours.
+   ========================================================= */
+.lp{--c-paper:#EEF1F7;--c-yellow:#FFD84A;--c-sky:#8FA3FF;--c-blue:#2F4FE0;--c-navy:#121935;--c-night:#0B1020;--c-ink:#121935;--c-white:#FFFFFF;
+  --m:clamp(16px,2.4vw,40px);--h-xl:clamp(52px,8.6vw,132px);--h-l:clamp(40px,5vw,80px);--t-m:clamp(20px,1.7vw,26px);--t-s:18px;--t-xs:15px;
+  background:var(--c-paper);color:var(--c-ink);font-size:var(--t-s);line-height:1.55}
+body.on-home .side,body.on-home main{display:none}
+body.on-home::before{background:var(--c-paper)}
+.lp h1,.lp h2{font-family:var(--f-display);font-weight:800;letter-spacing:-.02em;line-height:1;margin:0;text-wrap:balance}
+.lp p{max-width:60ch}
+.lp a{color:inherit}
+.lp .lp-btn{color:var(--c-navy)}
+.lp .lp-btn.dark{color:var(--c-white)}
+.lp .swatches .sw1,.lp .swatches .sw2{color:var(--c-navy)}
+.lp .swatches .sw3,.lp .swatches .sw4{color:var(--c-white)}
+.lp .swatches .sw5{color:var(--c-yellow)}
+.lp-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 26px;border:0;border-radius:0;font:700 18px var(--f-body);text-decoration:none;background:var(--c-white);color:var(--c-navy);transition:transform .15s var(--ease),background .2s,color .2s}
+.lp-btn:hover{background:var(--c-yellow)}
+.lp-btn:active{transform:scale(.97)}
+.lp-btn.dark{background:var(--c-navy);color:var(--c-white)}
+.lp-btn.dark:hover{background:var(--c-blue)}
+.lp :focus-visible{outline:3px solid var(--c-yellow);outline-offset:3px}
+
+/* hero: photograph panel + swatch column that is also the navigation */
+.lp-hero{display:grid;grid-template-columns:minmax(0,1fr) clamp(170px,16.6vw,260px);gap:10px;padding:10px;min-height:100svh;background:var(--c-paper)}
+.lp-panel{position:relative;border-radius:12px;overflow:hidden;min-height:calc(100svh - 20px);color:var(--c-white);display:grid;grid-template-rows:auto 1fr auto}
+.lp-panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%;animation:drift 24s ease-in-out infinite alternate}
+@keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.1) translateY(-1.5%)}}
+.lp-panel::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(10,14,30,.8),rgba(10,14,30,.32) 40%,rgba(10,14,30,.5))} /* taste-skill-ignore: neutral scrim over the photo */ /* neutral scrim for legibility */
+.lp-panel>*{position:relative;z-index:1}
+.lp-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:28px}
+.lp-mark{display:flex;align-items:center;gap:12px;font:800 26px/1 var(--f-display);text-decoration:none;white-space:nowrap}
+.lp-mark svg{width:44px;height:44px;border-radius:12px}
+.lp-lang{background:transparent;border:2px solid rgba(255,255,255,.7);color:var(--c-white);min-height:40px;padding:0 14px;font:600 15px var(--f-body)}
+.lp-lang:hover{background:var(--c-white);color:var(--c-navy)}
+.lp-head{align-self:start;padding:6vh var(--m) 0;text-align:center}
+.lp-head h1{font-size:var(--h-xl);color:var(--c-white)}
+.lp-head p{margin:32px auto 0;font-size:var(--t-m);max-width:34ch;color:var(--c-white)}
+.lp-foot{display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 var(--m) 36px}
+.lp-foot small{font-size:var(--t-xs);color:rgba(255,255,255,.9)}
+.swatches{display:grid;grid-template-rows:repeat(5,1fr);min-height:calc(100svh - 20px);border-radius:12px;overflow:hidden}
+.swatches a{display:block;padding:20px;font:600 17px/1.3 var(--f-body);text-decoration:none;transition:padding .2s var(--ease)}
+.swatches a:hover{padding-top:28px}
+.sw1{background:#DCE2F0}
+.sw2{background:var(--c-yellow);color:var(--c-navy)} .sw3{background:var(--c-blue);color:var(--c-white)}
+.sw4{background:var(--c-navy);color:var(--c-white)} .sw5{background:var(--c-night);color:var(--c-yellow)}
+
+/* showcase: input half, output half (live dictation) */
+.lp-show{display:grid;grid-template-columns:1fr 1fr;min-height:90svh}
+.lp-in,.lp-out{position:relative;padding:18svh var(--m) 120px;display:grid;align-content:start;gap:22px}
+.lp-in{background:var(--c-navy);color:var(--c-white)}
+.lp-out{background:var(--c-paper);color:var(--c-navy)}
+.lp-in label{font-size:var(--t-m);font-weight:600}
+.lp-in textarea{background:#1c2547;border:0;color:var(--c-white);font:500 clamp(20px,1.7vw,24px)/1.45 var(--f-display);max-width:34ch;border-radius:8px;padding:16px 18px}
+.lp-in textarea:focus{box-shadow:none;outline:3px solid var(--c-yellow)}
+.lp-in .row{justify-content:flex-start}
+.lp-split{position:absolute;bottom:32px;font-size:var(--h-l)}
+.lp-in .lp-split{inset-inline-start:var(--m)}
+.lp-out .lp-split{inset-inline-end:var(--m)}
+.lp-frag{background:var(--c-white);border-radius:12px;padding:24px;max-width:500px;display:grid;gap:14px}
+.lp-frag .target{font-size:clamp(20px,1.8vw,26px);text-align:left}
+.lp-frag .target .gapw{color:#6b7591}
+.lp-frag .target .hit{color:#17885A}
+.lp-frag .scorebar{display:flex;align-items:baseline;gap:12px}
+.lp-frag .scorebar b{font:800 44px/1 var(--f-display)}
+.lp-frag p{font-size:var(--t-xs);color:#4c5675}
+
+/* how it works: one card, four fields */
+.lp-how{display:grid;grid-template-columns:repeat(4,1fr);min-height:84svh}
+.lp-how>div{position:relative;padding:28px;display:grid;grid-template-rows:auto 1fr auto;gap:24px}
+.lp-how h2{font-size:var(--t-m);line-height:1.2}
+.lp-how .f1{background:var(--c-yellow);color:var(--c-navy)} .lp-how .f2{background:var(--c-sky);color:var(--c-navy)}
+.lp-how .f3{background:var(--c-blue);color:var(--c-white)} .lp-how .f4{background:var(--c-navy);color:var(--c-white)}
+.lp-card{align-self:center;justify-self:center;width:min(100%,260px);background:var(--c-white);color:var(--c-navy);border-radius:12px;padding:18px;display:grid;gap:10px;font-size:15px;transition:transform .15s var(--ease)}
+.lp-how>div:hover .lp-card{transform:translateY(-6px)}
+.lp-card b{font:800 30px/1 var(--f-display)}
+.lp-card .bar{height:8px;background:#e3e7f2;border-radius:99px;overflow:hidden}
+.lp-card .bar i{display:block;height:100%;background:var(--c-blue)}
+.lp-card ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.lp-card li{display:flex;gap:8px;align-items:center}
+.lp-card li i{width:16px;height:16px;border-radius:4px;background:#e3e7f2;flex:none}
+.lp-card li.on i{background:var(--c-blue)}
+.lp-card li.on{color:#4c5675;text-decoration:line-through}
+.lp-clause{font-size:var(--t-m);line-height:1.3;font-weight:600;max-width:16ch}
+
+/* list: the seven stops as a poster */
+.lp-list{background:var(--c-blue);color:var(--c-white);padding:80px var(--m)}
+.lp-list h2{font-size:var(--t-m);margin-bottom:28px;color:var(--c-yellow)}
+.lp-list ol{list-style:none;margin:0;padding:0}
+.lp-list li{display:flex;justify-content:space-between;align-items:baseline;gap:24px;transition:color .2s}
+.lp-list li:hover{color:var(--c-yellow)}
+.lp-list .big{font:800 clamp(44px,7.4vw,116px)/1.4 var(--f-display);letter-spacing:-.02em}
+.lp-list .det{font-size:var(--t-s);white-space:nowrap}
+
+/* cta: the action tile */
+.lp-cta{background:var(--c-navy);padding:120px 0;overflow:hidden}
+.lp-tiles{display:grid;grid-template-columns:2fr 8fr 2fr;gap:12px;margin-inline:-6vw}
+.lp-tiles>*{height:360px;border-radius:12px;overflow:hidden}
+.lp-tiles img{width:100%;height:100%;object-fit:cover}
+.lp-tile{background:var(--c-yellow);color:var(--c-navy);padding:40px;display:grid;align-content:center;gap:16px}
+.lp-tile h2{font-size:40px}
+.lp-tile p{font-size:17px}
+.lp-flat{background:var(--c-blue)}
+
+/* footer: the mark, built large */
+.lp-footer{background:var(--c-night);color:var(--c-white);padding:72px var(--m) 32px}
+.lp-big{display:flex;align-items:flex-end;gap:4vw;flex-wrap:wrap}
+.lp-big svg{width:min(34svh,40vw);height:auto;border-radius:clamp(16px,3vw,40px)}
+.lp-big span{font:800 clamp(56px,11vw,180px)/.9 var(--f-display);letter-spacing:-.03em}
+.lp-big span em{font-style:normal;color:var(--c-yellow)}
+.lp-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:56px;font-size:var(--t-xs)}
+.lp-cols h3{font-size:var(--t-xs);color:var(--c-yellow);margin:0 0 10px}
+.lp-cols a{display:block;text-decoration:none;padding:4px 0;color:#c9d0ea}
+.lp-cols a:hover{color:var(--c-white)}
+.lp-cols p{color:#c9d0ea;font-size:var(--t-xs)}
+.lp-last{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:48px;font-size:var(--t-xs);color:#c9d0ea}
+.lp .lp-last .lp-btn{min-height:42px;font-size:15px;background:var(--c-yellow);color:var(--c-navy)}
+
+/* entrances: content is visible without script; with script it rises in once */
+.js .rv{opacity:.001;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(var(--d,0)*75ms)}
+.js .rv.in{opacity:1;transform:none}
+
+@media (max-width:860px){
+  .lp-hero{grid-template-columns:1fr;padding:8px;gap:8px;min-height:0}
+  .lp-panel{min-height:64svh}
+  .lp-head h1{font-size:12vw}
+  .lp-head p{display:none}
+  .lp-foot small{display:none}
+  .swatches{grid-template-rows:none;min-height:0}
+  .swatches a{padding:14px 20px;font-size:15px;min-height:52px}
+  .lp-show{grid-template-columns:1fr}
+  .lp-in,.lp-out{min-height:0;padding:40px 20px 110px}
+  .lp-how{grid-template-columns:1fr 1fr;min-height:0}
+  .lp-how>div{min-height:0;grid-template-rows:auto auto auto;padding:28px 20px}
+  .lp-card{align-self:start}
+  .lp-list{padding:56px 16px}
+  .lp-list li{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:22px}
+  .lp-list .big{font-size:12vw}
+  .lp-list .det{font-size:15px}
+  .lp-cta{padding:56px 0}
+  .lp-tiles{grid-template-columns:1fr 1fr;margin-inline:16px;gap:12px}
+  .lp-tile{grid-column:1/-1;grid-row:1;height:auto;min-height:300px;padding:28px}
+  .lp-tile h2{font-size:28px}
+  .lp-tiles>img,.lp-tiles>.lp-flat,.lp-tiles>div:not(.lp-tile){height:120px}
+  .lp-cols{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){.lp-how{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none}.lp-panel img{animation:none}}
 </style>
 
 <aside class="side">
 <header><div class="wrap" id="head"></div></header>
 <nav aria-label="Sections"><div class="wrap" id="nav"></div></nav>
 </aside>
+<div id="v-home" class="lp" hidden></div>
 <main><div class="wrap">
   <noscript><h1>Fluent Route: اتعلم إنجليزي من الصفر للطلاقة</h1><p>مسار مجاني من A1 لـ C2: اختبار تحديد مستوى، تدريب كلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وأفلام وكتب لكل مستوى. شغّل JavaScript عشان تستخدم الموقع.</p></noscript>
   <section id="v-today" class="stack"></section>
@@ -340,6 +493,7 @@ textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(
    state + i18n
    ========================================================= */
 const $=id=>document.getElementById(id);
+document.documentElement.classList.add('js');
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const S={lang:store.get('fr-lang','ar'),accent:store.get('fr-accent','us')};
 const L=(ar,en)=>S.lang==='ar'?ar:en;          // inline bilingual text
@@ -723,7 +877,7 @@ const skipped=i=>!!place&&i<place.level;
 const stageDone=i=>skipped(i)?STAGES[i].c.length:STAGES[i].c.filter((_,j)=>checks[i+'-'+j]).length;
 function currentStage(){const i=STAGES.findIndex((s,i)=>stageDone(i)<s.c.length);return i<0?STAGES.length-1:i}
 const forLevel=(t,lv)=>RES.filter(r=>r[0]===t&&r[2]<=lv&&lv<=r[3]);
-const link=r=>r[6]||'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]+(r[0]==='book'?' book':''));
+const link=r=>r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
 const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}" target="_blank" rel="noopener"><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small></a>`;
 
 /* =========================================================
@@ -741,7 +895,7 @@ const NAV=[['today','النهارده','Today'],['path','المسار','Path'],[
 function renderShell(){
   document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
   const total=STAGES.reduce((a,s)=>a+s.c.length,0),n=STAGES.reduce((a,_,i)=>a+stageDone(i),0),p=Math.round(n/total*100);
-  $('head').innerHTML=`<div class="brand">${LOGO}<div><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div></div>
+  $('head').innerHTML=`<a class="brand" href="#home" style="color:inherit;text-decoration:none">${LOGO}<div><b class="en" dir="ltr">Fluent <span>Route</span></b><small>${L('من الصفر لحد ما الإنجليزي يطلع لوحده','From zero until English comes out on its own')}</small></div></a>
    <div class="switches">
     <div class="seg" role="group" aria-label="Language"><button data-lang="ar" aria-pressed="${S.lang==='ar'}">عربي</button><button data-lang="en" aria-pressed="${S.lang==='en'}">EN</button></div>
    </div>
@@ -775,7 +929,7 @@ const resLink=r=>r?`<a href="${esc(link(r))}" target="_blank" rel="noopener" cla
 function tasksFor(lv){return [
   {k:'anki',t:L('كلمات','Words'),m:15,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
   {k:'listen',t:L('استماع','Listening'),m:20,s:L('النهارده: ','Today: ')+resLink(pick(lv<1?'yt':'pod',lv))},
-  {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
+  {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`}, // taste-skill-ignore: the word Shadowing, not a CSS shadow
   {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:30,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
   {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
   {k:'read',t:L('قراية','Reading'),m:10,s:L('١٠ صفحات من ','10 pages of ')+resLink(pick('book',lv))},
@@ -790,7 +944,7 @@ function renderToday(){
   v.innerHTML=`<div class="today-grid"><div class="stack">
    ${place?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٣ أجزاء في حوالي ٢٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 3-part placement test, about 20 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
-     <div class="lvl"><span class="badge en">${LV[lv]}</span><div><p class="muted">${L('انت دلوقتي في مرحلة','You are now at')}</p><h2>${tx(s.n)}</h2></div></div>
+     <div class="lvl"><span class="badge en">${LV[lv]}</span><div><h1 class="st">${L('النهارده','Today')}</h1><p class="muted">${L('انت في مرحلة','Your stage')}: <strong>${tx(s.n)}</strong></p></div></div>
      <p>${tx(s.g)}</p>
      <div class="line"><i style="width:${done/s.c.length*100}%"></i></div>
      <p class="muted" style="font-size:14px">${L(`${done} من ${s.c.length} اتعملت · المدة المتوقعة ${tx(s.d)}`,`${done} of ${s.c.length} done · expected ${tx(s.d)}`)}${place?` · <a href="#test">${L('اعيد الاختبار','Retake the test')}</a>`:''}</p>
@@ -798,7 +952,7 @@ function renderToday(){
    </div>
    <div class="statrow"><a class="stat" href="#words"><strong class="en">${dueCards('all').length}</strong><span>${L('كلمة مستنية مراجعة','cards to review')}</span></a><div class="stat"><strong class="en">${streakFrom(fullDays,today())}</strong><span>${L('يوم ورا بعض','day streak')}</span></div></div>
    </div><div class="stack">
-   <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده 👏','All done today 👏'):L(`${n} من ${T.length}`,`${n} of ${T.length}`)}</small></div>
+   <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده','All done today'):L(`${n} من ${T.length}`,`${n} of ${T.length}`)}</small></div>
    <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><button class="tick" data-task="${t.k}" aria-pressed="${!!day.done[t.k]}" aria-label="${esc(t.t)}">${tick}</button><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span></span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
    </div></div>`;
   v.querySelectorAll('.today-grid>.stack').forEach(stagger);
@@ -806,7 +960,7 @@ function renderToday(){
 $('v-today').addEventListener('click',e=>{
   const b=e.target.closest('[data-task]');if(!b)return;
   day.done[b.dataset.task]=!day.done[b.dataset.task];store.set('fr-day',day);
-  const all=tasksFor(currentStage()).every(t=>day.done[t.k]);
+  const all=tasksFor(currentStage()).some(t=>day.done[t.k]);
   fullDays=fullDays.filter(d=>d!==day.d);if(all)fullDays.push(day.d);store.set('fr-days',fullDays.slice(-400));
   renderToday();$('v-today').classList.remove('stagger');
 });
@@ -816,11 +970,11 @@ $('v-today').addEventListener('click',e=>{
    ========================================================= */
 function renderPath(){
   const open=[...document.querySelectorAll('#stages details')].map(d=>d.open),cur=currentStage();
-  $('v-path').innerHTML=`<div class="sec-head"><h2>${L('المراحل السبعة','The seven stages')}</h2><small>${place?L(`حددت مستواك ${LV[place.level]} بالاختبار`,`Placed at ${LV[place.level]} by the test`):`<a href="#test">${L('اعرف مستواك بالاختبار','Find your level with the test')}</a>`}</small></div>
+  $('v-path').innerHTML=`<div class="sec-head"><h1 class="st">${L('المراحل السبعة','The seven stages')}</h1><small>${place?L(`حددت مستواك ${LV[place.level]} بالاختبار`,`Placed at ${LV[place.level]} by the test`):`<a href="#test">${L('اعرف مستواك بالاختبار','Find your level with the test')}</a>`}</small></div>
    <div class="stages" id="stages">${STAGES.map((s,i)=>{
     const n=stageDone(i),full=n===s.c.length,picks=Object.keys(TYPES).map(t=>forLevel(t,i)[0]).filter(Boolean);
     return `<details class="stage ${full?'done':''} ${i===cur?'current':''}" ${(open.length?open[i]:i===cur)?'open':''}>
-      <summary><span class="code en">${full?'✓':LV[i]}</span><span><span class="s-name">${tx(s.n)}</span><span class="s-meta">${skipped(i)?L('عدّيتها بالاختبار','Passed by the test'):tx(s.d)}</span></span><span class="s-count en">${n}/${s.c.length}</span></summary>
+      <summary><span class="code en">${full?'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" aria-label="done"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':LV[i]}</span><span><span class="s-name">${tx(s.n)}</span><span class="s-meta">${skipped(i)?L('عدّيتها بالاختبار','Passed by the test'):tx(s.d)}</span></span><span class="s-count en">${n}/${s.c.length}</span></summary>
       <div class="s-body">
         <p><strong>${L('الهدف:','Goal:')}</strong> ${tx(s.g)}</p>
         <div><p class="label">${L('علّم عليها لما تخلصها','Tick each one when done')}</p>
@@ -844,23 +998,26 @@ const DAY=864e5, GAPS=[0,1,3,7,16,35];
 function grade(st,known,now){const box=known?Math.min((st?.box??0)+1,GAPS.length-1):0;return {box,due:now+GAPS[box]*DAY}}
 console.assert(grade(undefined,true,0).box===1&&grade({box:3},false,5).due===5&&grade({box:5},true,0).box===5,'grade');
 let srs=store.get('fr-srs',{}), cat='all', cur=null;
-function dueCards(c){const now=Date.now();return CARDS.filter(x=>(c==='all'||x[0]===c)&&(!srs[x[1]]||srs[x[1]].due<=now))}
+const NEW_PER_DAY=10;
+function dueCards(c){const now=Date.now(),pool=CARDS.filter(x=>c==='all'||x[0]===c);
+  const newLeft=Math.max(0,NEW_PER_DAY-Object.values(srs).filter(s=>s.first===today()).length);
+  return pool.filter(x=>srs[x[1]]&&srs[x[1]].due<=now).concat(pool.filter(x=>!srs[x[1]]).slice(0,newLeft))}
 function renderWords(){
   const pool=CARDS.filter(c=>cat==='all'||c[0]===cat),due=dueCards(cat),learned=pool.filter(c=>(srs[c[1]]?.box||0)>=3).length;
   if(!cur||!due.includes(cur))cur=due[Math.floor(Math.random()*due.length)]||null;
-  $('v-words').innerHTML=`<div class="sec-head"><h2>${L('كلمات بيقولها الـ native كل يوم','Words natives use every day')}</h2><small>${L(`${due.length} للمراجعة · ${learned}/${pool.length} اتحفظت`,`${due.length} to review · ${learned}/${pool.length} learned`)}</small></div>
+  $('v-words').innerHTML=`<div class="sec-head"><h1 class="st">${L('كلمات بيقولها الـ native كل يوم','Words natives use every day')}</h1><small>${L(`${due.length} للمراجعة · ${learned}/${pool.length} اتحفظت`,`${due.length} to review · ${learned}/${pool.length} learned`)}</small></div>
    <div class="chips">${Object.entries(CATS).map(([k,v])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${tx(v)}</button>`).join('')}</div>
    ${cur?`<div class="flip" id="flip"><div class="flip-in">
       <div class="face"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ex" dir="ltr">${esc(cur[3])}</p><p class="muted">${L('قول الجملة بصوت عالي وخمّن المعنى','Say the sentence out loud and guess the meaning')}</p></div>
       <div class="face back"><span class="kind">${tx(CATS[cur[0]])}</span><p class="word en" dir="ltr"><span>${esc(cur[1])}</span></p><p class="ar"${S.lang==='en'?' dir="ltr"':''}>${esc(S.lang==='ar'?cur[2]:cur[4])}</p>${S.lang==='en'?`<p class="muted" dir="rtl">${esc(cur[2])}</p>`:''}<p class="ex" dir="ltr">${esc(cur[3])}</p></div>
      </div></div>
      <div class="row" style="margin-top:14px" id="cardBtns"><button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn" id="flipBtn">${L('اعرض المعنى','Show meaning')}</button></div>`
-   :`<div class="empty-card"><p class="ar">${L('خلصت مراجعة النهارده 👏','Done for today 👏')}</p><p class="muted">${L('ارجع بكرة، البطاقات هترجعلك في ميعادها.','Come back tomorrow. Cards return when they are due.')}</p></div>`}`;
+   :`<div class="empty-card"><p class="ar">${L('خلصت مراجعة النهارده','Done for today')}</p><p class="muted">${L('ارجع بكرة، البطاقات هترجعلك في ميعادها.','Come back tomorrow. Cards return when they are due.')}</p></div>`}`;
 }
 $('v-words').addEventListener('click',e=>{
   const c=e.target.closest('[data-cat]');if(c){cat=c.dataset.cat;cur=null;renderWords();return}
   if(e.target.id==='flipBtn'){$('flip').classList.add('on');$('cardBtns').innerHTML=`<button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn ghost" id="again">${L('لسه','Not yet')}</button><button class="btn good" id="know">${L('عارفها','I know it')}</button>`;return}
-  if(e.target.id==='know'||e.target.id==='again'){srs[cur[1]]=grade(srs[cur[1]],e.target.id==='know',Date.now());store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
+  if(e.target.id==='know'||e.target.id==='again'){srs[cur[1]]={...grade(srs[cur[1]],e.target.id==='know',Date.now()),first:srs[cur[1]]?.first||today()};store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
 });
 
 /* =========================================================
@@ -871,7 +1028,7 @@ let sp={mode:'repeat',lv:null,idx:0,rec:null,heard:'',result:null,err:'',prompt:
 function speakLevel(){return sp.lv??Math.min(currentStage(),5)}
 function renderSpeak(){
   const lv=speakLevel(),v=$('v-speak');
-  const head=`<div class="sec-head"><h2>${L('تدريب','Practice')}</h2>${accentPick()}</div>
+  const head=`<div class="sec-head"><h1 class="st">${L('تدريب','Practice')}</h1>${accentPick()}</div>
    <div class="tabs">${[['repeat','قلّد','Repeat'],['free','اتكلم','Talk'],['dict','إملاء','Dictation'],['ear','ودنك','Ear']].map(([k,a,e])=>`<button data-mode="${k}" aria-pressed="${sp.mode===k}">${L(a,e)}</button>`).join('')}</div>
    ${sp.mode==='ear'?'':`<div class="chips">${LV.slice(0,6).map((l,i)=>`<button class="chip en" data-slv="${i}" aria-pressed="${i===lv}">${l}</button>`).join('')}</div>`}`;
   const noSR=!SR?`<p class="note">${L('المتصفح ده مش بيدعم التعرّف على الصوت. استخدم Chrome أو Edge على الكمبيوتر أو الموبايل.','This browser does not support speech recognition. Use Chrome or Edge on desktop or Android.')}</p>`:'';
@@ -991,7 +1148,7 @@ function renderMore(){
   const tabs=`<div class="tabs"><button data-mt="lib" aria-pressed="${moreTab==='lib'}">${L('المكتبة','Library')}</button><button data-mt="tips" aria-pressed="${moreTab==='tips'}">${L('نصايح ونطق','Tips & sounds')}</button></div>`;
   if(moreTab==='lib'){
     const list=RES.filter(r=>(fType==='all'||r[0]===fType)&&(fLv<0||(r[2]<=fLv&&fLv<=r[3])));
-    v.innerHTML=tabs+`<div class="sec-head"><h2>${L('المكتبة','Library')}</h2><small>${L(`${list.length} مصدر`,`${list.length} resources`)}</small></div>
+    v.innerHTML=tabs+`<div class="sec-head"><h1 class="st">${L('المكتبة','Library')}</h1><small>${L(`${list.length} مصدر`,`${list.length} resources`)}</small></div>
      <div class="chips">${[[-1,L('كل المستويات','All levels')],...LV.map((l,i)=>[i,l])].map(([k,t])=>`<button class="chip" data-l="${k}" aria-pressed="${k===fLv}">${t}</button>`).join('')}</div>
      <div class="chips">${[['all',L('الكل','All')],...Object.entries(TYPES).map(([k,p])=>[k,tx(p)])].map(([k,t])=>`<button class="chip" data-t="${k}" aria-pressed="${k===fType}">${t}</button>`).join('')}</div>
      <div class="list" id="libList">${list.map(r=>itemHTML(r,true)).join('')||`<p class="muted">${L('مفيش حاجة بالاختيار ده.','Nothing matches.')}</p>`}</div>`;
@@ -1003,7 +1160,7 @@ function renderMore(){
       [L('سجّل صوتك','Record yourself'),L('دقيقة كل أسبوع، واسمع القديم. هتلاقي أخطاءك بنفسك.','One minute a week. Compare with old recordings and spot your own mistakes.')],
       [L('فكّر بالإنجليزي','Think in English'),L('اوصف اللي بتعمله في دماغك: "I\'m making coffee".','Narrate in your head: "I\'m making coffee". This removes translation.')],
       [L('اختار لهجة واحدة','Pick one accent'),L('أمريكي أو بريطاني، والتزم بيها في الاستماع والتقليد.','American or British, and stay with it while listening and shadowing.')]];
-    v.innerHTML=tabs+`<div class="sec-head"><h2>${L('الطرق اللي بتفرق فعلًا','What actually works')}</h2></div>
+    v.innerHTML=tabs+`<div class="sec-head"><h1 class="st">${L('الطرق اللي بتفرق فعلًا','What actually works')}</h1></div>
      <div class="methods">${M.map(([a,b])=>`<div class="panel"><strong>${a}</strong><p>${b}</p></div>`).join('')}</div>
      <div class="sec-head"><h2>${L('أصوات بتتعب العرب','Sounds Arabic speakers find hard')}</h2><small>${L('دوس واسمع، وبعدين قولها','Tap, listen, then say it')}</small></div>
      <div class="pairs">${PAIRS.map(w=>`<span class="pair"><button class="en" data-say="${w}">${w}</button><button data-say="${w}" data-slow="1">${L('بطيء','slow')}</button></span>`).join('')}</div>
@@ -1036,7 +1193,7 @@ function renderTest(){
   const v=$('v-test');
   if(tst.step==='intro'){
     v.innerHTML=`<div class="stack">
-      <div class="sec-head"><h2>${L('اختبار تحديد المستوى','Placement test')}</h2><small>${L('حوالي ٢٠ دقيقة','About 20 minutes')}</small></div>
+      <div class="sec-head"><h1 class="st">${L('اختبار تحديد المستوى','Placement test')}</h1><small>${L('حوالي ٢٠ دقيقة','About 20 minutes')}</small></div>
       <p>${L('الاختبار بيتغير على حسب إجاباتك زي الاختبارات الرسمية: لو جاوبت صح السؤال الجاي بيصعب، ولو غلط بيسهل. كده بيوصل لمستواك بأسئلة أقل وبدقة أعلى.','The test adapts like official computer tests: a right answer makes the next question harder, a wrong one makes it easier. This finds your level with fewer questions and more accuracy.')}</p>
       <ol class="intro-list">
         <li><span><strong>${L('الكلمات','Vocabulary')}</strong><br><span class="muted">${L('٨٠ كلمة: قول لو عارف معناها. فيه كلمات مش حقيقية متحطوطة عشان تكشف التخمين، فمتقولش "عارفها" غير لو متأكد.','80 words: say if you know the meaning. Some are fake words that catch guessing, so only say yes if you are sure.')}</span></span></li>
@@ -1084,7 +1241,7 @@ function renderTest(){
       ${bar(L('الاستماع','Listening'),r.l.score)}
       <div class="scale en">${LV.slice(0,6).map(l=>`<span>${l}</span>`).join('')}</div>
      </div>
-     ${tst.wrong.length?`<details class="panel review" style="margin-top:14px"><summary>${L(`راجع أخطائك (${tst.wrong.length})`,`Review your mistakes (${tst.wrong.length})`)}</summary><ul dir="ltr">${tst.wrong.map(w=>`<li><span class="tag">${LV[w.lvl]}</span> ${esc(w.q.replace('___','_____'))}<br><span style="color:var(--bad)">✗ ${esc(w.you)}</span> · <span style="color:var(--ok)">✓ ${esc(w.ans)}</span>${w.say?` · <button class="btn ghost" style="padding:2px 10px" data-say="${esc(w.say)}">▶</button>`:''}</li>`).join('')}</ul></details>`:''}
+     ${tst.wrong.length?`<details class="panel review" style="margin-top:14px"><summary>${L(`راجع أخطائك (${tst.wrong.length})`,`Review your mistakes (${tst.wrong.length})`)}</summary><ul dir="ltr">${tst.wrong.map(w=>`<li><span class="tag">${LV[w.lvl]}</span> ${esc(w.q.replace('___','_____'))}<br><span style="color:var(--bad)">${L('إجابتك','You')}: ${esc(w.you)}</span> · <span style="color:var(--ok)">${L('الصح','Correct')}: ${esc(w.ans)}</span>${w.say?` · <button class="btn ghost" style="padding:2px 10px" data-say="${esc(w.say)}">▶</button>`:''}</li>`).join('')}</ul></details>`:''}
      <p class="note" style="margin-top:14px">${L('الاختبار ده بيقيس الفهم والقواعد والكلمات. الكلام نفسه اتدرب عليه وقيسه في صفحة "تدريب" بالمايك.','This test measures understanding, grammar and vocabulary. Practise and measure speaking on the Practice page with the mic.')}</p>
      <div class="row" style="margin-top:14px"><button class="btn ghost" id="tAgain">${L('اعيد الاختبار','Retake')}</button><button class="btn" id="tApply">${L(`ابدأ من مرحلة ${LV[lvl]}`,`Start at ${LV[lvl]}`)}</button></div>`;
   }
@@ -1101,10 +1258,10 @@ $('v-test').addEventListener('click',e=>{
   if(b.id==='tStart'){tst.step='vocab'}
   else if(b.dataset.yn!==undefined){tst.vans.push({band:tst.vocab[tst.vi].band,yes:b.dataset.yn==='1'});tst.vi++;if(tst.vi>=tst.vocab.length)tst.step='uoe'}
   else if(b.dataset.opt!==undefined){const it=tst.ubank[tst.ucur];tst.uused.add(tst.ucur);
-    if(b.dataset.opt!=='0')tst.wrong.push({lvl:it.lvl,q:(it.p?it.p+' — ':'')+it.q,you:it.opts[+b.dataset.opt],ans:it.opts[0]});tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)tst.step='listen'}
+    if(b.dataset.opt!=='0')tst.wrong.push({lvl:it.lvl,q:(it.p?it.p+' ':'')+it.q,you:it.opts[+b.dataset.opt],ans:it.opts[0]});tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)tst.step='listen'}
   else if(b.id==='tPlay'){if(tst.plays>=2)return;const it=tst.lbank[tst.lcur];tst.plays++;say(it.text,{rate:[.85,.9,.98,1.05,1.1,1.15][it.lvl]})}
   else if(b.dataset.lopt!==undefined){const it=tst.lbank[tst.lcur];tst.lused.add(tst.lcur);
-    if(b.dataset.lopt!=='0')tst.wrong.push({lvl:it.lvl,q:'🔊 "'+it.text+'" — '+it.q,you:it.opts[+b.dataset.lopt],ans:it.opts[0],say:it.text});tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();if(tst.lresp.length>=LIS_N)finishTest()}
+    if(b.dataset.lopt!=='0')tst.wrong.push({lvl:it.lvl,q:'"'+it.text+'": '+it.q,you:it.opts[+b.dataset.lopt],ans:it.opts[0],say:it.text});tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();if(tst.lresp.length>=LIS_N)finishTest()}
   else if(b.id==='tAgain'){tst=newTest()}
   else if(b.id==='tApply'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);fLv=null;location.hash='today';renderAll();return}
   else return;
@@ -1113,20 +1270,130 @@ $('v-test').addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{if(location.hash!=='#test'||!tst||tst.step!=='vocab')return;const k=e.key.toLowerCase();if(k==='y'||k==='n'){const btn=document.querySelector(`[data-yn="${k==='y'?1:0}"]`);btn&&btn.click()}});
 
 /* =========================================================
+   landing (#home)
+   ========================================================= */
+const LP_SENT="I've been learning English for about six months now.";
+function lpFrag(typed){
+  const tw=toWords(LP_SENT),hit=matchWords(tw,toWords(typed||'')),n=hit.filter(Boolean).length;
+  let wi=0;
+  const shown=LP_SENT.split(/(\s+)/).map(tok=>{if(!tok.trim())return tok;const ok=hit[wi++];return ok?`<span class="hit">${esc(tok)}</span>`:`<span class="gapw">${'_'.repeat(Math.max(3,tok.length))}</span>`}).join('');
+  return `<div class="scorebar"><b class="en">${Math.round(n/tw.length*100)}%</b><span>${L(`${n} من ${tw.length} كلمات`,`${n} of ${tw.length} words`)}</span></div>
+    <p class="target" dir="ltr">${shown}</p>
+    <p>${L('دي نفس طريقة الإملاء في صفحة التدريب، ومعاها ٢٠ جملة لكل مستوى.','The same dictation you get on the Practice page, with 20 sentences per level.')}</p>`;
+}
+function renderHome(){
+  const h=$('v-home');
+  const rv=(i)=>`class="rv" style="--d:${i}"`;
+  h.innerHTML=`
+  <section class="lp-hero" aria-label="Fluent Route">
+    <div class="lp-panel">
+      <img src="img/hero.jpg" width="2000" height="1250" alt="${L('رحّال واقف فوق جبل بيبص على الطريق اللي قدامه','A hiker on a ridge looking over the valley ahead')}">
+      <div class="lp-top"><a class="lp-mark" href="#home">${LOGO}<span dir="ltr">Fluent Route</span></a><button class="lp-lang" data-lang="${S.lang==='ar'?'en':'ar'}">${S.lang==='ar'?'English':'عربي'}</button></div>
+      <div class="lp-head"><h1 ${rv(0)}>${L('اتكلم إنجليزي<br>من غير ما تترجم','Speak English<br>without translating')}</h1>
+        <p ${rv(1)}>${L('مسار مجاني من الصفر للطلاقة: اختبار يحدد مستواك، وبعده كلام بالمايك وإملاء ونطق كل يوم.','A free route from zero to fluent: a test finds your level, then speaking, dictation and pronunciation every day.')}</p></div>
+      <div class="lp-foot"><a class="lp-btn" ${rv(2)} href="#test">${L('اعرف مستواك في ٢٠ دقيقة','Find your level in 20 minutes')}</a><small>${L('ببلاش ومن غير تسجيل','Free, no sign-up')}</small></div>
+    </div>
+    <div class="swatches" role="navigation" aria-label="${L('أقسام الصفحة','On this page')}">
+      <a class="sw1" href="#home" data-go="lp-show">${L('جرّب الإملاء','Try a dictation')}</a>
+      <a class="sw2" href="#home" data-go="lp-how">${L('ازاي بتمشي','How it works')}</a>
+      <a class="sw3" href="#home" data-go="lp-list">${L('السبع محطات','The seven stops')}</a>
+      <a class="sw4" href="#home" data-go="lp-cta">${L('ابدأ الاختبار','Take the test')}</a>
+      <a class="sw5" href="#today">${L('ادخل على التطبيق','Open the app')}</a>
+    </div>
+  </section>
+
+  <section class="lp-show" id="lp-show" aria-labelledby="lpShowH">
+    <div class="lp-in">
+      <p ${rv(0)} style="font-size:var(--t-m)">${L('اسمع الجملة واكتبها. كل كلمة تكتبها صح بتظهر في الكارت.','Listen and type the sentence. Every word you get right appears on the card.')}</p>
+      <div class="row" ${rv(1)}><button class="lp-btn" id="lpPlay">${L('اسمع الجملة','Play the sentence')}</button><button class="lp-btn dark" id="lpSlow" style="background:#24305e">${L('بالبطيء','Slowly')}</button></div>
+      <label for="lpType" ${rv(2)}>${L('اكتب اللي سمعته بالإنجليزي','Type what you heard')}</label>
+      <textarea id="lpType" dir="ltr" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" ${rv(3)}></textarea>
+      <h2 class="lp-split" id="lpShowH">${L('اسمع','Listen')}</h2>
+    </div>
+    <div class="lp-out">
+      <div class="lp-frag rv" data-ui id="lpFrag" aria-live="polite">${lpFrag('')}</div>
+      <span class="lp-split" aria-hidden="true" style="font-family:var(--f-display);font-weight:800;line-height:1">${L('واكتب','and type')}</span>
+    </div>
+  </section>
+
+  <section class="lp-how" id="lp-how" aria-labelledby="lpHowH">
+    <div class="f1"><h2 id="lpHowH">${L('ازاي بتمشي','How it works')}</h2>
+      <div class="lp-card rv" data-ui><span>${L('اختبار تحديد المستوى','Placement test')}</span><b class="en">0 / 3</b><div class="bar"><i style="width:4%"></i></div><span>${L('كلمات · قواعد · استماع','Words · Grammar · Listening')}</span></div>
+      <p class="lp-clause">${L('الأول بتعمل اختبار ٢٠ دقيقة.','First you take a 20-minute test.')}</p></div>
+    <div class="f2"><span></span>
+      <div class="lp-card rv" data-ui style="--d:1"><span>${L('مستواك','Your level')}</span><b class="en">B1</b><span>${L('كلمات B2 · قواعد B1 · استماع B1','Words B2 · Grammar B1 · Listening B1')}</span></div>
+      <p class="lp-clause">${L('بعدها بتعرف مستواك بالظبط.','Then you know your exact level.')}</p></div>
+    <div class="f3"><span></span>
+      <div class="lp-card rv" data-ui style="--d:2"><span>${L('روتين النهارده','Today\'s routine')}</span><ul>${[['كلمات','Words',1],['استماع','Listening',1],['Shadowing','Shadowing',1],['مسلسل','Series',0],['إملاء','Dictation',0],['قراية','Reading',0]].map(([a,e,on])=>`<li class="${on?'on':''}"><i></i>${L(a,e)}</li>`).join('')}</ul></div>
+      <p class="lp-clause">${L('كل يوم ٦ مهام صغيرة.','Six small tasks every day.')}</p></div>
+    <div class="f4"><span></span>
+      <div class="lp-card rv" data-ui style="--d:3"><span>${L('المحطة الجاية','Next stop')}</span><b class="en">B2</b><div class="bar"><i style="width:100%"></i></div><span>${L('B1 خلصت ٥ من ٥','B1 done: 5 of 5')}</span></div>
+      <p class="lp-clause">${L('ولما تخلص بتطلع المحطة الجاية.','Finish, and you move up a stop.')}</p></div>
+  </section>
+
+  <section class="lp-list" id="lp-list" aria-labelledby="lpListH">
+    <h2 id="lpListH">${L('سبع محطات من الصفر للطلاقة','Seven stops from zero to fluent')}</h2>
+    <ol>${STAGES.map((s,i)=>`<li ${rv(i)}><span class="big">${tx(s.n)}</span><span class="det"><span class="en">${LV[i]}</span> · ${tx(s.d)}</span></li>`).join('')}</ol>
+  </section>
+
+  <section class="lp-cta" id="lp-cta" aria-labelledby="lpCtaH">
+    <div class="lp-tiles">
+      <img src="img/clouds.jpg" width="900" height="1000" loading="lazy" alt="${L('راجل قاعد فوق السحاب','A man sitting above the clouds')}">
+      <div class="lp-tile"><h2 id="lpCtaH" ${rv(0)}>${L('ابدأ من مستواك الحقيقي','Start at your real level')}</h2>
+        <p ${rv(1)}>${L('عشرين دقيقة بيوفّروا عليك شهور. الاختبار بيتغير على حسب إجاباتك، وفي الآخر بيوريك أخطاءك.','Twenty minutes that save you months. The test adapts to your answers and shows your mistakes at the end.')}</p>
+        <div class="row" style="justify-content:flex-start" ${rv(2)}><a class="lp-btn dark" href="#test">${L('ابدأ الاختبار','Take the test')}</a><a class="lp-btn" href="#today" style="background:transparent">${L('أو ابدأ من الصفر','Or start from zero')}</a></div></div>
+      <img src="img/jetty.jpg" width="1200" height="900" loading="lazy" alt="${L('حد واقف على رصيف قدام جبال','Someone on a jetty facing the mountains')}">
+    </div>
+  </section>
+
+  <footer class="lp-footer">
+    <div class="lp-big">${LOGO}<span dir="ltr">Fluent <em>Route</em></span></div>
+    <div class="lp-cols">
+      <div><h3>${L('اتعلم','Learn')}</h3><a href="#today">${L('النهارده','Today')}</a><a href="#path">${L('المسار','Path')}</a><a href="#words">${L('الكلمات','Words')}</a></div>
+      <div><h3>${L('اتدرب','Practise')}</h3><a href="#speak">${L('كلام بالمايك','Speaking')}</a><a href="#speak">${L('إملاء وودنك','Dictation & ear')}</a><a href="#test">${L('اختبار المستوى','Placement test')}</a></div>
+      <div><h3>${L('المكتبة','Library')}</h3><a href="#more">${L('بودكاست ويوتيوب','Podcasts & YouTube')}</a><a href="#more">${L('مسلسلات وأفلام','Series & films')}</a><a href="#more">${L('كتب وأدوات','Books & tools')}</a></div>
+      <div><h3>${L('الصور','Photos')}</h3><p>Danka &amp; Peter, Joshua Earle, Todd Quackenbush ${L('على','on')} Unsplash</p></div>
+    </div>
+    <div class="lp-last"><span>© 2026 Fluent Route</span><a class="lp-btn" href="#test">${L('ابدأ','Start')}</a></div>
+  </footer>`;
+  const ta=$('lpType');ta.addEventListener('input',()=>{$('lpFrag').innerHTML=lpFrag(ta.value)});
+  // entrances, once per element
+  const els=h.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});els.forEach(el=>io.observe(el))}
+  else els.forEach(el=>el.classList.add('in'));
+}
+$('v-home').addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){e.preventDefault();$(g.dataset.go).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return}
+  const l=e.target.closest('[data-lang]');if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();return}
+  const id=e.target.closest('button')?.id;
+  if(id==='lpPlay')say(LP_SENT);
+  if(id==='lpSlow')say(LP_SENT,{slow:true});
+});
+
+/* =========================================================
    routing
    ========================================================= */
-const VIEWS=['today','path','speak','words','more','test'];
+const VIEWS=['home','today','path','speak','words','more','test'];
 let shown=null;
-function markNav(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
+// new visitors land on the landing page; returning learners go straight to Today
+const hasProgress=()=>!!place||Object.keys(checks).length>0||Object.keys(srs).length>0||!!store.get('fr-lastTest',null);
+const curView=()=>{const h=location.hash.slice(1);return VIEWS.includes(h)?h:(hasProgress()?'today':'home')};
+function markNav(){const v=curView();document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
 function route(){
-  const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';
+  const v=curView();
+  document.body.classList.toggle('on-home',v==='home');
   if(v!=='speak')stopRec();
-  VIEWS.forEach(x=>{const el=$('v-'+x);el.hidden=x!==v});
+  // only the screen in view is in the page (one h1 per screen, less work); the others are emptied
+  VIEWS.forEach(x=>{const el=$('v-'+x);el.hidden=x!==v;if(x!==v)el.innerHTML=''});
+  DRAW[v]();
   const el=$('v-'+v);el.classList.remove('view');void el.offsetWidth;el.classList.add('view');
-  if(v==='test')renderTest();
   markNav();if(shown!==null)window.scrollTo(0,0);shown=v;
 }
-function renderAll(){renderShell();renderToday();renderPath();renderWords();renderSpeak();renderMore();if(tst)renderTest();route()}
+// each screen draws itself only while it is the one in view
+const DRAW={home:renderHome,today:renderToday,path:renderPath,speak:renderSpeak,words:renderWords,more:renderMore,test:renderTest};
+const onlyIf=(k,f)=>(...a)=>{if(curView()===k)return f(...a)};
+renderHome=onlyIf('home',renderHome);renderToday=onlyIf('today',renderToday);renderPath=onlyIf('path',renderPath);renderWords=onlyIf('words',renderWords);renderSpeak=onlyIf('speak',renderSpeak);renderMore=onlyIf('more',renderMore);renderTest=onlyIf('test',renderTest);
+function renderAll(){renderShell();route()}
 window.addEventListener('hashchange',route);
 renderAll();
 </script>
