@@ -1,10 +1,10 @@
 # Graph Report - fluent-route  (2026-11-04)
 
 ## Corpus Check
-- Corpus is ~11,431 words - fits in a single context window. You may not need a graph.
+- Corpus is ~11,447 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 75 nodes · 111 edges · 7 communities
+- 75 nodes · 112 edges · 7 communities
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -52,7 +52,7 @@ Nodes (12): Accent choice accentPick() in Practice, test and tips (not in header
 
 ### Community 1 - "Sign-in And Sync"
 Cohesion: 0.18
-Nodes (13): Published artifact claude.ai/artifact/67Qn5XzDPdmhtZhCMaVHUF, Google sign-in + sync: Firebase project fluent-route-ed587 (europe-west1), users/{uid} doc, Sign in / Sign up button, Fluent Route site, Fonts: Baloo Bhaijaan 2 + Readex Pro, Arabic/English switch (S.lang, L(), tx()), Logo: route ending in speech bubble (LOGO, logo.svg), Motion switch: html.motion, motionPref(), fr-motion, place (placement result) (+5 more)
+Nodes (13): Published artifact claude.ai/artifact/67Qn5XzDPdmhtZhCMaVHUF, Google sign-in + sync: Firebase project fluent-route-ed587 (europe-west1), users/{uid} doc, Sign in / Sign up button; auth change redraws the open screen, Fluent Route site, Fonts: Baloo Bhaijaan 2 + Readex Pro, Arabic/English switch (S.lang, L(), tx()), Logo: route ending in speech bubble (LOGO, logo.svg), Motion switch: html.motion, motionPref(), fr-motion, place (placement result) (+5 more)
 
 ### Community 2 - "Placement Test Scoring"
 Cohesion: 0.18
@@ -72,7 +72,7 @@ Nodes (7): CEFR levels, currentStage(), LV levels A1-Native, renderPath(), stage
 
 ### Community 6 - "Illustrations And Characters"
 Cohesion: 0.33
-Nodes (6): curView() / hasProgress(): new visitors land on #home, DRAW map + onlyIf(): only the visible screen renders, renderHome() app-style landing (hero with talking characters, features, route, steps), route() hash router, ROUTE_SVG: illustrated landscape route with drawing road and flag, SPOT: illustrated feature-card drawings
+Nodes (6): curView(): no hash always opens the landing (#home); hasProgress() switches its main button to Continue, DRAW map + onlyIf(): only the visible screen renders, renderHome() app-style landing (hero with talking characters, features, route, steps), route() hash router, ROUTE_SVG: illustrated landscape route with drawing road and flag, SPOT: illustrated feature-card drawings
 
 ## Knowledge Gaps
 - **24 isolated node(s):** `micMsg() mic errors`, `PROMPTS free-talk topics`, `High-variability phonetic training`, `Shadowing`, `Published artifact claude.ai/artifact/67Qn5XzDPdmhtZhCMaVHUF` (+19 more)
@@ -86,6 +86,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `micMsg() mic errors`, `PROMPTS free-talk topics`, `High-variability phonetic training` to the rest of the system?**
   _24 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Why does `renderAll()` connect `Flashcards` to `Practice`, `Sign-in And Sync`, `Characters And Lip Sync`, `Stages And Progress`, `Illustrations And Characters`?**
-  _High betweenness centrality (0.326) - this node is a cross-community bridge._
+  _High betweenness centrality (0.321) - this node is a cross-community bridge._
 - **Why does `finishTest()` connect `Placement Test Scoring` to `Characters And Lip Sync`?**
   _High betweenness centrality (0.172) - this node is a cross-community bridge._

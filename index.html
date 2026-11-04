@@ -947,7 +947,7 @@ function renderToday(){
   const v=$('v-today');
   v.innerHTML=`<div class="today-grid"><div class="stack">
    ${fbUser?'':`<div class="panel" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${L('سجّل بجوجل عشان تقدمك يتحفظ على كل أجهزتك','Sign in with Google to keep your progress on every device')}</span><button class="gbtn" data-auth="in">${G_ICON}${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</button></div>`}
-   ${place?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٣ أجزاء في حوالي ٢٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 3-part placement test, about 20 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
+   ${place||store.get('fr-lastTest',null)?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٦ أجزاء في حوالي ٣٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 6-part placement test, about 30 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
      <div class="lvl"><span class="badge en">${LV[lv]}</span><div><h1 class="st">${L('النهارده','Today')}</h1><p class="muted">${L('انت في مرحلة','Your stage')}: <strong>${tx(s.n)}</strong></p></div></div>
      <p>${tx(s.g)}</p>
@@ -1600,7 +1600,7 @@ function renderHome(){
       <div>
         <h1 id="lpH" ${rv(0)}>${L('اتكلم إنجليزي <em>من غير ما تترجم</em>','Speak English <em>without translating</em>')}</h1>
         <p class="lp-sub" ${rv(1)}>${L('مسار مجاني من A1 للطلاقة: اختبار دقيق يحدد مستواك، وبعدين كل يوم كلام بالمايك وإملاء وتدريب ودن مع شخصيات بتتكلم.','A free route from A1 to fluent: a precise test finds your level, then every day you speak with the mic, take dictation and train your ear with talking characters.')}</p>
-        <div class="lp-cta-row" ${rv(2)}><a class="btn big" href="#test">${L('اعرف مستواك','Find your level')}</a><a class="btn big ghost" href="#today">${L('ابدأ من الصفر','Start from zero')}</a></div>
+        <div class="lp-cta-row" ${rv(2)}>${hasProgress()?`<a class="btn big" href="#today">${L('كمّل من مكانك','Continue where you left off')}</a><a class="btn big ghost" href="#test">${L('اعرف مستواك','Find your level')}</a>`:`<a class="btn big" href="#test">${L('اعرف مستواك','Find your level')}</a><a class="btn big ghost" href="#today">${L('ابدأ من الصفر','Start from zero')}</a>`}</div>
         <div class="lp-trust" ${rv(3)}><span><i></i>${L('ببلاش','Free')}</span><span><i></i>${L('عربي وإنجليزي','Arabic & English')}</span><span><i></i>${L('أمريكي أو بريطاني','American or British')}</span></div>
       </div>
       <div class="lp-stage" ${rv(2)}>
@@ -1678,7 +1678,7 @@ async function fbInit(){
   const base='https://www.gstatic.com/firebasejs/10.12.2/';
   const [app,auth,fs]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);
   const a=app.initializeApp(FIREBASE_CONFIG);fb={auth:auth.getAuth(a),A:auth,db:fs.getFirestore(a),F:fs};
-  auth.onAuthStateChanged(fb.auth,async u=>{fbUser=u;if(u)await pullCloud();renderShell();if(curView()==='home')renderHome()});
+  auth.onAuthStateChanged(fb.auth,async u=>{fbUser=u;if(u)await pullCloud();renderShell();DRAW[curView()]()});
   return fb;
 }
 async function signIn(){
@@ -1716,7 +1716,7 @@ const VIEWS=['home','today','path','speak','words','more','test'];
 let shown=null;
 // new visitors land on the landing page; returning learners go straight to Today
 const hasProgress=()=>!!place||Object.keys(checks).length>0||Object.keys(srs).length>0||!!store.get('fr-lastTest',null);
-const curView=()=>{const h=location.hash.slice(1);return VIEWS.includes(h)?h:(hasProgress()?'today':'home')};
+const curView=()=>{const h=location.hash.slice(1);return VIEWS.includes(h)?h:'home'};
 function markNav(){const v=curView();document.querySelectorAll('nav a').forEach(a=>a.getAttribute('href')==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
 function route(){
   const v=curView();
