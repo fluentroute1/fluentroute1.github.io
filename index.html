@@ -1008,7 +1008,7 @@ function renderToday(){
   const v=$('v-today');
   v.innerHTML=`<div class="today-grid"><div class="stack">
    ${fbUser?'':`<div class="panel" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${L('سجّل بجوجل عشان تقدمك يتحفظ على كل أجهزتك','Sign in with Google to keep your progress on every device')}</span><button class="gbtn" data-auth="in">${G_ICON}${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</button></div>`}
-   ${place||store.get('fr-lastTest',null)?'':`<div class="cta"><div><strong>${L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٦ أجزاء في حوالي ٣٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 6-part placement test, about 30 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
+   ${place||store.get('fr-lastTest',null)?'':`<div class="cta"><div><strong>${savedTest()?L('كمّل اختبارك من مكانك','Continue your test'):L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٦ أجزاء في حوالي ٣٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 6-part placement test, about 30 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
      <div class="lvl"><span class="badge en">${LV[lv]}</span><div><h1 class="st">${L('النهارده','Today')}</h1><p class="muted">${L('انت في مرحلة','Your stage')}: <strong>${tx(s.n)}</strong></p></div></div>
      <p>${tx(s.g)}</p>
@@ -1484,6 +1484,11 @@ function overall6(parts){ // parts: {name:{score,w}} -> weighted level with conf
 
 const UOE_N=18, LIS_N=10, DICT_N=4;
 let tst=null;
+// an unfinished test is saved after every answer (Sets stored as arrays) and can be resumed later, on any signed-in device
+const saveTest=()=>{if(!tst||tst.step==='intro'||tst.step==='result')return;store.set('fr-test',{...tst,uused:[...tst.uused],lused:[...tst.lused],sRec:null,resume:null})};
+const clearSavedTest=()=>store.set('fr-test',null);
+const restoreTest=t=>({...t,uused:new Set(t.uused),lused:new Set(t.lused),sRec:null,resume:null});
+const savedTest=()=>{const t=store.get('fr-test',null);return t&&t.step&&t.step!=='intro'&&t.step!=='result'?t:null};
 function newTest(){
   const mono=LISTEN.map((x,j)=>({lvl:x[0],lines:[[['Emma','Jack','Sara','Leo'][j%4],x[1]]],q:x[2],opts:x[3],b:bOf(x[0],j*2)}));
   const dia=DIALOGS.map((x,j)=>({lvl:x[0],lines:x[1],q:x[2],opts:x[3],b:bOf(x[0],j*3+1)}));
@@ -1500,7 +1505,7 @@ const STEPS=['vocab','ctest','uoe','listen','dict','speak'];
 const STEP_NAMES={vocab:['الكلمات','Vocabulary'],ctest:['كمّل الكلمات','Complete the words'],uoe:['القواعد والقراية','Grammar & reading'],listen:['الاستماع','Listening'],dict:['اسمع واكتب','Listen & type'],speak:['اقرا بصوت عالي','Read aloud']};
 function testBar(done,total){const k=STEPS.indexOf(tst.step);return `<div class="t-top"><span>${k+1} / ${STEPS.length} · ${tx(STEP_NAMES[tst.step])}</span><span class="en">${done} / ${total}</span></div><div class="t-bar"><i style="width:${done/total*100}%"></i></div>`}
 function renderTest(){
-  if(!tst)tst=newTest();
+  if(!tst){tst=newTest();tst.resume=savedTest()}
   const v=$('v-test');
   if(tst.step==='intro'){
     const parts=[['vocab','٨٠ كلمة: قول لو عارف معناها. فيه كلمات مش حقيقية بتكشف التخمين.','80 words: say if you know them. Fake words catch guessing.'],
@@ -1511,6 +1516,7 @@ function renderTest(){
       ['speak','جملتين تقراهم بصوتك بالمايك (لو المتصفح بيدعم).','Two sentences you read aloud with the mic (where supported).']];
     v.innerHTML=`<div class="stack">
       <div class="sec-head"><h1 class="st">${L('اختبار تحديد المستوى','Placement test')}</h1><small>${L('حوالي ٣٠ دقيقة','About 30 minutes')}</small></div>
+      ${tst.resume?`<div class="cta"><div><strong>${L('كمّل اختبارك من مكانك','Continue your test')}</strong><p>${L(`وقفت في جزء ${STEPS.indexOf(tst.resume.step)+1} من ${STEPS.length}: ${tx(STEP_NAMES[tst.resume.step])}`,`You stopped at part ${STEPS.indexOf(tst.resume.step)+1} of ${STEPS.length}: ${tx(STEP_NAMES[tst.resume.step])}`)}</p></div><button class="btn" id="tResume">${L('كمّل','Continue')}</button></div>`:''}
       ${castHTML(['Emma','Jack','Sara','Leo'],{scene:true})}
       <p>${L('الاختبار ده متصمم على نفس أفكار الاختبارات الكبيرة زي Duolingo English Test و EF SET: ٦ أجزاء، ومعظمها بيتكيّف على مستواك. لو جاوبت صح بيصعب، ولو غلط بيسهل، فبيوصل لمستواك الحقيقي بدقة.','Built on the same ideas as the big computer tests like the Duolingo English Test and EF SET: six parts, most of them adapting to you, so it lands on your real level.')}</p>
       <ol class="intro-list">${parts.map(([k,a,e])=>`<li><span><strong>${tx(STEP_NAMES[k])}</strong><br><span class="muted">${L(a,e)}</span></span></li>`).join('')}</ol>
@@ -1591,14 +1597,15 @@ function finishTest(){
   const v=vocabScore(tst.vans),ue=eap(tst.uresp),le=eap(tst.lresp);
   const parts={vocab:{score:v.score,w:.15},ctest:{score:stepScore(tst.cAtt),w:.2},uoe:{score:thetaScore(ue.theta),sd:ue.sd,w:.25},listen:{score:thetaScore(le.theta),sd:le.sd,w:.25},dict:{score:stepScore(tst.dAtt),w:.15}};
   if(tst.sAtt.length){const a=tst.sAtt;parts.speak={score:Math.min(5.99,a[1]?.pct>=.85?4.6:a[0].pct>=.85?2.8+(a[1]?.pct||0)*1.4:a[0].pct*2.6),w:.1}}
-  tst.res={v,parts,o:overall6(parts)};tst.step='result';
+  tst.res={v,parts,o:overall6(parts)};tst.step='result';clearSavedTest();
   store.set('fr-lastTest',{date:today(),level:tst.res.o.level,score:+tst.res.o.score.toFixed(2),parts:Object.fromEntries(Object.entries(parts).map(([k,p])=>[k,+p.score.toFixed(2)]))});
   confetti();
 }
 function nextAfter(step){tst.step=STEPS[STEPS.indexOf(step)+1]||'result';if(tst.step==='speak'&&!SR){finishTest()}}
 $('v-test').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||!tst)return;
-  if(b.id==='tStart'){tst.step='vocab'}
+  if(b.id==='tResume'){tst=restoreTest(tst.resume)}
+  else if(b.id==='tStart'){clearSavedTest();tst.resume=null;tst.step='vocab'}
   else if(b.dataset.yn!==undefined){tst.vans.push({band:tst.vocab[tst.vi].band,yes:b.dataset.yn==='1'});tst.vi++;if(tst.vi>=tst.vocab.length)nextAfter('vocab')}
   else if(b.id==='cDone'){
     const gaps=ctestGaps(CTESTS[tst.cLvl]),ins=[...document.querySelectorAll('.ctest input')];
@@ -1625,9 +1632,10 @@ $('v-test').addEventListener('click',e=>{
     tst.sRec=listen({onText:t=>{tst.sHeard=t;const h=testEl().querySelector('.heard');if(h)h.textContent=t},onError:c=>{tst.sHeard='';toast(micMsg(c))},onEnd:t=>{tst.sRec=null;tst.sHeard=t||tst.sHeard;renderTest()}})}
   else if(b.id==='sNext'){const s=[SENTS[2][0],SENTS[4][1]][tst.sIdx],hit=matchWords(toWords(s),toWords(tst.sHeard));tst.sAtt.push({pct:hit.filter(Boolean).length/hit.length});tst.sHeard='';tst.sIdx++;if(tst.sIdx>=2)finishTest()}
   else if(b.id==='sSkip'){finishTest()}
-  else if(b.id==='tAgain'){tst=newTest()}
+  else if(b.id==='tAgain'){clearSavedTest();tst=newTest()}
   else if(b.id==='tApply'||b.id==='tMap'){place={level:tst.res.o.level,date:today()};store.set('fr-place',place);pmap=buildMap(tst.res);store.set('fr-map',pmap);fLv=null;location.hash=b.id==='tMap'?'path':'today';renderAll();return}
   else return;
+  saveTest();
   renderTest();
 });
 const testEl=()=>$('v-test');
@@ -1919,7 +1927,7 @@ $('v-home').addEventListener('click',e=>{
    Until it is filled in, the sign-in button explains that it is not set up yet.
    ========================================================= */
 const FIREBASE_CONFIG={apiKey:'AIzaSyBd_zM8rg6D9x0gtQHk44AQc5uW1kxlBR4',authDomain:'fluent-route-ed587.firebaseapp.com',projectId:'fluent-route-ed587',storageBucket:'fluent-route-ed587.firebasestorage.app',messagingSenderId:'990654544590',appId:'1:990654544590:web:1b0ee75a81abaded8f6e9f'};
-const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone'];
+const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone','fr-test'];
 const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 let fb=null,fbUser=null,pushTimer=null;
 const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
