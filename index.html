@@ -432,6 +432,8 @@ html.motion.js .rv.in{opacity:1;transform:none}
 .scene-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 .chara{position:relative;z-index:1;display:grid;justify-items:center;gap:2px}
 .chara svg{width:clamp(104px,22vw,150px);height:auto;overflow:visible}
+/* four characters side by side must fit a 375px phone */
+.cast:has(.chara~.chara~.chara~.chara){gap:clamp(4px,2vw,44px)}.cast:has(.chara~.chara~.chara~.chara) .chara svg{width:clamp(64px,18vw,150px)}
 .chara .nm{font:700 15px var(--f-display);padding:3px 12px;border-radius:99px;background:var(--surface);color:var(--muted);transition:background .2s,color .2s}
 .chara.talk .nm{background:var(--accent);color:var(--surface)}
 .chara .mouth>*{display:none}
@@ -581,16 +583,52 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .player{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 18px 40px -22px rgba(18,25,53,.6)}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .watch-tips ul{margin:8px 0;padding-inline-start:20px;display:grid;gap:4px}
+.note.has-x{position:relative;padding-inline-end:40px}
+.note-x{position:absolute;top:6px;inset-inline-end:6px;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:inherit;font-size:15px;cursor:pointer;opacity:.7}
+.note-x:hover{opacity:1;background:rgba(0,0,0,.06)}
+.lp-bar{position:sticky}
+.lp-menu{display:none;flex:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);place-items:center;cursor:pointer}
+.lp-menu svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+@media (max-width:860px){
+  .lp-menu{display:grid;order:3}
+  .lp-links.open{display:grid;position:absolute;top:100%;inset-inline:16px;gap:2px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -18px rgba(18,25,53,.45);z-index:20}
+  .lp-links.open a{padding:12px 14px}
+}
+@media (max-width:420px){.lp-menu{width:34px;height:34px;border-radius:10px}.lp-bar .wrap{gap:6px}.lp-act{gap:6px}.lp-bar .gbtn .l-short{display:none}.lp-bar .gbtn{padding:8px}.lp-act .theme-tgl{width:34px;height:34px}.lp-brand{font-size:18px;gap:6px}.lp-brand svg{width:30px;height:30px}}
+.lp-static{padding-block:32px;display:grid;gap:12px;line-height:1.7}.lp-static ol{padding-inline-start:22px;display:grid;gap:6px}
 </style>
 
 <aside class="side">
 <header><div class="wrap" id="head"></div></header>
 <nav aria-label="Sections"><div class="wrap" id="nav"></div></nav>
 </aside>
-<div id="v-home" class="lp" hidden></div>
+<div id="v-home" class="lp">
+<!-- static copy of the landing page for search engines and no-JS visitors; renderHome() replaces it -->
+<div class="wrap lp-static">
+  <h1>Fluent Route: اتكلم إنجليزي من غير ما تترجم</h1>
+  <p>مسار مجاني من A1 للطلاقة: اختبار دقيق يحدد مستواك، وبعدين كل يوم كلام بالمايك وإملاء وتدريب ودن مع شخصيات بتتكلم، وكتب وبودكاست وفيديوهات جوه الموقع.</p>
+  <p><a href="#test">اعرف مستواك</a> · <a href="#today">ابدأ من الصفر</a></p>
+  <section id="lp-feats"><h2>كل اللي محتاجه عشان تتكلم</h2>
+    <h3>اختبار مستوى دقيق</h3><p>٦ أجزاء بتتكيّف على إجاباتك، وتطلعلك مستواك في كل مهارة: الكلمات، القواعد، القراية، الاستماع، الإملاء والكلام.</p>
+    <h3>اتكلم بالمايك</h3><p>قول الجملة وشوف كل كلمة اتفهمت ولا لأ، واتكلم دقيقة في موضوع وخد تصحيح لكلامك.</p>
+    <h3>إملاء</h3><p>اسمع واكتب. بيدرّب ودنك تمسك كل كلمة، حتى الصغيرة.</p>
+    <h3>درّب ودنك</h3><p>ship ولا sheep؟ الأصوات اللي بتلخبط العرب، بأصوات أمريكي أو بريطاني.</p>
+    <h3>١١٠٠+ كلمة أساسية</h3><p>بطاقات بالتكرار المتباعد، كل كلمة بمعناها العربي وجملة مثال، من A1 لـ C1.</p>
+    <h3>كتب وبودكاست جوه الموقع</h3><p>١٢ كتاب كامل تدوس فيهم على أي كلمة تعرف معناها، و٢٠ بودكاست وقناة يوتيوب بترجمة إنجليزي.</p>
+  </section>
+  <section id="lp-route"><h2>سبع محطات من الصفر للطلاقة</h2>
+    <ol><li><strong>A1 · البداية</strong> (٦ أسابيع): تفهم وتقول جمل بسيطة عن نفسك وعن الحاجات اللي حواليك.</li><li><strong>A2 · الأساس المتين</strong> (شهرين): تتكلم عن يومك وعن اللي حصل امبارح وعن خططك.</li><li><strong>B1 · الانطلاق</strong> (٣ شهور): تمسك محادثة عادية وتفهم مسلسل بترجمة إنجليزي. من هنا ممنوع الترجمة العربي.</li><li><strong>B2 · الطلاقة</strong> (٤ شهور): تتكلم براحة في أي موضوع يومي، وتبدأ تفكر بالإنجليزي.</li><li><strong>C1 · زي المحترفين</strong> (٦ شهور): تفهم أي فيلم أو بودكاست أصلي، وتعبّر عن آراء معقدة.</li><li><strong>C2 · الإتقان</strong> (٦ شهور+): دقة وأسلوب: تختار الكلمة الصح وتفهم الهزار والتلميح.</li><li><strong>Native · كأنها لغتك الأم</strong> (مستمرة): النطق والإيقاع والكلام المتوصل والعامية، لحد ما الإنجليزي يطلع لوحده.</li></ol>
+  </section>
+  <section id="lp-steps"><h2>ازاي بتمشي</h2><p>٣ خطوات، وبعدها ساعة كل يوم.</p>
+    <ol><li><strong>اعمل الاختبار:</strong> حوالي ٣٠ دقيقة، وتعرف مستواك الحقيقي وتاخد خريطة على قدك.</li>
+    <li><strong>اتبع روتين اليوم:</strong> ٦ مهام صغيرة مجموعها ساعة: كلمات، استماع، تقليد، فيديو، كلام وإملاء، قراية.</li>
+    <li><strong>اطلع المحطة الجاية:</strong> لما تخلص حاجات المرحلة بتنتقل للي بعدها.</li></ol>
+  </section>
+  <noscript><p>شغّل JavaScript عشان تستخدم الاختبار والتدريب.</p></noscript>
+</div>
+</div>
 <main><div class="wrap">
   <div id="backbar" class="backbar" hidden><button class="backbtn" id="backBtn"></button></div>
-  <noscript><h1>Fluent Route: اتعلم إنجليزي من الصفر للطلاقة</h1><p>مسار مجاني من A1 لـ C2: اختبار تحديد مستوى، تدريب كلام بالمايك، إملاء، تدريب الودن على النطق، بطاقات كلمات، ومكتبة بودكاست ومسلسلات وأفلام وكتب لكل مستوى. شغّل JavaScript عشان تستخدم الموقع.</p></noscript>
   <section id="v-today" class="stack"></section>
   <section id="v-path" hidden></section>
   <section id="v-speak" hidden></section>
@@ -964,14 +1002,18 @@ const accentLang=a=>(a||S.accent)==='uk'?'en-GB':'en-US';
 // Only voices of the chosen accent are used, so American stays American and British stays British.
 const vScore=v=>(/natural|online|neural/i.test(v.name)?100:0)+(/google/i.test(v.name)?60:0)+(/microsoft/i.test(v.name)?10:0)+(v.localService?0:5);
 const accentVoices=a=>{const re=new RegExp(accentLang(a).replace('-','[-_]'),'i');return voices.filter(v=>re.test(v.lang)).sort((x,y)=>vScore(y)-vScore(x))};
-const goodVoice=a=>{const v=accentVoices(a)[0];return !!v&&vScore(v)>=60};
+// Natural/Google voices, Apple's enhanced ones, and Android (its voices are Google's even when the name does not say so)
+const goodVoice=a=>{const v=accentVoices(a)[0];return !!v&&(vScore(v)>=60||/enhanced|premium|siri/i.test(v.name)||/Android/i.test(navigator.userAgent))};
 console.assert(vScore({name:'Microsoft Aria Online (Natural) - English (United States)',localService:false})>vScore({name:'Google US English',localService:false})&&vScore({name:'Google US English'})>vScore({name:'Microsoft David - English (United States)',localService:true}),'voice ranking');
+const noteX=k=>`<button class="note-x" data-note-x="${k}" aria-label="${L('اقفل','Close')}">✕</button>`;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-note-x]');if(!b)return;store.set('fr-note-'+b.dataset.noteX,true);b.closest('.note').remove()});
 function voiceNote(){
   if(!('speechSynthesis' in window))return '';
+  if(store.get('fr-note-voice',false))return '';
   if(!voices.length)return '';
   const uk=S.accent==='uk';
-  if(!accentVoices().length)return `<p class="note">${L(`المتصفح ده مفيهوش صوت ${uk?'بريطاني':'أمريكي'}. افتح الموقع من Microsoft Edge أو Google Chrome عشان تسمع اللهجة صح.`,`This browser has no ${uk?'British':'American'} voice. Open the site in Microsoft Edge or Google Chrome to hear the right accent.`)}</p>`;
-  if(!goodVoice())return `<p class="note">${L('الأصوات اللي في المتصفح ده مش واضحة. أوضح أصوات ببلاش موجودة في Microsoft Edge (أصوات Natural)، وبعدها Google Chrome.','The voices in this browser are not very clear. The clearest free voices are in Microsoft Edge (Natural voices), then Google Chrome.')}</p>`;
+  if(!accentVoices().length)return `<p class="note has-x">${noteX('voice')}${L(`المتصفح ده مفيهوش صوت ${uk?'بريطاني':'أمريكي'}. افتح الموقع من Microsoft Edge أو Google Chrome عشان تسمع اللهجة صح.`,`This browser has no ${uk?'British':'American'} voice. Open the site in Microsoft Edge or Google Chrome to hear the right accent.`)}</p>`;
+  if(!goodVoice())return `<p class="note has-x">${noteX('voice')}${L('الأصوات اللي في المتصفح ده مش واضحة. أوضح أصوات ببلاش موجودة في Microsoft Edge (أصوات Natural)، وبعدها Google Chrome.','The voices in this browser are not very clear. The clearest free voices are in Microsoft Edge (Natural voices), then Google Chrome.')}</p>`;
   return '';
 }
 function say(text,opts={}){
@@ -984,7 +1026,10 @@ function say(text,opts={}){
   const top=all.slice(0,Math.min(all.length,3));
   const v=vary&&top.length?top[Math.floor(Math.random()*top.length)]:all[0];
   if(v)u.voice=v;
-  if(onend)u.onend=onend;
+  // finished, failed or silent too long: settle once, so whoever waits on it is never left hanging
+  let settled=false;const fin=ok=>{if(settled)return;settled=true;clearTimeout(w);if(ok)onend&&onend();else opts.onerror&&opts.onerror()};
+  const w=setTimeout(()=>{if(!settled){speechSynthesis.cancel();fin(false)}},(text.split(/\s+/).length/(1.8*u.rate)+5)*1000);
+  u.onend=()=>fin(true);u.onerror=()=>fin(false);
   speechSynthesis.speak(u);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b)say(b.dataset.say,{slow:!!b.dataset.slow,accent:b.dataset.accent})});
@@ -1082,11 +1127,12 @@ function streakFrom(days,t){const has=new Set(days);let d=new Date(t+'T12:00:00'
 console.assert(streakFrom(['2026-11-03','2026-11-04'],'2026-11-04')===2&&streakFrom(['2026-11-03'],'2026-11-04')===1&&streakFrom(['2026-11-01'],'2026-11-04')===0,'streak');
 const pick=(t,lv)=>{const l=forLevel(t,lv);return l.length?l[dayNum%l.length]:null};
 const resLink=r=>r?`<a href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'} class="en" dir="ltr">${esc(r[1])}</a>`:'';
+// 10+15+5+10+10+10 = 60 minutes: "about an hour a day" on the landing page
 function tasksFor(lv){return [
-  {k:'anki',t:L('كلمات','Words'),m:15,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
-  {k:'listen',t:L('استماع','Listening'),m:20,s:L('النهارده: ','Today: ')+resLink(pick('pod',lv))},
-  {k:'shadow',t:'Shadowing',m:15,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`}, // taste-skill-ignore: the word Shadowing, not a CSS shadow
-  {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:30,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
+  {k:'anki',t:L('كلمات','Words'),m:10,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
+  {k:'listen',t:L('استماع','Listening'),m:15,s:L('النهارده: ','Today: ')+resLink(pick('pod',lv))},
+  {k:'shadow',t:'Shadowing',m:5,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`}, // taste-skill-ignore: the word Shadowing, not a CSS shadow
+  {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:10,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
   {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
   {k:'read',t:L('قراية','Reading'),m:10,s:(()=>{const b=bookFor(lastBook()||recBook()[0]);return L('فصل من ','A chapter of ')+`<a href="#read/${b[0]}" class="en" dir="ltr">${esc(b[1])}</a>`+L(' هنا في الموقع',' here on the site')})()},
 ]}
@@ -1518,20 +1564,35 @@ setInterval(()=>{
   });
 },150);
 // lines: [[name,text],...]; plays them in order, the speaking character animates and its name lights up
-function playLines(lines,{rate=.92,root=document,onDone,onLine}={}){
-  if(!('speechSynthesis' in window)){onDone&&onDone();return}
+let curPlay=null;
+function playLines(lines,{rate=.92,root=document,onDone,onLine,onFail}={}){
+  if(curPlay)curPlay.finish(false); // the old play gives its button back before a new one starts
+  const fail=onFail||onDone;
+  if(!('speechSynthesis' in window)){fail&&fail();return}
   if(!voices.length)loadVoices();
   speechSynthesis.cancel();
+  let done=false,wd=0;
+  const play={finish(ok){if(done)return;done=true;clearTimeout(wd);if(curPlay===play)curPlay=null;clearLips();mouthLoop(null,root);if(!ok)speechSynthesis.cancel();const f=ok?onDone:fail;f&&f()}};
+  curPlay=play;
+  // safety net: some browsers never report the end; give control back after the lines' time plus a margin
+  const words=lines.reduce((n,l)=>n+l[1].split(/\s+/).length,0);
+  wd=setTimeout(()=>play.finish(false),(words/(1.8*rate)+lines.length*1.5+5)*1000);
   lines.forEach(([n,t],i)=>{
     const u=new SpeechSynthesisUtterance(t),vp=voiceFor(n);u.lang=accentLang();u.rate=rate;u.pitch=vp.pitch;if(vp.voice)u.voice=vp.voice;
-    u.onstart=()=>{const el=root.querySelector(`.chara[data-char="${n}"]`);mouthLoop(el,root);onLine&&onLine(i);
+    u.onstart=()=>{if(done)return;const el=root.querySelector(`.chara[data-char="${n}"]`);mouthLoop(el,root);onLine&&onLine(i);
       if(el){const s=el.querySelector('svg');let got=false;
-        u.onboundary=e=>{if(e.name&&e.name!=='word')return;got=true;lipWord(s,(t.slice(e.charIndex).match(/^[w']+/)||[''])[0],rate)};
+        u.onboundary=e=>{if(e.name&&e.name!=='word')return;got=true;lipWord(s,(t.slice(e.charIndex).match(/^[\w']+/)||[''])[0],rate)};
         lipTimers.push(setTimeout(()=>{if(!got)lipLine(s,t,rate)},350))}};
-    u.onend=()=>{clearLips();if(i===lines.length-1){mouthLoop(null,root);onDone&&onDone()}};
+    u.onend=()=>{clearLips();if(i===lines.length-1)play.finish(true)};
+    u.onerror=()=>play.finish(false);
     speechSynthesis.speak(u);
   });
 }
+// leaving the page (another tab, a call) stops speech and gives every button back
+document.addEventListener('visibilitychange',()=>{if(!document.hidden||!('speechSynthesis' in window))return;speechSynthesis.cancel();if(curPlay)curPlay.finish(false)});
+// "Emma is speaking": the Arabic verb follows the character (Emma, Sara: girls; Jack, Leo: boys)
+const talking=n=>n+(CHARS[n]&&CHARS[n].g==='f'?L(' بتتكلم…',' is speaking…'):L(' بيتكلم…',' is speaking…'));
+console.assert(talking('Emma').includes(S.lang==='ar'?'بتتكلم':'is')&&talking('Jack').includes(S.lang==='ar'?'بيتكلم':'is'),'talking verb');
 
 /* =========================================================
    placement test: six parts, like the big computer tests
@@ -1728,12 +1789,13 @@ $('v-test').addEventListener('click',e=>{
     if(b.dataset.opt!=='0')tst.wrong.push({lvl:it.lvl,q:(it.p?it.p+' ':'')+it.q,you:it.opts[+b.dataset.opt],ans:it.opts[0]});
     tst.uresp.push({b:it.b,ok:b.dataset.opt==='0'});tst.ucur=null;if(tst.uresp.length>=UOE_N)nextAfter('uoe')}
   else if(b.id==='tPlay'){if(tst.plays>=2)return;const it=tst.lbank[tst.lcur];tst.plays++;b.disabled=true;
-    playLines(it.lines,{rate:[.85,.9,.98,1.03,1.08,1.12][it.lvl],root:testEl(),onLine:i=>{const el=$('lineNow');if(el)el.textContent=it.lines[i][0]+L(' بيتكلم…',' is speaking…')},onDone:()=>{tst.heard=true;renderTest()}});return}
+    const cur=tst.lcur;playLines(it.lines,{rate:[.85,.9,.98,1.03,1.08,1.12][it.lvl],root:testEl(),onLine:i=>{const el=$('lineNow');if(el)el.textContent=talking(it.lines[i][0])},onDone:()=>{if(tst.lcur!==cur)return;tst.heard=true;renderTest()},
+      onFail:()=>{if(tst.lcur!==cur||tst.step!=='listen')return;tst.plays=Math.max(0,tst.plays-1);if(curView()!=='test')return;renderTest();const el=$('lineNow');if(el)el.textContent=L('الصوت اتقطع. دوس شغّل تاني، المرة دي مش محسوبة.','The audio was cut. Press play again; that try does not count.')}});return}
   else if(b.dataset.lopt!==undefined){const it=tst.lbank[tst.lcur];tst.lused.add(tst.lcur);
     if(b.dataset.lopt!=='0')tst.wrong.push({lvl:it.lvl,q:it.lines.map(l=>l[0]+': '+l[1]).join(' / ')+' — '+it.q,you:it.opts[+b.dataset.lopt],ans:it.opts[0],say:it.lines.map(l=>l[1]).join(' ')});
     tst.lresp.push({b:it.b,ok:b.dataset.lopt==='0'});tst.lcur=null;window.speechSynthesis?.cancel();mouthLoop(null);if(tst.lresp.length>=LIS_N)nextAfter('listen')}
   else if(b.id==='dtPlay'){if(tst.plays>=3)return;tst.plays++;b.textContent=L(`شغّل (فاضل ${3-tst.plays})`,`Play (${3-tst.plays} left)`);if(tst.plays>=3)b.disabled=true;
-    playLines([['Leo',tst.dSent]],{rate:[.85,.9,.95,1,1.05,1.1][tst.dLvl],root:testEl()});return}
+    const ds=tst.dSent;playLines([['Leo',tst.dSent]],{rate:[.85,.9,.95,1,1.05,1.1][tst.dLvl],root:testEl(),onDone:()=>{},onFail:()=>{if(tst.dSent!==ds||tst.step!=='dict')return;tst.plays=Math.max(0,tst.plays-1);if(curView()==='test')renderTest()}});return}
   else if(b.id==='dtDone'){const hit=matchWords(toWords(tst.dSent),toWords(tst.dTyped)),pct=hit.filter(Boolean).length/hit.length;
     tst.dAtt.push({lvl:tst.dLvl,pct,s:tst.dSent});if(pct<1)tst.wrong.push({lvl:tst.dLvl,q:L('إملاء','Dictation'),you:tst.dTyped,ans:tst.dSent,say:tst.dSent});
     const nx=pct>=.85?Math.min(5,tst.dLvl+1):pct<.5?Math.max(0,tst.dLvl-1):tst.dLvl;tst.dLvl=nx;tst.dSent=null;
@@ -1962,7 +2024,8 @@ function renderHome(){
   h.innerHTML=`
   <div class="lp-bar"><div class="wrap">
     <a class="lp-brand" href="#home">${LOGO}<span dir="ltr">Fluent <span>Route</span></span></a>
-    <div class="lp-links" role="navigation" aria-label="${L('أقسام الصفحة','On this page')}"><a href="#home" data-go="lp-feats">${L('المميزات','Features')}</a><a href="#home" data-go="lp-route">${L('المسار','The route')}</a><a href="#home" data-go="lp-steps">${L('ازاي بتمشي','How it works')}</a></div>
+    <button class="lp-menu" id="lpMenu" aria-expanded="false" aria-controls="lpLinks" aria-label="${L('القايمة','Menu')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="lp-links" id="lpLinks" role="navigation" aria-label="${L('أقسام الصفحة','On this page')}"><a href="#home" data-go="lp-feats">${L('المميزات','Features')}</a><a href="#home" data-go="lp-route">${L('المسار','The route')}</a><a href="#home" data-go="lp-steps">${L('ازاي بتمشي','How it works')}</a></div>
     <div class="lp-act">${themeBtn()}<button class="seg-lang gbtn" data-lang="${S.lang==='ar'?'en':'ar'}">${S.lang==='ar'?'EN':'عربي'}</button>${authHTML()}</div>
   </div></div>
 
@@ -2025,7 +2088,8 @@ function renderHome(){
   }else{els.forEach(el=>el.classList.add('in'));$('routeBox').classList.add('in')}
 }
 $('v-home').addEventListener('click',e=>{
-  const g=e.target.closest('[data-go]');if(g){e.preventDefault();$(g.dataset.go).scrollIntoView({behavior:'smooth'});return}
+  const mb=e.target.closest('#lpMenu');if(mb){const open=$('lpLinks').classList.toggle('open');mb.setAttribute('aria-expanded',open);return}
+  const g=e.target.closest('[data-go]');if(g){e.preventDefault();$('lpLinks').classList.remove('open');$('lpMenu').setAttribute('aria-expanded','false');$(g.dataset.go).scrollIntoView({behavior:'smooth'});return}
   const l=e.target.closest('[data-lang]');if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();return}
   if(e.target.closest('#heroPlay')){
     const bubs=[$('bub0'),$('bub1')];bubs.forEach(b=>b.classList.remove('on'));
@@ -2184,7 +2248,7 @@ function rdPlayFrom(i){
   ps.forEach(p=>p.classList.toggle('on',+p.dataset.i===i));
   ps[i].scrollIntoView({block:'center',behavior:motionPref()?'smooth':'auto'});
   const ss=sentencesOf(ps[i].querySelector('.t').textContent);let k=0;
-  const next=()=>{if(!rdPlaying)return;if(k>=ss.length){rdPlayFrom(i+1);return}say(ss[k++].trim(),{accent:S.accent,rate:.92,onend:next})};
+  const next=()=>{if(!rdPlaying)return;if(k>=ss.length){rdPlayFrom(i+1);return}say(ss[k++].trim(),{accent:S.accent,rate:.92,onend:next,onerror:rdStop})};
   next();
 }
 function shelfHTML(){
