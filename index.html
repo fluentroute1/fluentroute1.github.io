@@ -2058,15 +2058,38 @@ async function signIn(){
   try{await f.A.signInWithPopup(f.auth,new f.A.GoogleAuthProvider())}
   catch(e){if(e.code!=='auth/popup-closed-by-user')toast(L('مقدرتش أسجّل الدخول: ','Could not sign in: ')+(e.code||e.message))}
 }
+// Signing in merges this device with the cloud, key by key, so neither device can wipe the other's progress
+// (the old rule "newest save wins" let a fresh phone that only picked a language replace a laptop's whole progress).
+function mergeData(loc,cld){
+  const out={},has=v=>v!==undefined&&v!==null;
+  const later=(a,b,k)=>(a&&a[k]||'')>=(b&&b[k]||'')?a:b;
+  for(const k of SYNC_KEYS){
+    const a=loc[k],b=cld[k];
+    if(!has(a)||!has(b)){if(has(a)||has(b))out[k]=has(a)?a:b;continue}
+    if(k==='fr-srs'){const m={...b};for(const c in a)if(!m[c]||(a[c].due||0)>(m[c].due||0))m[c]=a[c];out[k]=m}
+    else if(k==='fr-checks'||k==='fr-mapdone')out[k]={...b,...a};
+    else if(k==='fr-days')out[k]=[...new Set(b.concat(a))].sort();
+    else if(k==='fr-mywords'){const m=new Map(b.map(w=>[w[1],w]));a.forEach(w=>m.set(w[1],w));out[k]=[...m.values()]}
+    else if(k==='fr-day')out[k]=a.d===b.d?{d:a.d,done:{...b.done,...a.done}}:later(a,b,'d');
+    else if(k==='fr-read'){const m={...b};for(const s in a){const x=a[s],y=m[s];m[s]=y?{n:x.n||y.n,ch:Math.max(x.ch||0,y.ch||0),done:{...y.done,...x.done}}:x}out[k]=m}
+    else if(k==='fr-place'||k==='fr-lastTest')out[k]=later(a,b,'date');
+    else if(k==='fr-map')out[k]=later(loc['fr-place'],cld['fr-place'],'date')===loc['fr-place']?a:b; // the map follows the newer test
+    else out[k]=a; // settings and an unfinished test: this device's own
+  }
+  return out;
+}
+console.assert((()=>{const m=mergeData({'fr-lang':'en','fr-day':{d:'2026-11-05',done:{a:true}}},{'fr-place':{level:3,date:'2026-11-01'},'fr-srs':{x:{box:2,due:5}},'fr-day':{d:'2026-11-05',done:{b:true}},'fr-days':['2026-11-01']});
+  return m['fr-place'].level===3&&m['fr-srs'].x.box===2&&m['fr-lang']==='en'&&m['fr-day'].done.a&&m['fr-day'].done.b&&m['fr-days'].length===1})(),'merge keeps both devices');
 async function pullCloud(){
   const ref=fb.F.doc(fb.db,'users',fbUser.uid),snap=await fb.F.getDoc(ref);
-  const localAt=store.get('fr-updated',0);
-  if(snap.exists()&&(snap.data().updatedAt||0)>localAt){
-    const d=snap.data().data||{};let changed=false;
-    SYNC_KEYS.forEach(k=>{if(k in d){const nv=JSON.stringify(d[k]);try{if(localStorage.getItem(k)!==nv){localStorage.setItem(k,nv);changed=true}}catch(_){}}});
-    try{localStorage.setItem('fr-updated',JSON.stringify(snap.data().updatedAt))}catch(_){}
-    if(changed)location.reload(); // simplest way to load the cloud progress into every screen
-  }else pushCloud();
+  const cloud=snap.exists()?snap.data().data||{}:{},local={};
+  SYNC_KEYS.forEach(k=>{const v=store.get(k,undefined);if(v!==undefined)local[k]=v});
+  const merged=mergeData(local,cloud);let changed=false;
+  SYNC_KEYS.forEach(k=>{if(!(k in merged))return;const nv=JSON.stringify(merged[k]);try{if(localStorage.getItem(k)!==nv){localStorage.setItem(k,nv);changed=true}}catch(_){}});
+  try{localStorage.setItem('fr-updated',JSON.stringify(Date.now()))}catch(_){}
+  if(JSON.stringify(merged)!==JSON.stringify(Object.fromEntries(SYNC_KEYS.filter(k=>k in cloud).map(k=>[k,cloud[k]]))))
+    await fb.F.setDoc(ref,{data:merged,updatedAt:Date.now(),name:fbUser.displayName||''}).catch(()=>{}); // saved before the reload below
+  if(changed)location.reload(); // simplest way to load the merged progress into every screen
 }
 function pushCloud(){
   if(!fb||!fbUser)return;clearTimeout(pushTimer);
