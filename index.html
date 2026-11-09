@@ -647,6 +647,10 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .opt{transition:transform .15s,background .2s,border-color .2s}.opt:active{transform:scale(.97)}
 .task.done .tick{animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
 @media (max-width:420px){.greet{gap:10px}.greet .mascot{--s:72px!important}.greet-t strong{font-size:19px}}
+.bobo-tip{margin:2px 0 0;font-size:14px;color:var(--muted);background:var(--sunk);border-radius:12px;padding:6px 12px;max-width:44ch}
+.bobo-say{display:flex;gap:12px;align-items:center;text-align:start;background:var(--accent-soft);border-radius:18px;padding:10px 14px}
+.bobo-say p{margin:0;font-weight:600;line-height:1.5}
+.t-top{align-items:center}.t-top .mascot{margin-inline-end:6px}
 </style>
 
 <aside class="side">
@@ -1728,7 +1732,7 @@ function newTest(){
 }
 const STEPS=['vocab','ctest','uoe','listen','dict','speak'];
 const STEP_NAMES={vocab:['الكلمات','Vocabulary'],ctest:['كمّل الكلمات','Complete the words'],uoe:['القواعد والقراية','Grammar & reading'],listen:['الاستماع','Listening'],dict:['اسمع واكتب','Listen & type'],speak:['اقرا بصوت عالي','Read aloud']};
-function testBar(done,total){const k=STEPS.indexOf(tst.step);return `<div class="t-top"><span>${k+1} / ${STEPS.length} · ${tx(STEP_NAMES[tst.step])}</span><span class="en">${done} / ${total}</span></div><div class="t-bar"><i style="width:${done/total*100}%"></i></div>`}
+function testBar(done,total){const k=STEPS.indexOf(tst.step);return `<div class="t-top">${mascot(done/total>.5?'happy':'think',40)}<span>${k+1} / ${STEPS.length} · ${tx(STEP_NAMES[tst.step])}</span><span class="en">${done} / ${total}</span></div><div class="t-bar"><i style="width:${done/total*100}%"></i></div>`}
 function renderTest(){
   if(!tst){tst=newTest();tst.resume=savedTest()}
   const v=$('v-test');
@@ -1742,6 +1746,7 @@ function renderTest(){
     v.innerHTML=`<div class="stack">
       <div class="sec-head"><h1 class="st">${L('اختبار تحديد المستوى','Placement test')}</h1><small>${L('حوالي ٣٠ دقيقة','About 30 minutes')}</small></div>
       ${tst.resume?`<div class="cta"><div><strong>${L('كمّل اختبارك من مكانك','Continue your test')}</strong><p>${L(`وقفت في جزء ${STEPS.indexOf(tst.resume.step)+1} من ${STEPS.length}: ${tx(STEP_NAMES[tst.resume.step])}`,`You stopped at part ${STEPS.indexOf(tst.resume.step)+1} of ${STEPS.length}: ${tx(STEP_NAMES[tst.resume.step])}`)}</p></div><button class="btn" id="tResume">${L('كمّل','Continue')}</button></div>`:''}
+      <div class="bobo-say">${mascot('wave',84)}<p>${L('أنا Bobo! هساعدك تعرف مستواك الحقيقي. هتسمع Emma وJack وSara وLeo بيتكلموا. جاوب على قد ما تعرف، ومتخمنش.','I am Bobo! I will help you find your real level. You will hear Emma, Jack, Sara and Leo talk. Answer what you know, do not guess.')}</p></div>
       ${castHTML(['Emma','Jack','Sara','Leo'],{scene:true})}
       <p>${L('الاختبار ده متصمم على نفس أفكار الاختبارات الكبيرة زي Duolingo English Test و EF SET: ٦ أجزاء، ومعظمها بيتكيّف على مستواك. لو جاوبت صح بيصعب، ولو غلط بيسهل، فبيوصل لمستواك الحقيقي بدقة.','Built on the same ideas as the big computer tests like the Duolingo English Test and EF SET: six parts, most of them adapting to you, so it lands on your real level.')}</p>
       <ol class="intro-list">${parts.map(([k,a,e])=>`<li><span><strong>${tx(STEP_NAMES[k])}</strong><br><span class="muted">${L(a,e)}</span></span></li>`).join('')}</ol>
@@ -1827,7 +1832,8 @@ function finishTest(){
   store.set('fr-lastTest',{date:today(),level:tst.res.o.level,score:+tst.res.o.score.toFixed(2),parts:Object.fromEntries(Object.entries(parts).map(([k,p])=>[k,+p.score.toFixed(2)]))});
   confetti();
 }
-function nextAfter(step){tst.step=STEPS[STEPS.indexOf(step)+1]||'result';if(tst.step==='speak'&&!SR){finishTest()}}
+function nextAfter(step){tst.step=STEPS[STEPS.indexOf(step)+1]||'result';
+  {const left=STEPS.length-STEPS.indexOf(tst.step);if(tst.step!=='result')coach(left>1?L(`خلصت جزء! فاضل ${left===2?'جزأين':left+' أجزاء'}، كمّل كده.`,`Part done! ${left} to go, keep it up.`):L('آخر جزء! انت قربت.','Last part! Almost there.'),'cheer',2400)}if(tst.step==='speak'&&!SR){finishTest()}}
 $('v-test').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||!tst)return;
   if(b.id==='tResume'){tst=restoreTest(tst.resume)}
@@ -1981,6 +1987,14 @@ function buildMap(res){
   console.assert(m.units.filter(u=>u.chapter!==undefined).length===1+4,'map: boost + B1..C2 chapters');
 })();
 let pmap=store.get('fr-map',null),mapDone=store.get('fr-mapdone',{});
+// what Bobo says at the top of each lesson
+const BOBO_TIPS={gram:['جاوب الأسئلة الأول، وبعدين اقرا الشرح لو غلطت.','Try the questions first, then read the rule if you miss one.'],
+ vocab:['قول كل كلمة بصوت عالي وحطها في جملة عنك.','Say each word out loud and use it in a sentence about you.'],
+ listen:['اسمع من غير ما تقرا الأول، وبعدين اسمع تاني.','Listen without reading first, then listen again.'],
+ speak:['متخافش من الغلط، المهم تتكلم.','Do not fear mistakes. Just keep talking.'],
+ pron:['اسمع الفرق الأول، لسانك هيقلّد ودنك.','Hear the difference first; your mouth will follow.'],
+ read:['دوس على الكلمات الجديدة واحفظ المهم منها.','Tap new words and save the useful ones.'],
+ write:['اكتب، وبعدين دوس صحّح وشوف أخطاءك.','Write, then press Check to see your mistakes.']};
 const unitTitle=u=>u.type==='gram'?tx(GRAMMAR[u.lvl][u.i].t):u.type==='vocab'?tx(VOCAB_SETS[u.lvl].t):tx(SKILLS[u.type].n)+' '+LV[u.lvl];
 const nextUnit=()=>pmap?.units.find(u=>u.id&&!mapDone[u.id]);
 function mapHTML(){
@@ -2045,7 +2059,7 @@ function openSheet(id){
   let el=$('sheet');if(!el){el=document.createElement('div');el.id='sheet';el.className='sheet-wrap';document.body.appendChild(el)}
   el.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">
     <div class="sh-top"><span class="skchip" style="--c:${s.c}">${tx(s.n)} · <span class="en">${LV[u.lvl]}</span></span><button class="sh-x" data-close aria-label="${L('اقفل','Close')}">✕</button></div>
-    <div class="sh-hero">${castHTML([u.type==='listen'?'Jack':u.type==='speak'?'Sara':u.type==='read'||u.type==='write'?'Leo':'Emma'])}<h2 id="shT">${esc(unitTitle(u))}</h2></div>
+    <div class="sh-hero">${mascot(u.type==='speak'?'talk':u.type==='gram'?'think':'happy',88)}<h2 id="shT">${esc(unitTitle(u))}</h2><p class="bobo-tip">${tx(BOBO_TIPS[u.type]||BOBO_TIPS.gram)}</p></div>
     <div class="sh-body stack">${sheetBody(u)}</div>
     <button class="btn big wide" data-finish="${u.id}">${mapDone[u.id]?L('خلصته ✓','Done ✓'):L('خلصت الدرس','Mark as done')}</button></div>`;
   el.hidden=false;document.body.style.overflow='hidden';
@@ -2058,7 +2072,7 @@ document.addEventListener('click',e=>{
   if(e.target===w||e.target.closest('[data-close]')){closeSheet();return}
   const a=e.target.closest('[data-ans]');
   if(a){const box=a.closest('.mq');if(box.dataset.done)return;box.dataset.done=1;const ok=a.dataset.ans==='0';a.classList.add(ok?'right':'wrong');
-    if(!ok)box.querySelector('[data-ans="0"]').classList.add('right');return}
+    if(!ok){box.querySelector('[data-ans="0"]').classList.add('right');oops()}else addXP(3);return}
   const gp=e.target.closest('[data-go-practice]');if(gp){goPractice(gp.dataset.goPractice,+gp.dataset.lv);return}
   const f=e.target.closest('[data-finish]');
   if(f){const was=mapDone[f.dataset.finish];mapDone[f.dataset.finish]=true;store.set('fr-mapdone',mapDone);closeSheet();confetti();renderPath();if(!was)addXP(20,{msg:L('درس خلص! الخريطة اتقدمت.','Lesson done! Your map moved on.')})}
