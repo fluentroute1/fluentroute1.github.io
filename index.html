@@ -2144,21 +2144,29 @@ function mergeData(loc,cld){
 }
 console.assert((()=>{const m=mergeData({'fr-lang':'en','fr-day':{d:'2026-11-05',done:{a:true}}},{'fr-place':{level:3,date:'2026-11-01'},'fr-srs':{x:{box:2,due:5}},'fr-day':{d:'2026-11-05',done:{b:true}},'fr-days':['2026-11-01']});
   return m['fr-place'].level===3&&m['fr-srs'].x.box===2&&m['fr-lang']==='en'&&m['fr-day'].done.a&&m['fr-day'].done.b&&m['fr-days'].length===1})(),'merge keeps both devices');
+// Cloud values are saved as JSON text: Firestore refuses arrays inside arrays (saved words, the unfinished test),
+// which made every save fail silently, and it reorders object keys, which made the same data look "changed".
+const toCloud=d=>Object.fromEntries(Object.entries(d).map(([k,v])=>[k,JSON.stringify(v)]));
+const fromCloud=d=>Object.fromEntries(Object.entries(d||{}).map(([k,v])=>{if(typeof v!=='string')return [k,v];try{return [k,JSON.parse(v)]}catch(_){return [k,v]}}));
+const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(y=>[y,x[y]])):x);
+console.assert(canon({b:1,a:{d:2,c:3}})===canon({a:{c:3,d:2},b:1})&&fromCloud(toCloud({'fr-mywords':[['my','x']]}))['fr-mywords'][0][1]==='x','cloud format');
 async function pullCloud(){
   const ref=fb.F.doc(fb.db,'users',fbUser.uid),snap=await fb.F.getDoc(ref);
-  const cloud=snap.exists()?snap.data().data||{}:{},local={};
+  const cloud=snap.exists()?fromCloud(snap.data().data):{},local={};
   SYNC_KEYS.forEach(k=>{const v=store.get(k,undefined);if(v!==undefined)local[k]=v});
   const merged=mergeData(local,cloud);let changed=false;
-  SYNC_KEYS.forEach(k=>{if(!(k in merged))return;const nv=JSON.stringify(merged[k]);try{if(localStorage.getItem(k)!==nv){localStorage.setItem(k,nv);changed=true}}catch(_){}});
-  try{localStorage.setItem('fr-updated',JSON.stringify(Date.now()))}catch(_){}
-  if(JSON.stringify(merged)!==JSON.stringify(Object.fromEntries(SYNC_KEYS.filter(k=>k in cloud).map(k=>[k,cloud[k]]))))
-    await fb.F.setDoc(ref,{data:merged,updatedAt:Date.now(),name:fbUser.displayName||''}).catch(()=>{}); // saved before the reload below
-  if(changed)location.reload(); // simplest way to load the merged progress into every screen
+  // only real differences count, not the order of keys
+  SYNC_KEYS.forEach(k=>{if(!(k in merged)||canon(merged[k])===canon(local[k]))return;try{localStorage.setItem(k,JSON.stringify(merged[k]));changed=true}catch(_){}});
+  if(SYNC_KEYS.some(k=>(k in merged)&&canon(merged[k])!==canon(cloud[k])))
+    await fb.F.setDoc(ref,{data:toCloud(merged),updatedAt:Date.now(),name:fbUser.displayName||''}).catch(e=>console.warn('cloud save failed',e)); // saved before the reload below
+  // reload once to show the merged progress; never twice in a minute, so a sync problem can never become a reload loop
+  let last=0;try{last=+sessionStorage.getItem('fr-sync-reload')||0}catch(_){}
+  if(changed&&Date.now()-last>60000){try{sessionStorage.setItem('fr-sync-reload',Date.now())}catch(_){}location.reload()}
 }
 function pushCloud(){
   if(!fb||!fbUser)return;clearTimeout(pushTimer);
   pushTimer=setTimeout(()=>{const data={};SYNC_KEYS.forEach(k=>{const v=store.get(k,undefined);if(v!==undefined)data[k]=v});
-    fb.F.setDoc(fb.F.doc(fb.db,'users',fbUser.uid),{data,updatedAt:store.get('fr-updated',Date.now()),name:fbUser.displayName||''}).catch(()=>{})},1500);
+    fb.F.setDoc(fb.F.doc(fb.db,'users',fbUser.uid),{data:toCloud(data),updatedAt:Date.now(),name:fbUser.displayName||''}).catch(e=>console.warn('cloud save failed',e))},1500);
 }
 document.addEventListener('click',e=>{const a=e.target.closest('[data-auth]');if(!a)return;if(a.dataset.auth==='in')signIn();else fb&&fb.A.signOut(fb.auth)});
 // every saved change marks the time and is pushed to the cloud when signed in
