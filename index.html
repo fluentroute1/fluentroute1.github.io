@@ -680,6 +680,39 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 [data-fin].glow{animation:pulseN 1.6s ease-out infinite;--c:var(--accent)}
 [data-fin].nudge{animation:mwob .45s ease-in-out 2}
 @media (max-width:520px){.book{padding:26px 20px 34px;height:clamp(420px,68vh,640px)}.book .rd-text{font-size:17px}.pg-turn{width:32px;height:52px;font-size:24px}.pg-turn.prev{left:-4px}.pg-turn.next{right:-4px}}
+/* printed-book look: a hard cover behind the pages, paper grain, gutter shadow, running heads, justified text */
+.book-cover{background:var(--cover);border-radius:10px 18px 18px 10px;padding:10px 12px 12px 8px;margin:8px auto 4px;max-width:584px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),inset 4px 0 8px rgba(0,0,0,.35),0 40px 60px -34px rgba(0,0,0,.7)}
+.book-cover:has(.spread){max-width:1104px;border-radius:14px;padding:12px 14px 14px}
+.book-cover .book{margin:0;max-width:none}
+.book::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;mix-blend-mode:multiply;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .45 0 0 0 0 .3 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+  radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(120,90,40,.12))}
+.book{box-shadow:inset 14px 0 22px -16px rgba(0,0,0,.45),inset -2px 0 0 rgba(0,0,0,.06)}
+.book.spread{box-shadow:none;background:
+  linear-gradient(90deg,rgba(0,0,0,.08),transparent 6%,transparent 44%,rgba(0,0,0,.18) 49.2%,rgba(0,0,0,.32) 50%,rgba(0,0,0,.18) 50.8%,transparent 56%,transparent 94%,rgba(0,0,0,.08)),var(--paper)}
+.book .rd-text{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.book .pg-title{text-align:center;border:0;font-size:22px;letter-spacing:.02em;margin-bottom:22px}
+.book .pg-title::after{content:"❦";display:block;font-size:16px;opacity:.5;margin-top:8px}
+.book .pg-title+p::first-letter{float:left;font:700 3.1em/.85 'Literata',Georgia,serif;padding:6px 6px 0 0;color:var(--paper-ink)}
+.rh,.pn{position:absolute;font:500 11px/1 'Literata',Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-ink);opacity:.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}
+.rh{top:16px}.rh-l{left:44px}.rh-r{right:44px}
+.pn{bottom:16px;letter-spacing:0;font-size:12px}.pn-l{left:44px}.pn-r{right:44px}
+.book:not(.spread) .rh-r{left:30px;right:30px;max-width:none;text-align:center}.book:not(.spread) .pn-r{left:0;right:0;max-width:none;text-align:center}
+/* the turning leaf: the paper bends (shine and shadow move with it) and the page below darkens under it */
+.leaf .lf,.leaf .lb{background:var(--paper)}
+.leaf .lf::after{background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,.04) 18%,rgba(255,255,255,.18) 55%,rgba(0,0,0,.12))}
+.leaf .lb::after{background:linear-gradient(270deg,rgba(0,0,0,.28),rgba(0,0,0,.04) 18%,rgba(255,255,255,.14) 55%,rgba(0,0,0,.12))}
+.leaf{filter:drop-shadow(0 14px 22px rgba(0,0,0,.28))}
+/* Bobo's synced mouth */
+.m-speak .mo-smile{display:none}.m-speak .mo-open{display:inline;transform-origin:60px 64px;transform:scaleY(.2);transition:transform .07s}
+.m-speak.open .mo-open{transform:scaleY(1)}.m-speak .ar{transform:rotate(-60deg)}
+/* task progress */
+.t-prog{display:block;height:5px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:6px;max-width:160px}
+.t-prog i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .6s}
+.t-num{font-size:12px;color:var(--muted);margin-top:2px;display:block}
+.tick{pointer-events:none}
+@media (max-width:520px){.book-cover{padding:7px 8px 9px 6px}.rh-l,.rh-r{left:20px;right:20px}.pn-r{left:0;right:0}}
 </style>
 
 <aside class="side">
@@ -1101,7 +1134,7 @@ function voiceNote(){
   return '';
 }
 function say(text,opts={}){
-  const {slow=false,rate,accent,onend,vary=false}=opts;
+  const {slow=false,accent,onend,vary=false}=opts,rate=opts.rate;
   if(!('speechSynthesis' in window)){onend&&onend();return}
   if(!voices.length&&!opts._retry){loadVoices();if(!voices.length){setTimeout(()=>{loadVoices();say(text,{...opts,_retry:true})},350);return}}
   speechSynthesis.cancel();
@@ -1109,7 +1142,7 @@ function say(text,opts={}){
   const u=new SpeechSynthesisUtterance(text);u.lang=accentLang(accent);u.rate=rate||(slow?.7:.9);u.pitch=1;
   const top=all.slice(0,Math.min(all.length,3));
   const v=opts.voice||(vary&&top.length?top[Math.floor(Math.random()*top.length)]:all[0]);
-  if(v)u.voice=v;if(opts.pitch)u.pitch=opts.pitch;
+  if(v)u.voice=v;if(opts.pitch)u.pitch=opts.pitch;if(opts.onstart)u.onstart=opts.onstart;if(opts.onboundary)u.onboundary=opts.onboundary;
   // finished, failed or silent too long: settle once, so whoever waits on it is never left hanging
   let settled=false;const fin=ok=>{if(settled)return;settled=true;clearTimeout(w);if(ok)onend&&onend();else opts.onerror&&opts.onerror()};
   const w=setTimeout(()=>{if(!settled){speechSynthesis.cancel();fin(false)}},(text.split(/\s+/).length/(1.8*u.rate)+5)*1000);
@@ -1220,7 +1253,20 @@ function tasksFor(lv){return [
   {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
   {k:'read',t:L('قراية','Reading'),m:10,s:(()=>{const b=bookFor(lastBook()||recBook()[0]);return L('فصل من ','A chapter of ')+`<a href="#read/${b[0]}" class="en" dir="ltr">${esc(b[1])}</a>`+L(' هنا في الموقع',' here on the site')})()},
 ]}
-let day=store.get('fr-day',{d:today(),done:{}});if(day.d!==today())day={d:today(),done:{}};
+let day=store.get('fr-day',{d:today(),done:{},c:{}});if(day.d!==today())day={d:today(),done:{},c:{}};day.c=day.c||{};
+// what finishes each daily task: counts of real activity today (seconds for listening and watching)
+const TASK_RULE={anki:c=>(c.cards||0)>=10,listen:c=>(c.listen||0)>=300,shadow:c=>(c.rep||0)>=5,watch:c=>(c.watch||0)>=300,speak:c=>(c.talk||0)>=1&&(c.dict||0)>=3,read:c=>(c.pages||0)>=4||(c.chapters||0)>=1};
+const TASK_GOAL={anki:['cards',10],listen:['listen',300],shadow:['rep',5],watch:['watch',300],speak:['dict',3],read:['pages',4]};
+function progress(key,n=1){
+  if(day.d!==today())day={d:today(),done:{},c:{}};
+  day.c[key]=(day.c[key]||0)+n;
+  // a task counts (and gives points) the first time it is finished today, never again
+  for(const k in TASK_RULE)if(!day.done[k]&&TASK_RULE[k](day.c)){day.done[k]=true;addXP(10,{msg:L('مهمة النهارده خلصت لوحدها! ✓','A daily task is done! ✓')})}
+  store.set('fr-day',day);
+  if(Object.keys(day.done).length&&!fullDays.includes(day.d)){fullDays.push(day.d);store.set('fr-days',fullDays.slice(-400))}
+  if(curView()==='today')renderToday();
+}
+console.assert(TASK_RULE.speak({talk:1,dict:3})&&!TASK_RULE.speak({talk:1,dict:2})&&TASK_RULE.anki({cards:10}),'task rules');
 let fullDays=store.get('fr-days',[]);
 const tick='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function renderToday(){
@@ -1241,18 +1287,11 @@ function renderToday(){
    <div class="statrow"><a class="stat" href="#words"><strong class="en">${dueCards('all').length}</strong><span>${L('كلمة مستنية مراجعة','cards to review')}</span></a><div class="stat"><strong class="en">${streakFrom(fullDays,today())}</strong><span>${L('يوم ورا بعض','day streak')}</span></div></div>
    ${(()=>{const s=lastBook()||recBook()[0],b=bookFor(s),p=bookPct(s);return `<a class="panel read-card" href="#read/${s}"><span class="cover" dir="ltr" style="--c:${b[7]}"><span class="en">${esc(b[1])}</span></span><span><strong>${lastBook()?L('كمّل قراية','Keep reading'):L('اقرا كتاب على مستواك','Read a book at your level')}</strong><br><span class="en" dir="ltr">${esc(b[1])}</span><br><small class="muted">${p?L(`${p}٪ خلصت`,`${p}% done`):L('دوس على أي كلمة تعرف معناها','Tap any word for its meaning')}</small></span></a>`})()}
    </div><div class="stack">
-   <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده','All done today'):L(`${n} من ${T.length}`,`${n} of ${T.length}`)}</small></div>
-   <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><button class="tick" data-task="${t.k}" aria-pressed="${!!day.done[t.k]}" aria-label="${esc(t.t)}">${tick}</button><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span></span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
+   <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده','All done today'):L(`${n} من ${T.length} · بتتعلّم لوحدها لما تخلصها`,`${n} of ${T.length} · they tick themselves when you finish`)}</small></div>
+   <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><span class="tick" role="img" aria-label="${day.done[t.k]?L('خلصت','Done'):L('لسه','Not yet')}">${tick}</span><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span>${day.done[t.k]?'':(()=>{const [ck,g]=TASK_GOAL[t.k],v=Math.min(day.c[ck]||0,g),sec=ck==='listen'||ck==='watch';return `<span class="t-prog"><i style="width:${v/g*100}%"></i></span><span class="t-num en">${sec?Math.floor(v/60)+'/'+g/60+' min':v+'/'+g}</span>`})()}</span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
    </div></div>`;
   v.querySelectorAll('.today-grid>.stack').forEach(stagger);
 }
-$('v-today').addEventListener('click',e=>{
-  const b=e.target.closest('[data-task]');if(!b)return;
-  day.done[b.dataset.task]=!day.done[b.dataset.task];store.set('fr-day',day);if(day.done[b.dataset.task])addXP(10,{msg:L('مهمة خلصت!','Task done!')});
-  const all=tasksFor(currentStage()).some(t=>day.done[t.k]);
-  fullDays=fullDays.filter(d=>d!==day.d);if(all)fullDays.push(day.d);store.set('fr-days',fullDays.slice(-400));
-  renderToday();$('v-today').classList.remove('stagger');
-});
 
 /* =========================================================
    path (stages)
@@ -1307,7 +1346,7 @@ function renderWords(){
 $('v-words').addEventListener('click',e=>{
   const c=e.target.closest('[data-cat]');if(c){cat=c.dataset.cat;cur=null;renderWords();return}
   if(e.target.id==='flipBtn'){$('flip').classList.add('on');$('cardBtns').innerHTML=`<button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn ghost" id="again">${L('لسه','Not yet')}</button><button class="btn good" id="know">${L('عارفها','I know it')}</button>`;return}
-  if(e.target.id==='know'||e.target.id==='again'){if(e.target.id==='know')addXP(2);else{addXP(1,{silent:true});oops()}srs[cur[1]]={...grade(srs[cur[1]],e.target.id==='know',Date.now()),first:srs[cur[1]]?.first||today()};store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
+  if(e.target.id==='know'||e.target.id==='again'){progress('cards');if(e.target.id==='know')addXP(2);else{addXP(1,{silent:true});oops()}srs[cur[1]]={...grade(srs[cur[1]],e.target.id==='know',Date.now()),first:srs[cur[1]]?.first||today()};store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
 });
 
 /* =========================================================
@@ -1414,7 +1453,7 @@ $('v-speak').addEventListener('click',e=>{
   const dTarget=()=>{const p=dictPool(speakLevel());return p[sp.dIdx%p.length]};
   if(id==='dPlay'){say(dTarget());return}
   if(id==='dSlow'){say(dTarget(),{slow:true});return}
-  if(id==='dCheck'){sp.dCheck=true;renderSpeak();const p=dictPool(speakLevel()),t=p[sp.dIdx%p.length],hit=matchWords(toWords(t),toWords(sp.dTyped));hit.filter(Boolean).length/hit.length>=.8?addXP(5):oops();return}
+  if(id==='dCheck'){sp.dCheck=true;renderSpeak();progress('dict');const p=dictPool(speakLevel()),t=p[sp.dIdx%p.length],hit=matchWords(toWords(t),toWords(sp.dTyped));hit.filter(Boolean).length/hit.length>=.8?addXP(5):oops();return}
   if(id==='dRetry'){sp.dCheck=false;sp.dTyped='';renderSpeak();$('dInput')?.focus();return}
   if(id==='dNext'){sp.dIdx++;sp.dCheck=false;sp.dTyped='';renderSpeak();say(dTarget());return}
   // ear training
@@ -1437,6 +1476,7 @@ $('v-speak').addEventListener('click',e=>{
     onText:t=>{sp.heard=t;const h=document.querySelector('#v-speak .heard');if(h)h.textContent=t},
     onError:code=>{sp.err=micMsg(code)},
     onEnd:t=>{clearInterval(sp.timer);sp.rec=null;sp.heard=t||sp.heard;sp.result=!!sp.heard;renderSpeak();
+      if(sp.result&&sp.mode==='repeat')progress('rep');if(sp.result&&sp.mode==='free'&&sp.secs>=20)progress('talk');
       if(sp.result&&sp.mode==='free')addXP(10,{msg:L('اتكلمت! ده أهم تمرين.','You spoke! That matters most.')});
       else if(sp.result&&sp.mode==='repeat'){const tw=toWords(SENTS[speakLevel()][sp.idx%SENTS[speakLevel()].length]),hits=matchWords(tw,toWords(sp.heard)),pct=hits.filter(Boolean).length/hits.length;pct>=.6?addXP(5):oops()}}});
   if(free){sp.timer=setInterval(()=>{sp.secs++;const el=document.querySelector('#v-speak .timer');if(el)el.textContent=`${Math.floor(sp.secs/60)}:${String(sp.secs%60).padStart(2,'0')} / 1:00`;if(sp.secs>=60)stopRec()},1000)}
@@ -2191,7 +2231,7 @@ $('v-home').addEventListener('click',e=>{
   const l=e.target.closest('[data-lang]');if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();return}
   if(e.target.closest('#heroPlay')){
     // Bobo says hello; his mouth moves while he talks and he cheers at the end
-    const m=document.querySelector('#boboHero .mascot');if(!m)return;m.className='mascot m-talk';
+    const m=document.querySelector('#boboHero .mascot');if(!m)return;boboTalk(m,"Hi! I'm Bobo. Let's get you talking English!");return;
     // Bobo is a he: a man's voice of the chosen accent, or a deeper version of whatever voice exists
     const mv=accentVoices().find(x=>voiceGender(x)==='m');
     say("Hi! I'm Bobo. Let's get you talking English!",{voice:mv,pitch:mv?1.05:.7,onend:()=>{m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},onerror:()=>{m.className='mascot m-wave'}});
@@ -2235,7 +2275,7 @@ function mergeData(loc,cld){
     else if(k==='fr-checks'||k==='fr-mapdone')out[k]={...b,...a};
     else if(k==='fr-days')out[k]=[...new Set(b.concat(a))].sort();
     else if(k==='fr-mywords'){const m=new Map(b.map(w=>[w[1],w]));a.forEach(w=>m.set(w[1],w));out[k]=[...m.values()]}
-    else if(k==='fr-day')out[k]=a.d===b.d?{d:a.d,done:{...b.done,...a.done}}:later(a,b,'d');
+    else if(k==='fr-day')out[k]=a.d===b.d?{d:a.d,done:{...b.done,...a.done},c:Object.fromEntries([...new Set([...Object.keys(a.c||{}),...Object.keys(b.c||{})])].map(x=>[x,Math.max((a.c||{})[x]||0,(b.c||{})[x]||0)]))}:later(a,b,'d');
     else if(k==='fr-read'){const m={...b};for(const s in a){const x=a[s],y=m[s];m[s]=y?{n:x.n||y.n,ch:Math.max(x.ch||0,y.ch||0),pg:(x.ch||0)===(y.ch||0)?Math.max(x.pg||0,y.pg||0):((x.ch||0)>(y.ch||0)?x.pg:y.pg)||0,done:{...y.done,...x.done}}:x}out[k]=m}
     else if(k==='fr-place'||k==='fr-lastTest')out[k]=later(a,b,'date');
     else if(k==='fr-xp')out[k]=a.d===b.d?{t:Math.max(a.t||0,b.t||0),d:a.d,n:Math.max(a.n||0,b.n||0)}:{...later(a,b,'d'),t:Math.max(a.t||0,b.t||0)};
@@ -2387,13 +2427,14 @@ async function renderRead(){
    <div class="rd-head" dir="ltr"><p class="muted">${esc(meta[1])} · ${esc(meta[2])}</p><h1 class="st en">${esc(c.h)}</h1>
      <div class="row"><button class="btn ghost" id="rdListen">${L('اسمع الفصل','Listen')}</button><span class="muted" style="font-size:14px">${L(`فصل ${ci+1} من ${book.ch.length} · ${bookPct(slug)}٪ من الكتاب`,`Chapter ${ci+1} of ${book.ch.length} · ${bookPct(slug)}% of the book`)}</span></div></div>
    <p class="rd-tip">${L('دوس على أي كلمة: تسمعها وتعرف معناها وتحفظها. دوس ▶ جنب أي فقرة تسمعها.','Tap any word to hear it, see its meaning and save it. Tap ▶ beside a paragraph to hear it.')}</p>
-   <div class="book" id="book" dir="ltr">
+   <div class="book-cover" style="--cover:${meta[7]}"><div class="book" id="book" dir="ltr">
+     <span class="rh rh-l"></span><span class="rh rh-r"></span><span class="pn pn-l"></span><span class="pn pn-r"></span>
      <div class="book-pages" id="bookPages">
        <div class="rd-text" id="flow" lang="en"><h2 class="pg-title">${esc(c.h)}</h2>${c.p.map((p,i)=>`<p data-i="${i}"><button class="rd-play" data-pi="${i}" aria-label="${L('اسمع الفقرة','Listen to this paragraph')}">▶</button><span class="t">${esc(p)}</span></p>`).join('')}</div>
      </div>
      <button class="pg-turn prev" id="pgPrev" aria-label="${L('الصفحة اللي فاتت','Previous page')}">‹</button>
      <button class="pg-turn next" id="pgNext" aria-label="${L('الصفحة اللي بعدها','Next page')}">›</button>
-   </div>
+   </div></div>
    <p class="pg-num" id="pgNum" dir="ltr"></p>
    <div class="rd-foot">${ci>0?`<button class="btn ghost" data-go="${ci-1}">${L('الفصل اللي فات','Previous')}</button>`:'<span></span>'}
      <button class="btn" data-go="${ci+1}" data-fin="${ci}">${ci+1<book.ch.length?L('خلصت الفصل، اللي بعده','Done, next chapter'):L('خلصت الكتاب','I finished the book')}</button></div>
@@ -2418,6 +2459,9 @@ function showPage(){
   flow.style.transform=`translateX(${-pg.i*(pg.w+pg.g)}px)`;
   const last=Math.min(pg.n,pg.i+pg.step);
   $('pgNum').textContent=`${pg.step>1&&last>pg.i+1?`${pg.i+1}–${last}`:pg.i+1} / ${pg.n}`;
+  {const b=$('book'),meta=bookFor(bookSlug),ch=book.ch[readPos[bookSlug]?.ch||0];const two=pg.step>1;
+   b.querySelector('.rh-l').textContent=two?meta[1]:'';b.querySelector('.rh-r').textContent=two?ch.h:meta[1];
+   b.querySelector('.pn-l').textContent=two?pg.i+1:'';b.querySelector('.pn-r').textContent=two?(pg.i+2<=pg.n?pg.i+2:''):pg.i+1}
   $('pgPrev').disabled=pg.i<=0;$('pgNext').classList.toggle('end',pg.i+pg.step>=pg.n);
   // on the last page the "next chapter" button lights up
   document.querySelector('[data-fin]')?.classList.toggle('glow',pg.i+pg.step>=pg.n);
@@ -2437,7 +2481,7 @@ function turn(dir){
   if(ni>=pg.n){const f=document.querySelector('[data-fin]');if(f){f.classList.remove('nudge');void f.offsetWidth;f.classList.add('nudge')}return}
   const old=pg.i;
   // the page flip is the point of the book, so it plays unless you switched motion off yourself in the site
-  if(store.get('fr-motion',null)===false){pg.i=ni;showPage();return}
+  if(store.get('fr-motion',null)===false){pg.i=ni;showPage();progress('pages',pg.step);return}
   const box=$('bookPages'),spread=pg.step>1,R1=spread?1:0,dur=750;
   // the leaf always hinges on the spine: over the right page in a spread, over the whole page on a phone
   const leaf=document.createElement('div');leaf.className='leaf';
@@ -2449,7 +2493,7 @@ function turn(dir){
   if(spread||dir<0)box.appendChild(hold);
   box.appendChild(leaf);pg.busy=true;pg.i=ni;showPage();
   const a=leaf.animate([{transform:`rotateY(${dir>0?0:-180}deg)`},{transform:`rotateY(${dir>0?-180:0}deg)`}],{duration:dur,easing:'cubic-bezier(.45,.05,.25,1)'});
-  setTimeout(()=>hold.remove(),dur/2);
+  setTimeout(()=>hold.remove(),dur/2);progress('pages',pg.step);
   // ends on a timer, not on the animation event: a page in the background never finishes its animations
   setTimeout(()=>{a.cancel();leaf.remove();hold.remove();pg.busy=false},dur+60);
 }
@@ -2520,7 +2564,7 @@ $('v-read').addEventListener('click',e=>{
   const go=e.target.closest('[data-go]'),pl=e.target.closest('[data-pi]');
   if(e.target.id==='rdListen'){if(rdPlaying){rdStop();return}rdPlaying=true;e.target.textContent=L('وقّف','Stop');const on=document.querySelector('.rd-text p.on');rdPlayFrom(on?+on.dataset.i:0);return}
   if(pl){rdStop();rdPlaying=true;$('rdListen').textContent=L('وقّف','Stop');rdPlayFrom(+pl.dataset.pi);return}
-  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){if(!pos.done[go.dataset.fin])addXP(15,{msg:L('فصل كامل! برافو.','A whole chapter! Bravo.')});pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
+  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){progress('chapters');if(!pos.done[go.dataset.fin])addXP(15,{msg:L('فصل كامل! برافو.','A whole chapter! Bravo.')});pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
     pos.ch=+go.dataset.go;pos.pg=0;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0);return}
   if(e.target.id==='wpSent'&&rdSel){const s=rdSel;e.target.disabled=true;gTranslate(s.sent,false).then(t=>{if(rdSel===s&&$('wpSentAr'))$('wpSentAr').innerHTML=t?'<span class="wp-sent">'+esc(t.main)+'</span>':L('الترجمة مش متاحة دلوقتي.','Translation is not available right now.')});return}
   if(e.target.closest('#pgNext')){turn(1);return}
@@ -2535,6 +2579,7 @@ $('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookS
 /* =========================================================
    watch: a podcast or channel played inside the site
    ========================================================= */
+setInterval(()=>{if(document.hidden||curView()!=='watch')return;const r=RES.find(x=>YT[x[1]]&&slugOf(x[1])===location.hash.split('/')[1]);if(r)progress(r[0]==='pod'?'listen':'watch',15)},15000);
 function renderWatch(){
   const slug=location.hash.split('/')[1],r=RES.find(x=>YT[x[1]]&&slugOf(x[1])===slug);
   const v=$('v-watch');
@@ -2586,6 +2631,20 @@ function mascot(mood='happy',size=120){
       <g class="mo mo-open"><path d="M49 60q11 1 22 0q-1 14-11 14t-11-14z" fill="#6E1E2B" ${o}/><path d="M54 70q6-4 12 0q-6 3-12 0z" fill="#FF8FA3"/></g>
       <ellipse class="mo mo-o" cx="60" cy="66" rx="5" ry="6" fill="#6E1E2B" ${o}/>
     </g></svg></span>`;
+}
+// Bobo talks: the mouth opens once per syllable of the word being spoken (word events from the voice),
+// with an even rhythm as a fallback for voices that send no word events. Starts when the sound starts.
+function boboTalk(m,text){
+  const mv=accentVoices().find(x=>voiceGender(x)==='m'),rate=.95;let timers=[],gotWord=false;
+  const clear=()=>{timers.forEach(clearTimeout);timers=[];m.classList.remove('open')};
+  const syl=w=>Math.max(1,(w.toLowerCase().match(/[aeiouy]+/g)||[]).length);
+  const pulse=(n,ms)=>{for(let k=0;k<n;k++){timers.push(setTimeout(()=>m.classList.add('open'),k*ms));timers.push(setTimeout(()=>m.classList.remove('open'),k*ms+ms*.6))}};
+  m.className='mascot m-speak';
+  say(text,{voice:mv,pitch:mv?1.05:.7,rate,
+    onstart:()=>{timers.push(setTimeout(()=>{if(gotWord)return;let t=0;text.split(/\s+/).forEach(w=>{const n=syl(w);timers.push(setTimeout(()=>pulse(n,170/rate),t));t+=n*170/rate+60})},250))},
+    onboundary:e=>{if(e.name&&e.name!=='word')return;gotWord=true;const w=(text.slice(e.charIndex).match(/^[\w']+/)||[''])[0];pulse(syl(w),150/rate)},
+    onend:()=>{clear();m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},
+    onerror:()=>{clear();m.className='mascot m-wave'}});
 }
 // XP: points for every bit of practice, a daily goal, and Bobo cheering you on
 const XP_GOAL=50;
