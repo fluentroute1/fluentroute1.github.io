@@ -596,6 +596,57 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 }
 @media (max-width:420px){.lp-menu{width:34px;height:34px;border-radius:10px}.lp-bar .wrap{gap:6px}.lp-act{gap:6px}.lp-bar .gbtn .l-short{display:none}.lp-bar .gbtn{padding:8px}.lp-act .theme-tgl{width:34px;height:34px}.lp-brand{font-size:18px;gap:6px}.lp-brand svg{width:30px;height:30px}}
 .lp-static{padding-block:32px;display:grid;gap:12px;line-height:1.7}.lp-static ol{padding-inline-start:22px;display:grid;gap:6px}
+/* Bobo */
+.mascot{display:inline-block;width:var(--s);flex:none;line-height:0}
+.mascot svg{width:100%;height:auto;overflow:visible}
+.mascot .mb{transform-origin:60px 118px;animation:mbob 2.8s ease-in-out infinite}
+@keyframes mbob{50%{transform:translateY(-4px) scaleY(1.025)}}
+.mascot .eo{transform-origin:60px 47px;animation:mblink 4.6s infinite}
+@keyframes mblink{0%,45%,49%,100%{transform:scaleY(1)}47%{transform:scaleY(.08)}}
+.mascot .pu{transition:transform .3s}
+.mascot .arm{transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.mascot .al{transform-origin:24px 74px}.mascot .ar{transform-origin:96px 74px}
+.mascot .eh,.mascot .brow,.mascot .mo-open,.mascot .mo-o{display:none}
+.m-wave .ar{animation:mwave 1.1s ease-in-out infinite}
+@keyframes mwave{0%,100%{transform:rotate(-150deg)}50%{transform:rotate(-110deg)}}
+.m-cheer .eo,.m-cheer .mo-smile{display:none}.m-cheer .eh,.m-cheer .mo-open{display:inline}
+.m-cheer .al{transform:rotate(130deg)}.m-cheer .ar{transform:rotate(-130deg)}
+.m-cheer .mb{animation:mjump .8s cubic-bezier(.3,.8,.4,1) infinite}
+@keyframes mjump{0%,100%{transform:translateY(0) scaleY(1)}10%{transform:scaleY(.94)}45%{transform:translateY(-14px) scaleY(1.05)}}
+.m-oops .mo-smile{display:none}.m-oops .mo-o,.m-oops .brow{display:inline}.m-oops .pu{transform:translate(-2px,2px)}
+.m-oops .mb{animation:mwob .5s ease-in-out 2}
+@keyframes mwob{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.m-think .pu{transform:translate(3px,-4px)}.m-think .mo-smile{display:none}.m-think .mo-o{display:inline}
+.m-talk .mo-smile{display:none}.m-talk .mo-open{display:inline;transform-origin:60px 64px;animation:mtalk .22s ease-in-out infinite alternate}
+@keyframes mtalk{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.m-talk .ar{transform:rotate(-60deg)}
+.bobo-stage{display:grid;place-items:center;padding:10px 0 4px}
+.bobo-stage .mascot{filter:drop-shadow(0 18px 24px rgba(47,79,224,.25))}
+.result-hero{display:grid;place-items:center;margin-bottom:-6px}
+/* coach: Bobo pops up with a short message */
+.coach{position:fixed;z-index:80;inset-inline-start:16px;bottom:calc(88px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;max-width:min(360px,calc(100vw - 32px));
+  background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:8px 16px 8px 8px;box-shadow:0 20px 40px -18px rgba(18,25,53,.5);
+  transform:translateY(30px) scale(.9);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .25s}
+.coach.on{transform:none;opacity:1}
+.coach p{margin:0;font-weight:600;line-height:1.4}.coach b{color:var(--accent)}
+@media (min-width:1000px){.coach{bottom:24px;inset-inline-start:auto;inset-inline-end:24px}}
+/* Today greeting */
+.greet{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,var(--accent-soft),var(--surface) 70%)}
+.greet-t{flex:1;min-width:0;display:grid;gap:6px}
+.greet-t strong{font:800 22px/1.2 var(--f-display)}.greet-t p{margin:0;color:var(--muted)}
+.greet-stats{display:flex;gap:8px;flex-wrap:wrap}
+.greet-stats>span{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:4px 10px;font-weight:700;font-size:14px;background:var(--surface);border:1px solid var(--line)}
+.chip-xp b{color:var(--accent)}.chip-fire b{color:#E8590C}
+.xpbar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.xpbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FFD84A,#F2A93B);transition:width .8s cubic-bezier(.3,1.3,.5,1)}
+/* livelier buttons */
+.btn{transition:transform .18s cubic-bezier(.3,1.6,.5,1),filter .15s,box-shadow .2s}
+.btn:not(.ghost){box-shadow:0 4px 0 rgba(18,25,53,.3)}
+.btn:not(.ghost):active{transform:translateY(3px);box-shadow:0 1px 0 rgba(18,25,53,.3)}
+.btn:hover{filter:brightness(1.06)}
+.opt{transition:transform .15s,background .2s,border-color .2s}.opt:active{transform:scale(.97)}
+.task.done .tick{animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+@media (max-width:420px){.greet{gap:10px}.greet .mascot{--s:72px!important}.greet-t strong{font-size:19px}}
 </style>
 
 <aside class="side">
@@ -1144,6 +1195,7 @@ function renderToday(){
   const T=tasksFor(lv),n=T.filter(t=>day.done[t.k]).length;
   const v=$('v-today');
   v.innerHTML=`<div class="today-grid"><div class="stack">
+   ${greetHTML(streakFrom(fullDays,today()))}
    ${fbUser?'':`<div class="panel" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${L('سجّل بجوجل عشان تقدمك يتحفظ على كل أجهزتك','Sign in with Google to keep your progress on every device')}</span><button class="gbtn" data-auth="in">${G_ICON}${L('تسجيل الدخول / حساب جديد','Sign in / Sign up')}</button></div>`}
    ${place||store.get('fr-lastTest',null)?'':`<div class="cta"><div><strong>${savedTest()?L('كمّل اختبارك من مكانك','Continue your test'):L('اعرف مستواك الحقيقي الأول','Find your real level first')}</strong><p>${L('اختبار تحديد مستوى من ٦ أجزاء في حوالي ٣٠ دقيقة، وبعده هتبدأ من المرحلة الصح.','A 6-part placement test, about 30 minutes. Then you start at the right stage.')}</p></div><a class="btn" href="#test">${L('ابدأ الاختبار','Start the test')}</a></div>`}
    <div class="panel now">
@@ -1163,7 +1215,7 @@ function renderToday(){
 }
 $('v-today').addEventListener('click',e=>{
   const b=e.target.closest('[data-task]');if(!b)return;
-  day.done[b.dataset.task]=!day.done[b.dataset.task];store.set('fr-day',day);
+  day.done[b.dataset.task]=!day.done[b.dataset.task];store.set('fr-day',day);if(day.done[b.dataset.task])addXP(10,{msg:L('مهمة خلصت!','Task done!')});
   const all=tasksFor(currentStage()).some(t=>day.done[t.k]);
   fullDays=fullDays.filter(d=>d!==day.d);if(all)fullDays.push(day.d);store.set('fr-days',fullDays.slice(-400));
   renderToday();$('v-today').classList.remove('stagger');
@@ -1222,7 +1274,7 @@ function renderWords(){
 $('v-words').addEventListener('click',e=>{
   const c=e.target.closest('[data-cat]');if(c){cat=c.dataset.cat;cur=null;renderWords();return}
   if(e.target.id==='flipBtn'){$('flip').classList.add('on');$('cardBtns').innerHTML=`<button class="btn ghost" data-say="${esc(cur[3])}">${L('اسمع','Listen')}</button><button class="btn ghost" id="again">${L('لسه','Not yet')}</button><button class="btn good" id="know">${L('عارفها','I know it')}</button>`;return}
-  if(e.target.id==='know'||e.target.id==='again'){srs[cur[1]]={...grade(srs[cur[1]],e.target.id==='know',Date.now()),first:srs[cur[1]]?.first||today()};store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
+  if(e.target.id==='know'||e.target.id==='again'){if(e.target.id==='know')addXP(2);else{addXP(1,{silent:true});oops()}srs[cur[1]]={...grade(srs[cur[1]],e.target.id==='know',Date.now()),first:srs[cur[1]]?.first||today()};store.set('fr-srs',srs);cur=null;renderWords();renderToday()}
 });
 
 /* =========================================================
@@ -1329,12 +1381,12 @@ $('v-speak').addEventListener('click',e=>{
   const dTarget=()=>{const p=dictPool(speakLevel());return p[sp.dIdx%p.length]};
   if(id==='dPlay'){say(dTarget());return}
   if(id==='dSlow'){say(dTarget(),{slow:true});return}
-  if(id==='dCheck'){sp.dCheck=true;renderSpeak();return}
+  if(id==='dCheck'){sp.dCheck=true;renderSpeak();const p=dictPool(speakLevel()),t=p[sp.dIdx%p.length],hit=matchWords(toWords(t),toWords(sp.dTyped));hit.filter(Boolean).length/hit.length>=.8?addXP(5):oops();return}
   if(id==='dRetry'){sp.dCheck=false;sp.dTyped='';renderSpeak();$('dInput')?.focus();return}
   if(id==='dNext'){sp.dIdx++;sp.dCheck=false;sp.dTyped='';renderSpeak();say(dTarget());return}
   // ear training
   const ew=e.target.closest('[data-ear]');
-  if(ew&&sp.ear&&!sp.ear.picked){sp.ear.picked=ew.dataset.ear;sp.ear.n++;if(sp.ear.picked===sp.ear.word)sp.ear.right++;renderSpeak();return}
+  if(ew&&sp.ear&&!sp.ear.picked){sp.ear.picked=ew.dataset.ear;sp.ear.n++;if(sp.ear.picked===sp.ear.word){sp.ear.right++;addXP(2)}else oops();renderSpeak();return}
   if(id==='earPlay'){say(sp.ear.word,{vary:true});return}
   if(id==='earNext'){sp.ear=newEar();renderSpeak();say(sp.ear.word,{vary:true});return}
   if(id==='earNew'){sp.ear=null;renderSpeak();return}
@@ -1342,7 +1394,7 @@ $('v-speak').addEventListener('click',e=>{
   if(id==='again2'){sp={...sp,heard:'',result:null,err:''};renderSpeak();return}
   if(id==='newPrompt'){stopRec();sp={...sp,prompt:sp.prompt+1,heard:'',result:null,err:'',secs:0};renderSpeak();return}
   if(id==='talkCheck'){runCheck(sp.heard,$('talkFix'),e.target,true);return}
-  if(id==='pwCheck'){runCheck($('pwIn').value,$('pwFix'),e.target,false);return}
+  if(id==='pwCheck'){if(toWords($('pwIn').value).length>=20)addXP(10,{msg:L('كتبت! كمّل بنفس الحماس.','You wrote! Keep it up.')});runCheck($('pwIn').value,$('pwFix'),e.target,false);return}
   if(id!=='micBtn'||!SR)return;
   if(sp.rec){stopRec();return}
   window.speechSynthesis?.cancel();
@@ -1351,7 +1403,9 @@ $('v-speak').addEventListener('click',e=>{
   sp.rec=listen({continuous:free,
     onText:t=>{sp.heard=t;const h=document.querySelector('#v-speak .heard');if(h)h.textContent=t},
     onError:code=>{sp.err=micMsg(code)},
-    onEnd:t=>{clearInterval(sp.timer);sp.rec=null;sp.heard=t||sp.heard;sp.result=!!sp.heard;renderSpeak()}});
+    onEnd:t=>{clearInterval(sp.timer);sp.rec=null;sp.heard=t||sp.heard;sp.result=!!sp.heard;renderSpeak();
+      if(sp.result&&sp.mode==='free')addXP(10,{msg:L('اتكلمت! ده أهم تمرين.','You spoke! That matters most.')});
+      else if(sp.result&&sp.mode==='repeat'){const tw=toWords(SENTS[speakLevel()][sp.idx%SENTS[speakLevel()].length]),hits=matchWords(tw,toWords(sp.heard)),pct=hits.filter(Boolean).length/hits.length;pct>=.6?addXP(5):oops()}}});
   if(free){sp.timer=setInterval(()=>{sp.secs++;const el=document.querySelector('#v-speak .timer');if(el)el.textContent=`${Math.floor(sp.secs/60)}:${String(sp.secs%60).padStart(2,'0')} / 1:00`;if(sp.secs>=60)stopRec()},1000)}
   renderSpeak();
 });
@@ -1748,6 +1802,7 @@ function renderTest(){
     const bar=(name,p,extra)=>p?`<div class="b"><div><span>${name}</span><strong class="en">${LV[Math.floor(p.score)]}</strong></div><div class="line"><i style="width:${Math.max(4,p.score/6*100)}%;background:var(--accent)"></i></div>${extra?`<small class="muted">${extra}</small>`:''}</div>`:'';
     const conf=r.o.spread<1.2&&r.parts.uoe.sd<0.7&&r.v.fa<0.25?'high':r.o.spread<2&&r.v.fa<0.4?'mid':'low';
     v.innerHTML=`<div class="stack" style="text-align:center">
+      <div class="result-hero">${mascot('cheer',110)}</div>
       <p class="muted">${L('مستواك','Your level')}</p>
       <div class="result-badge en">${LV[lvl]}</div>
       <p style="max-width:52ch;margin:0 auto">${tx(CANDO[lvl])}</p>
@@ -1768,7 +1823,7 @@ function finishTest(){
   const v=vocabScore(tst.vans),ue=eap(tst.uresp),le=eap(tst.lresp);
   const parts={vocab:{score:v.score,w:.15},ctest:{score:stepScore(tst.cAtt),w:.2},uoe:{score:thetaScore(ue.theta),sd:ue.sd,w:.25},listen:{score:thetaScore(le.theta),sd:le.sd,w:.25},dict:{score:stepScore(tst.dAtt),w:.15}};
   if(tst.sAtt.length){const a=tst.sAtt;parts.speak={score:Math.min(5.99,a[1]?.pct>=.85?4.6:a[0].pct>=.85?2.8+(a[1]?.pct||0)*1.4:a[0].pct*2.6),w:.1}}
-  tst.res={v,parts,o:overall6(parts)};tst.step='result';clearSavedTest();
+  tst.res={v,parts,o:overall6(parts)};tst.step='result';clearSavedTest();addXP(50,{silent:true});
   store.set('fr-lastTest',{date:today(),level:tst.res.o.level,score:+tst.res.o.score.toFixed(2),parts:Object.fromEntries(Object.entries(parts).map(([k,p])=>[k,+p.score.toFixed(2)]))});
   confetti();
 }
@@ -2006,7 +2061,7 @@ document.addEventListener('click',e=>{
     if(!ok)box.querySelector('[data-ans="0"]').classList.add('right');return}
   const gp=e.target.closest('[data-go-practice]');if(gp){goPractice(gp.dataset.goPractice,+gp.dataset.lv);return}
   const f=e.target.closest('[data-finish]');
-  if(f){mapDone[f.dataset.finish]=true;store.set('fr-mapdone',mapDone);closeSheet();confetti();renderPath()}
+  if(f){const was=mapDone[f.dataset.finish];mapDone[f.dataset.finish]=true;store.set('fr-mapdone',mapDone);closeSheet();confetti();renderPath();if(!was)addXP(20,{msg:L('درس خلص! الخريطة اتقدمت.','Lesson done! Your map moved on.')})}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('sheet')&&!$('sheet').hidden)closeSheet()});
 
@@ -2040,10 +2095,10 @@ function renderHome(){
       <div class="lp-stage" ${rv(2)}>
         <div class="lp-chips" aria-hidden="true"><b style="top:-14px;inset-inline-start:12%">A1</b><b style="top:-14px;inset-inline-end:14%">B2</b><b style="bottom:22%;inset-inline-end:-12px">C1</b><b style="bottom:34%;inset-inline-start:-12px">B1</b></div>
         <div style="display:grid;align-content:end;gap:14px">
-          <div class="lp-talk"><div class="bubble" id="bub0">${esc(HERO_LINES[0][1])}</div><div class="bubble" id="bub1">${esc(HERO_LINES[1][1])}</div></div>
-          ${castHTML(['Emma','Jack'],{scene:true})}
+          <div class="lp-talk"><div class="bubble on" id="bub0" dir="ltr">Hi! I'm Bobo. Let's get you talking English!</div></div>
+          <div class="bobo-stage" id="boboHero">${mascot('wave',200)}</div>
         </div>
-        <button class="btn lp-play" id="heroPlay">${L('اسمعهم بيتكلموا','Hear them talk')}</button>
+        <button class="btn lp-play" id="heroPlay">${L('اسمع Bobo','Hear Bobo')}</button>
       </div>
     </section>
 
@@ -2092,8 +2147,9 @@ $('v-home').addEventListener('click',e=>{
   const g=e.target.closest('[data-go]');if(g){e.preventDefault();$('lpLinks').classList.remove('open');$('lpMenu').setAttribute('aria-expanded','false');$(g.dataset.go).scrollIntoView({behavior:'smooth'});return}
   const l=e.target.closest('[data-lang]');if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();return}
   if(e.target.closest('#heroPlay')){
-    const bubs=[$('bub0'),$('bub1')];bubs.forEach(b=>b.classList.remove('on'));
-    playLines(HERO_LINES,{root:$('v-home'),onLine:i=>{bubs.forEach((b,k)=>b.classList.toggle('on',k===i))},onDone:()=>bubs.forEach(b=>b.classList.remove('on'))});
+    // Bobo says hello; his mouth moves while he talks and he cheers at the end
+    const m=document.querySelector('#boboHero .mascot');if(!m)return;m.className='mascot m-talk';
+    say("Hi! I'm Bobo. Let's get you talking English!",{onend:()=>{m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},onerror:()=>{m.className='mascot m-wave'}});
   }
 });
 
@@ -2103,7 +2159,7 @@ $('v-home').addEventListener('click',e=>{
    Until it is filled in, the sign-in button explains that it is not set up yet.
    ========================================================= */
 const FIREBASE_CONFIG={apiKey:'AIzaSyBd_zM8rg6D9x0gtQHk44AQc5uW1kxlBR4',authDomain:'fluent-route-ed587.firebaseapp.com',projectId:'fluent-route-ed587',storageBucket:'fluent-route-ed587.firebasestorage.app',messagingSenderId:'990654544590',appId:'1:990654544590:web:1b0ee75a81abaded8f6e9f'};
-const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone','fr-test','fr-read','fr-mywords','fr-lastbook'];
+const SYNC_KEYS=['fr-checks','fr-place','fr-srs','fr-day','fr-days','fr-lastTest','fr-lang','fr-accent','fr-lv','fr-map','fr-mapdone','fr-test','fr-read','fr-mywords','fr-lastbook','fr-xp'];
 const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 let fb=null,fbUser=null,pushTimer=null;
 const authHTML=()=>fbUser?`<span class="who">${fbUser.photoURL?`<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<span>${esc((fbUser.displayName||'').split(' ')[0])}</span><button data-auth="out">${L('خروج','Sign out')}</button></span>`
@@ -2137,6 +2193,7 @@ function mergeData(loc,cld){
     else if(k==='fr-day')out[k]=a.d===b.d?{d:a.d,done:{...b.done,...a.done}}:later(a,b,'d');
     else if(k==='fr-read'){const m={...b};for(const s in a){const x=a[s],y=m[s];m[s]=y?{n:x.n||y.n,ch:Math.max(x.ch||0,y.ch||0),done:{...y.done,...x.done}}:x}out[k]=m}
     else if(k==='fr-place'||k==='fr-lastTest')out[k]=later(a,b,'date');
+    else if(k==='fr-xp')out[k]=a.d===b.d?{t:Math.max(a.t||0,b.t||0),d:a.d,n:Math.max(a.n||0,b.n||0)}:{...later(a,b,'d'),t:Math.max(a.t||0,b.t||0)};
     else if(k==='fr-map')out[k]=later(loc['fr-place'],cld['fr-place'],'date')===loc['fr-place']?a:b; // the map follows the newer test
     else out[k]=a; // settings and an unfinished test: this device's own
   }
@@ -2351,7 +2408,7 @@ $('v-read').addEventListener('click',e=>{
   const go=e.target.closest('[data-go]'),pl=e.target.closest('[data-pi]');
   if(e.target.id==='rdListen'){if(rdPlaying){rdStop();return}rdPlaying=true;e.target.textContent=L('وقّف','Stop');const on=document.querySelector('.rd-text p.on');rdPlayFrom(on?+on.dataset.i:0);return}
   if(pl){rdStop();rdPlaying=true;$('rdListen').textContent=L('وقّف','Stop');rdPlayFrom(+pl.dataset.pi);return}
-  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
+  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){if(!pos.done[go.dataset.fin])addXP(15,{msg:L('فصل كامل! برافو.','A whole chapter! Bravo.')});pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
     pos.ch=+go.dataset.go;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0);return}
   if(e.target.id==='wpSent'&&rdSel){const s=rdSel;e.target.disabled=true;gTranslate(s.sent,false).then(t=>{if(rdSel===s&&$('wpSentAr'))$('wpSentAr').innerHTML=t?'<span class="wp-sent">'+esc(t.main)+'</span>':L('الترجمة مش متاحة دلوقتي.','Translation is not available right now.')});return}
   if(e.target.id==='wpX'){$('wpop').hidden=true;rdSel=null;return}
@@ -2388,6 +2445,63 @@ window.addEventListener('hashchange',()=>navCount++);
 const PARENT={read:h=>h.includes('/')?'#read':'#more',watch:()=>'#more',test:()=>'#today'};
 function drawBackbar(v){const b=$('backbar');b.hidden=!PARENT[v];if(!b.hidden)$('backBtn').textContent=L('→ رجوع','← Back')}
 $('backBtn').addEventListener('click',()=>{const v=curView();if(navCount>0){navCount-=2;history.back()}else location.hash=PARENT[v](location.hash)});
+/* =========================================================
+   Bobo: the site's own mascot, a speech bubble with the route's yellow scarf (from the logo).
+   mascot(mood,size): happy | wave | cheer | oops | think | talk
+   ========================================================= */
+const BOBO_INK='#121935';
+function mascot(mood='happy',size=120){
+  const o=`stroke="${BOBO_INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"`;
+  const arm=(cls,d)=>`<g class="arm ${cls}"><path d="${d}" fill="none" stroke="${BOBO_INK}" stroke-width="13" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#2F4FE0" stroke-width="7.5" stroke-linecap="round"/></g>`;
+  return `<span class="mascot m-${mood}" style="--s:${size}px" aria-hidden="true"><svg viewBox="0 0 120 130">
+    <ellipse class="msh" cx="60" cy="124" rx="30" ry="4.5" fill="${BOBO_INK}" opacity=".14"/>
+    <g class="mb">
+      <ellipse cx="46" cy="114" rx="9" ry="6" fill="#F2A93B" ${o}/><ellipse cx="74" cy="114" rx="9" ry="6" fill="#F2A93B" ${o}/>
+      <path d="M60 14c26 0 44 17 44 42s-18 44-44 44c-6 0-12-1-17-3l-15 9 5-15C21 86 16 73 16 56c0-25 18-42 44-42z" fill="#2F4FE0" ${o}/>
+      <path d="M30 40c6-12 18-19 32-19" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".35"/>
+      <ellipse cx="62" cy="74" rx="26" ry="18" fill="#4F6CFF" opacity=".55"/>
+      ${arm('al','M24 74q-12 4-15 15')}${arm('ar','M96 74q12 4 15 15')}
+      <path d="M21 70q40 20 82-8" fill="none" stroke="${BOBO_INK}" stroke-width="10" stroke-linecap="round"/><path d="M21 70q40 20 82-8" fill="none" stroke="#FFD84A" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="103" cy="62" r="5" fill="#FFD84A" ${o}/>
+      <g class="eo"><ellipse cx="45" cy="47" rx="11" ry="12.5" fill="#fff" ${o}/><ellipse cx="75" cy="47" rx="11" ry="12.5" fill="#fff" ${o}/>
+        <g class="pu"><circle cx="47" cy="49" r="6" fill="${BOBO_INK}"/><circle cx="77" cy="49" r="6" fill="${BOBO_INK}"/><circle cx="49.5" cy="46" r="2.2" fill="#fff"/><circle cx="79.5" cy="46" r="2.2" fill="#fff"/></g></g>
+      <g class="eh" fill="none" stroke="${BOBO_INK}" stroke-width="3.6" stroke-linecap="round"><path d="M36 50q9-10 18 0"/><path d="M66 50q9-10 18 0"/></g>
+      <g class="brow" fill="none" stroke="${BOBO_INK}" stroke-width="3.2" stroke-linecap="round"><path d="M36 31q8-5 16 1"/><path d="M68 32q8-6 16-1"/></g>
+      <ellipse cx="33" cy="62" rx="6" ry="3.5" fill="#FF8FA3" opacity=".7"/><ellipse cx="87" cy="62" rx="6" ry="3.5" fill="#FF8FA3" opacity=".7"/>
+      <path class="mo mo-smile" d="M51 62q9 9 18 0" fill="none" stroke="${BOBO_INK}" stroke-width="3.4" stroke-linecap="round"/>
+      <g class="mo mo-open"><path d="M49 60q11 1 22 0q-1 14-11 14t-11-14z" fill="#6E1E2B" ${o}/><path d="M54 70q6-4 12 0q-6 3-12 0z" fill="#FF8FA3"/></g>
+      <ellipse class="mo mo-o" cx="60" cy="66" rx="5" ry="6" fill="#6E1E2B" ${o}/>
+    </g></svg></span>`;
+}
+// XP: points for every bit of practice, a daily goal, and Bobo cheering you on
+const XP_GOAL=50;
+let xp=store.get('fr-xp',{t:0,d:today(),n:0});if(xp.d!==today())xp={t:xp.t||0,d:today(),n:0};
+const pickOne=a=>a[Math.floor(Math.random()*a.length)];
+const CHEER=[['برافو! ✨','Nice one! ✨'],['عاش يا بطل!','You got it!'],['ممتاز، كمّل كده!','Great, keep going!'],['إنجليزيك بيتحسن!','Your English is growing!'],['حلو أوي!','Awesome!']];
+const OOPS=[['ولا يهمك، هترجعلك تاني','No worries, it will come back'],['قربت جدًا!','So close!'],['الغلط بيعلّم، جرّب تاني','Mistakes teach. Try again']];
+let coachT=0;
+function coach(msg,mood='happy',ms=2600){
+  let c=$('coach');if(!c){c=document.createElement('div');c.id='coach';c.setAttribute('role','status');document.body.appendChild(c)}
+  c.innerHTML=mascot(mood,64)+`<p>${msg}</p>`;c.className='coach on';clearTimeout(coachT);coachT=setTimeout(()=>c.classList.remove('on'),ms);
+}
+function addXP(n,{silent=false,mood='cheer',msg=''}={}){
+  const before=xp.n;xp={t:(xp.t||0)+n,d:today(),n:before+n};store.set('fr-xp',xp);
+  if(before<XP_GOAL&&xp.n>=XP_GOAL){coach(L(`خلصت هدف النهارده: ${XP_GOAL} نقطة! 🎉`,`Daily goal done: ${XP_GOAL} XP! 🎉`),'cheer',3800);confetti()}
+  else if(!silent)coach(`<b class="en">+${n} XP</b> ${msg||tx(pickOne(CHEER))}`,mood);
+  const chip=document.querySelector('[data-xp]');if(chip)chip.textContent=xp.n;
+}
+const oops=()=>coach(tx(pickOne(OOPS)),'oops');
+// greeting card on Today: Bobo, the daily goal ring and the streak
+function greetHTML(streak){
+  const p=Math.min(1,xp.n/XP_GOAL),hr=new Date().getHours();
+  const hi=hr<12?L('صباح الخير!','Good morning!'):hr<18?L('أهلًا!','Hey there!'):L('مساء الخير!','Good evening!');
+  const say=p>=1?L('خلصت هدف النهارده. أي حاجة زيادة بونص!','Daily goal done. Anything more is a bonus!'):xp.n?L(`فاضلك ${XP_GOAL-xp.n} نقطة على هدف النهارده.`,`${XP_GOAL-xp.n} XP to today's goal.`):L('يلا نبدأ؟ كل تمرين بيديك نقط.','Ready? Every exercise earns XP.');
+  return `<div class="greet panel">${mascot(p>=1?'cheer':xp.n?'happy':'wave',96)}
+    <div class="greet-t"><strong>${hi}</strong><p>${say}</p>
+      <div class="greet-stats"><span class="chip-xp"><b class="en" data-xp>${xp.n}</b>/<span class="en">${XP_GOAL}</span> XP</span><span class="chip-fire">🔥 <b class="en">${streak}</b> ${L('يوم','days')}</span><span class="chip-tot en">${xp.t} XP</span></div>
+      <div class="xpbar"><i style="width:${p*100}%"></i></div></div></div>`;
+}
+console.assert(mascot('cheer').includes('m-cheer')&&greetHTML(0).includes('xpbar'),'mascot');
 /* =========================================================
    routing
    ========================================================= */
