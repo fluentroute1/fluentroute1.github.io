@@ -713,6 +713,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .t-num{font-size:12px;color:var(--muted);margin-top:2px;display:block}
 .tick{pointer-events:none}
 @media (max-width:520px){.book-cover{padding:7px 8px 9px 6px}.rh-l,.rh-r{left:20px;right:20px}.pn-r{left:0;right:0}}
+.m-live .mo-open{transform:scaleY(var(--mo,.2))!important;transition:none!important}
 </style>
 
 <aside class="side">
@@ -2158,6 +2159,7 @@ const FEAT_ICONS={
  dict:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13 7l4 4"/>',
  ear:'<path d="M7 9a5 5 0 1 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 0"/><path d="M10 9a2 2 0 1 1 4 0"/>'};
 function renderHome(){
+  try{boboClip().catch(()=>{})}catch(_){}
   const h=$('v-home'),rv=i=>`class="rv" style="--d:${i}"`;
   h.innerHTML=`
   <div class="lp-bar"><div class="wrap">
@@ -2231,7 +2233,7 @@ $('v-home').addEventListener('click',e=>{
   const l=e.target.closest('[data-lang]');if(l){S.lang=l.dataset.lang;store.set('fr-lang',S.lang);renderAll();return}
   if(e.target.closest('#heroPlay')){
     // Bobo says hello; his mouth moves while he talks and he cheers at the end
-    const m=document.querySelector('#boboHero .mascot');if(!m)return;boboTalk(m,"Hi! I'm Bobo. Let's get you talking English!");return;
+    const m=document.querySelector('#boboHero .mascot');if(!m)return;boboVoice(m);return;
     // Bobo is a he: a man's voice of the chosen accent, or a deeper version of whatever voice exists
     const mv=accentVoices().find(x=>voiceGender(x)==='m');
     say("Hi! I'm Bobo. Let's get you talking English!",{voice:mv,pitch:mv?1.05:.7,onend:()=>{m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},onerror:()=>{m.className='mascot m-wave'}});
@@ -2645,6 +2647,34 @@ function boboTalk(m,text){
     onboundary:e=>{if(e.name&&e.name!=='word')return;gotWord=true;const w=(text.slice(e.charIndex).match(/^[\w']+/)||[''])[0];pulse(syl(w),150/rate)},
     onend:()=>{clear();m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},
     onerror:()=>{clear();m.className='mascot m-wave'}});
+}
+// Bobo's real voice: a recorded natural male voice (US or UK, by your accent), decoded once and kept ready,
+// so it starts the moment you tap. The mouth follows a loudness curve measured from the recording itself
+// (every 30 ms), timed to the audio clock, so it moves exactly with the voice. If the recording cannot be
+// loaded (offline, the claude.ai copy), he falls back to the browser voice.
+let boboCtx=null;const boboClips={};
+function boboClip(){
+  const a=S.accent==='uk'?'uk':'us';if(boboClips[a])return boboClips[a];
+  const url=(location.hostname.endsWith('github.io')||location.hostname==='localhost'?'':'https://fluentroute1.github.io/')+'audio/bobo-'+a+'.mp3';
+  return boboClips[a]=fetch(url).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(ab=>{
+    boboCtx=boboCtx||new (window.AudioContext||window.webkitAudioContext)();
+    return boboCtx.decodeAudioData(ab)}).then(buf=>{
+    const d=buf.getChannelData(0),step=Math.round(buf.sampleRate*.03),env=[];let peak=0;
+    for(let k=0;k<d.length;k+=step){let s=0;for(let n=k;n<Math.min(d.length,k+step);n++)s+=d[n]*d[n];const v=Math.sqrt(s/step);env.push(v);peak=Math.max(peak,v)}
+    return {buf,env:env.map(v=>v/(peak||1))}}).catch(e=>{delete boboClips[a];throw e});
+}
+function boboVoice(m){
+  const text="Hi! I'm Bobo. Let's get you talking English!";
+  window.speechSynthesis?.cancel();
+  boboClip().then(({buf,env})=>{
+    boboCtx.resume();
+    const src=boboCtx.createBufferSource();src.buffer=buf;src.connect(boboCtx.destination);
+    const t0=boboCtx.currentTime+.02;let raf=0;
+    m.className='mascot m-speak m-live';
+    const tick=()=>{const k=Math.floor((boboCtx.currentTime-t0)/.03);m.style.setProperty('--mo',(.15+.85*Math.min(1,(env[k]||0)*1.3)).toFixed(2));raf=requestAnimationFrame(tick)};
+    src.onended=()=>{cancelAnimationFrame(raf);m.style.removeProperty('--mo');m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)};
+    src.start(t0);tick();
+  }).catch(()=>boboTalk(m,text)); // no recording: the browser voice with syllable lip sync
 }
 // XP: points for every bit of practice, a daily goal, and Bobo cheering you on
 const XP_GOAL=50;
