@@ -714,6 +714,19 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .tick{pointer-events:none}
 @media (max-width:520px){.book-cover{padding:7px 8px 9px 6px}.rh-l,.rh-r{left:20px;right:20px}.pn-r{left:0;right:0}}
 .m-live .mo-open{transform:scaleY(var(--mo,.2))!important;transition:none!important}
+/* book: white paper and black ink in every theme, as big as the screen allows */
+.book{--paper:#FFFFFF;--paper-2:#F3F3F1;--paper-ink:#111111}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .book{--paper:#FFFFFF;--paper-2:#F3F3F1;--paper-ink:#111111}}
+:root[data-theme="dark"] .book{--paper:#FFFFFF;--paper-2:#F3F3F1;--paper-ink:#111111}
+.book::after{opacity:.25}
+body:has(#v-read:not([hidden]) #book) main .wrap{max-width:1500px}
+.book{height:clamp(520px,82vh,980px)}
+.book-cover{max-width:760px}.book-cover:has(.spread){max-width:1440px}
+.book .rd-text{font-size:20px;line-height:1.8}
+.book .rd-text p.on{background:rgba(255,216,74,.45)}
+@media (max-width:520px){.book{height:clamp(500px,76vh,760px)}.book .rd-text{font-size:18px}}
+.mylink{display:grid;gap:8px}.mylink input{flex:1;min-width:0;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.mylink .row{flex-wrap:nowrap}
 </style>
 
 <aside class="side">
@@ -1185,8 +1198,13 @@ const YT={'Easy Stories in English':'UUCoLYcsDxFjnFPYF057l-7w','BBC 6 Minute Eng
  'English with Lucy':'UUz4tgANd4yy8Oe0iXCdSWfA','Speak English With Vanessa':'UUxJGMJbjokfnr2-s4_RXPxQ','Easy English street interviews':'UUvgLaFuTGGRXl0eyvBRCifA',
  'Learn English With TV Series':'UUKgpamMlm872zkGDcBJHYDg',"Rachel's English":'UUvn_XCl_mgQmt3sD753zdJA','TED Talks':'UUAuUUnT6oDeKwE6v1NGQxug',
  'Kurzgesagt':'UUsXVk37bltHxD1rDPwtNM8Q','Hot Ones':'UUPD_bxCRGpmmeQcbe2kpPaA'};
+// scenes from each series and film on YouTube (found by search; whole episodes and films are not free to show)
+const CLIPS={"Friends":["Lhpu3GdlV3w","y8QEATxV-8M","GMoqKIZI7X8","EqXEu0D5PJM","fvol_PhlegU","UMLUdgJuu60"],"Young Sheldon":["qe-VlhaZPgw","728Imd_APlo","qTcSsaUbyzg","u1GZk3TWNQQ","Cq1tD7Z-WFg","fdV-dsVkFCE"],"How I Met Your Mother":["3hvGBibGccg","yqEVVHO1OCE","BOLpw8tcWAo","D3cuTnkv_us","yBue0vt4Qrk","8__08XiMEhs"],"Modern Family":["5DTWf8ZuOeg","ybICuvHz_dc","yGZ9RWvpKq0","yaSBXuwEZJE","ELutIbHk2UA","psVlgO8pF1Q"],"The Office (US)":["y5jchMm0Ae8","DVPEsKCL20Q","1baVt4UrP3k","gO8N3L_aERg","qMcph-xRQD8","1QQBB3cwNM0"],"Brooklyn Nine-Nine":["L7wCy1IOwOw","UG_sAhMuL08","wrXKBR2JUPE","gFNigX2jrnM","HlBYdiXdUa8","MY-ns1gmv5E"],"Ted Lasso":["t1bveUz8RD0","4KlGFOQfwqQ","1OM4KIJlkj4","HW-wvaer8pE","HYp5xnfEkVU","3S16b-x5mRA"],"Breaking Bad":["46l2HlRQHk8","zAjJYkUnTEs","T3x1tzOuXbQ","b2PtUP48IIY","NLScfl_-VBY","rURYmdmUwYY"],"Sherlock":["echK0RhFKcQ","0Hl_tB7Pxx0","-bBHT158E0s","xVVwNzx7elE","6IxeVSAhKyQ","4V3NOuVctrs"],"Succession":["KH55hmX0-Uo","7GGajk7cwYw","39O3PNrVO8A","Ut4pgRu5gHU","U7P4zKOgu8U","Rk3lcEeoEy8"],"Peaky Blinders":["9_zzTrKrEUU","wf3HQ941xvQ","j3ult86PGh4","gbOVM-3Worg","D0GfpCwhjls","uoE9kUPite8"],"Gilmore Girls":["6MWPY76d3fo","ZSP2lNwb_Bs","034z39GmPaM","pXO5z-5ydLs","BkJ3ooGCw1w","kalLh75XbiE"],"Toy Story":["4NSfIi57ado","6F8k_cJ3JPA","9pn8utbTtnU","5bTyYTcIsuE","ZxAEFhZVkpg","N-95Vjy3jsM"],"Finding Nemo":["UDEGqKJVt9k","FwZB_tQVaMs","Tg-yyRWTiG4","O8pXmu8E9ig","bEtC2ekw2Fc","zNyYDHCg06c"],"Inside Out":["Uky-jgd3M3E","du5E8zX9Y98","nEUzQ7yL9A0","M7KelAaqsCg","JhAzwl6pWq0","cxEqNNimt3Q"],"Forrest Gump":["Ah3bYaCl8gA","_4B63QRIO5Q","cma9S_qQdCM","ITGEGE9v0d0","nFvASiMTDz0","fJdxyuNslCI"],"The Pursuit of Happyness":["UZb2NOHPA2A","TkD1QvjKlqU","jZda2mqH3_c","Vyi0vQ-HTrM","hKi3-5gO4uE","W7iEqrXqcmo"],"The Social Network":["tjMGuJMIgwM","Cjya49c5Sak","-Koj9hvcBMk","KdtPNRzuKrk","VlSkPA60ujQ","VKnNUYknsuQ"],"Good Will Hunting":["8GY3sO47YYo","8gfipuaIA68","Xv7eeMikM_w","OZmV7RGdMUc","ZQht2yOX9Js","-k6JxfX8asc"],"The Big Short":["oyh14SQOIac","xbiDrzTd8fE","A25EUhZGBws","Cxjdj5_5yNM","mwdo17GT6sg","F3goSYkVPNE"],"Snatch":["2pIuncegdOc","IXugVZMsZ24","bRJxNpPj6Zc","_c1kBwsv8PM","bRBZw4IU8rg","wyKBSy6rgdY"]};
+// any YouTube link: watch?v=, youtu.be/, shorts/, embed/
+const ytId=u=>{const m=String(u).match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/);return m?m[1]:null};
+console.assert(ytId('https://youtu.be/dQw4w9WgXcQ?t=3')==='dQw4w9WgXcQ'&&ytId('https://www.youtube.com/watch?v=dQw4w9WgXcQ&x=1')==='dQw4w9WgXcQ'&&!ytId('netflix.com/title/1'),'yt link');
 const slugOf=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const link=r=>YT[r[1]]?'#watch/'+slugOf(r[1]):r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
+const link=r=>YT[r[1]]||CLIPS[r[1]]?'#watch/'+slugOf(r[1]):r[6]||(r[0]==='book'?'https://www.goodreads.com/search?q='+encodeURIComponent(r[1]):'https://www.youtube.com/results?search_query='+encodeURIComponent(r[1]));
 const itemHTML=(r,showLv)=>`<a class="item" href="${esc(link(r))}"${link(r)[0]==='#'?'':' target="_blank" rel="noopener"'}><span class="top"><span class="en" dir="ltr">${esc(r[1])}</span><span class="tag">${showLv?LV[r[2]]+'–'+LV[r[3]]:tx(TYPES[r[0]])}</span></span><small>${esc(L(r[4],r[5]))}</small>${link(r)[0]!=='#'?`<small class="ext">${r[0]==='book'?L('↗ كتاب ليه حقوق نشر، بيفتح صفحته بره الموقع','↗ Copyrighted book: opens its page outside the site'):L('↗ بيفتح بره الموقع','↗ Opens outside the site')}</small>`:''}</a>`;
 
 /* =========================================================
@@ -1250,14 +1268,14 @@ function tasksFor(lv){return [
   {k:'anki',t:L('كلمات','Words'),m:10,s:L('راجع البطاقات وضيف ١٠ جداد. ','Review your cards and add 10 new ones. ')+`<a href="#words">${L('افتح الكلمات','Open Words')}</a>`},
   {k:'listen',t:L('استماع','Listening'),m:15,s:L('النهارده: ','Today: ')+resLink(pick('pod',lv))},
   {k:'shadow',t:'Shadowing',m:5,s:L('قلّد ٥ جمل بصوتك. ','Repeat 5 sentences out loud. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`}, // taste-skill-ignore: the word Shadowing, not a CSS shadow
-  {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:10,s:(lv<2?'':L('بترجمة إنجليزي: ','With English subtitles: '))+resLink(pick(lv<2?'yt':'tv',lv))},
+  {k:'watch',t:lv<2?L('فيديو','Video'):L('مسلسل أو فيلم','Series or film'),m:10,s:lv<2?resLink(pick('yt',lv)):L('مشهد بترجمة إنجليزي: ','A scene with English subtitles: ')+`<a href="#watch/random">${L('اختارلي حاجة على مستوايا','pick one at my level')}</a> · <a href="#watch/link">${L('أو حط لينك','or paste a link')}</a>`},
   {k:'speak',t:L('كلام وودن','Speaking & ear'),m:10,s:L('اتكلم دقيقة، واعمل إملاء ٥ جمل وجولة "ودنك". ','Talk for a minute, then 5 dictations and one Ear round. ')+`<a href="#speak">${L('افتح التدريب','Open Practice')}</a>`},
-  {k:'read',t:L('قراية','Reading'),m:10,s:(()=>{const b=bookFor(lastBook()||recBook()[0]);return L('فصل من ','A chapter of ')+`<a href="#read/${b[0]}" class="en" dir="ltr">${esc(b[1])}</a>`+L(' هنا في الموقع',' here on the site')})()},
+  {k:'read',t:L('قراية','Reading'),m:10,s:(()=>{const b=bookFor(lastBook()||recBook()[0]);return L('٥ دقايق قراية من ','5 minutes of reading in ')+`<a href="#read/${b[0]}" class="en" dir="ltr">${esc(b[1])}</a>`+L(' هنا في الموقع',' here on the site')})()},
 ]}
 let day=store.get('fr-day',{d:today(),done:{},c:{}});if(day.d!==today())day={d:today(),done:{},c:{}};day.c=day.c||{};
 // what finishes each daily task: counts of real activity today (seconds for listening and watching)
-const TASK_RULE={anki:c=>(c.cards||0)>=10,listen:c=>(c.listen||0)>=300,shadow:c=>(c.rep||0)>=5,watch:c=>(c.watch||0)>=300,speak:c=>(c.talk||0)>=1&&(c.dict||0)>=3,read:c=>(c.pages||0)>=4||(c.chapters||0)>=1};
-const TASK_GOAL={anki:['cards',10],listen:['listen',300],shadow:['rep',5],watch:['watch',300],speak:['dict',3],read:['pages',4]};
+const TASK_RULE={anki:c=>(c.cards||0)>=10,listen:c=>(c.listen||0)>=300,shadow:c=>(c.rep||0)>=5,watch:c=>(c.watch||0)>=300,speak:c=>(c.talk||0)>=1&&(c.dict||0)>=3,read:c=>(c.readsec||0)>=300};
+const TASK_GOAL={anki:['cards',10],listen:['listen',300],shadow:['rep',5],watch:['watch',300],speak:['dict',3],read:['readsec',300]};
 function progress(key,n=1){
   if(day.d!==today())day={d:today(),done:{},c:{}};
   day.c[key]=(day.c[key]||0)+n;
@@ -1267,7 +1285,7 @@ function progress(key,n=1){
   if(Object.keys(day.done).length&&!fullDays.includes(day.d)){fullDays.push(day.d);store.set('fr-days',fullDays.slice(-400))}
   if(curView()==='today')renderToday();
 }
-console.assert(TASK_RULE.speak({talk:1,dict:3})&&!TASK_RULE.speak({talk:1,dict:2})&&TASK_RULE.anki({cards:10}),'task rules');
+console.assert(!TASK_RULE.read({pages:40,chapters:2})&&TASK_RULE.read({readsec:300})&&TASK_RULE.speak({talk:1,dict:3})&&!TASK_RULE.speak({talk:1,dict:2})&&TASK_RULE.anki({cards:10}),'task rules');
 let fullDays=store.get('fr-days',[]);
 const tick='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function renderToday(){
@@ -1289,7 +1307,7 @@ function renderToday(){
    ${(()=>{const s=lastBook()||recBook()[0],b=bookFor(s),p=bookPct(s);return `<a class="panel read-card" href="#read/${s}"><span class="cover" dir="ltr" style="--c:${b[7]}"><span class="en">${esc(b[1])}</span></span><span><strong>${lastBook()?L('كمّل قراية','Keep reading'):L('اقرا كتاب على مستواك','Read a book at your level')}</strong><br><span class="en" dir="ltr">${esc(b[1])}</span><br><small class="muted">${p?L(`${p}٪ خلصت`,`${p}% done`):L('دوس على أي كلمة تعرف معناها','Tap any word for its meaning')}</small></span></a>`})()}
    </div><div class="stack">
    <div class="sec-head"><h2>${L('روتين النهارده','Today\'s routine')}</h2><small>${n===T.length?L('خلصت النهارده','All done today'):L(`${n} من ${T.length} · بتتعلّم لوحدها لما تخلصها`,`${n} of ${T.length} · they tick themselves when you finish`)}</small></div>
-   <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><span class="tick" role="img" aria-label="${day.done[t.k]?L('خلصت','Done'):L('لسه','Not yet')}">${tick}</span><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span>${day.done[t.k]?'':(()=>{const [ck,g]=TASK_GOAL[t.k],v=Math.min(day.c[ck]||0,g),sec=ck==='listen'||ck==='watch';return `<span class="t-prog"><i style="width:${v/g*100}%"></i></span><span class="t-num en">${sec?Math.floor(v/60)+'/'+g/60+' min':v+'/'+g}</span>`})()}</span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
+   <ul class="tasks" id="tasks">${T.map(t=>`<li class="task ${day.done[t.k]?'done':''}"><span class="tick" role="img" aria-label="${day.done[t.k]?L('خلصت','Done'):L('لسه','Not yet')}">${tick}</span><span><span class="t-title">${t.t}</span><span class="t-sub">${t.s}</span>${day.done[t.k]?'':(()=>{const [ck,g]=TASK_GOAL[t.k],v=Math.min(day.c[ck]||0,g),sec=ck==='listen'||ck==='watch'||ck==='readsec';return `<span class="t-prog"><i style="width:${v/g*100}%"></i></span><span class="t-num en">${sec?Math.floor(v/60)+'/'+g/60+' min':v+'/'+g}</span>`})()}</span><span class="mins en">${t.m}m</span></li>`).join('')}</ul>
    </div></div>`;
   v.querySelectorAll('.today-grid>.stack').forEach(stagger);
 }
@@ -2446,10 +2464,12 @@ async function renderRead(){
 /* paged book: CSS columns cut the chapter into pages; one page on phones, two side by side on wide screens.
    Turning a page flips a "leaf" in 3-D: its front is the page you leave, its back the page you arrive at. */
 let pg={i:0,n:1,step:1,w:0,g:0,h:0,busy:false};
+let lastAct=Date.now();['pointerdown','keydown','wheel','touchstart'].forEach(t=>document.addEventListener(t,()=>{lastAct=Date.now()},{passive:true}));
+setInterval(()=>{if(!document.hidden&&curView()==='read'&&$('flow')&&Date.now()-lastAct<120000)progress('readsec',15)},15000);
 function layoutBook(keep){
   const box=$('bookPages'),flow=$('flow');if(!box||!flow)return;
   // two pages side by side when the reading area is wide enough for two comfortable lines
-  const spread=$('book').parentElement.clientWidth>=820;$('book').classList.toggle('spread',spread);
+  const spread=$('book').closest('.reader').clientWidth>=820;$('book').classList.toggle('spread',spread);
   const g=spread?64:40,w=spread?(box.clientWidth-g)/2:box.clientWidth;
   Object.assign(flow.style,{width:w+'px',height:box.clientHeight+'px',columnWidth:w+'px',columnGap:g+'px'});
   Object.assign(pg,{w,g,h:box.clientHeight,step:spread?2:1});
@@ -2483,7 +2503,7 @@ function turn(dir){
   if(ni>=pg.n){const f=document.querySelector('[data-fin]');if(f){f.classList.remove('nudge');void f.offsetWidth;f.classList.add('nudge')}return}
   const old=pg.i;
   // the page flip is the point of the book, so it plays unless you switched motion off yourself in the site
-  if(store.get('fr-motion',null)===false){pg.i=ni;showPage();progress('pages',pg.step);return}
+  if(store.get('fr-motion',null)===false){pg.i=ni;showPage();return}
   const box=$('bookPages'),spread=pg.step>1,R1=spread?1:0,dur=750;
   // the leaf always hinges on the spine: over the right page in a spread, over the whole page on a phone
   const leaf=document.createElement('div');leaf.className='leaf';
@@ -2495,7 +2515,7 @@ function turn(dir){
   if(spread||dir<0)box.appendChild(hold);
   box.appendChild(leaf);pg.busy=true;pg.i=ni;showPage();
   const a=leaf.animate([{transform:`rotateY(${dir>0?0:-180}deg)`},{transform:`rotateY(${dir>0?-180:0}deg)`}],{duration:dur,easing:'cubic-bezier(.45,.05,.25,1)'});
-  setTimeout(()=>hold.remove(),dur/2);progress('pages',pg.step);
+  setTimeout(()=>hold.remove(),dur/2);
   // ends on a timer, not on the animation event: a page in the background never finishes its animations
   setTimeout(()=>{a.cancel();leaf.remove();hold.remove();pg.busy=false},dur+60);
 }
@@ -2566,7 +2586,7 @@ $('v-read').addEventListener('click',e=>{
   const go=e.target.closest('[data-go]'),pl=e.target.closest('[data-pi]');
   if(e.target.id==='rdListen'){if(rdPlaying){rdStop();return}rdPlaying=true;e.target.textContent=L('وقّف','Stop');const on=document.querySelector('.rd-text p.on');rdPlayFrom(on?+on.dataset.i:0);return}
   if(pl){rdStop();rdPlaying=true;$('rdListen').textContent=L('وقّف','Stop');rdPlayFrom(+pl.dataset.pi);return}
-  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){progress('chapters');if(!pos.done[go.dataset.fin])addXP(15,{msg:L('فصل كامل! برافو.','A whole chapter! Bravo.')});pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
+  if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){if(!pos.done[go.dataset.fin])addXP(15,{msg:L('فصل كامل! برافو.','A whole chapter! Bravo.')});pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
     pos.ch=+go.dataset.go;pos.pg=0;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0);return}
   if(e.target.id==='wpSent'&&rdSel){const s=rdSel;e.target.disabled=true;gTranslate(s.sent,false).then(t=>{if(rdSel===s&&$('wpSentAr'))$('wpSentAr').innerHTML=t?'<span class="wp-sent">'+esc(t.main)+'</span>':L('الترجمة مش متاحة دلوقتي.','Translation is not available right now.')});return}
   if(e.target.closest('#pgNext')){turn(1);return}
@@ -2581,9 +2601,30 @@ $('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookS
 /* =========================================================
    watch: a podcast or channel played inside the site
    ========================================================= */
-setInterval(()=>{if(document.hidden||curView()!=='watch')return;const r=RES.find(x=>YT[x[1]]&&slugOf(x[1])===location.hash.split('/')[1]);if(r)progress(r[0]==='pod'?'listen':'watch',15)},15000);
+setInterval(()=>{if(document.hidden||curView()!=='watch')return;const s=location.hash.split('/')[1],r=RES.find(x=>(YT[x[1]]||CLIPS[x[1]])&&slugOf(x[1])===s);if(r||s==='random'||s==='link')progress(r&&r[0]==='pod'?'listen':'watch',15)},15000);
+let myLink=store.get('fr-mylink','');
+function sceneHTML(){
+  const slug=location.hash.split('/')[1],v=$('v-watch'),lv=currentStage();
+  const pool=RES.filter(x=>CLIPS[x[1]]&&(x[0]==='tv'||x[0]==='mov'));
+  const fit=pool.filter(x=>x[2]<=Math.max(lv,2)&&Math.max(lv,2)<=x[3]);
+  const r=slug==='random'?(fit.length?fit:pool)[Math.floor(Math.random()*(fit.length?fit:pool).length)]:pool.find(x=>slugOf(x[1])===slug);
+  const own=slug==='link'?ytId(myLink):null;
+  if(slug!=='link'&&!r){location.replace('#more');return}
+  const id=own||(r&&CLIPS[r[1]][Math.floor(Math.random()*CLIPS[r[1]].length)]);
+  v.innerHTML=`<div class="watch">
+   <div class="sec-head"><h1 class="st en" dir="ltr">${r?esc(r[1]):L('الفيديو بتاعك','Your video')}</h1>${r?`<small class="en">${LV[r[2]]}–${LV[r[3]]}</small>`:''}</div>
+   ${r?`<p class="muted">${esc(L(r[4],r[5]))} · ${L('مشهد من يوتيوب، الحلقات والأفلام الكاملة مش متاحة ببلاش','A scene from YouTube; full episodes and films are not free to show')}</p>`:''}
+   ${id?`<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/${id}?cc_load_policy=1&cc_lang_pref=en&hl=en&rel=0" title="${esc(r?r[1]:'video')}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`:''}
+   <div class="row" style="justify-content:flex-start">${r?`<a class="btn" href="#watch/${slug}" data-again>${L('مشهد تاني','Another scene')}</a>`:''}<a class="btn ghost" href="#watch/random" data-again>${L('مسلسل أو فيلم عشوائي على مستواك','A random series or film at your level')}</a></div>
+   <form class="panel mylink" id="myLinkForm"><label for="myLinkIn"><strong>${L('عندك فيديو معيّن؟','Have a video in mind?')}</strong> ${L('حط لينك يوتيوب ويشتغل هنا.','Paste a YouTube link and it plays here.')}</label>
+     <div class="row"><input id="myLinkIn" dir="ltr" inputmode="url" placeholder="https://www.youtube.com/watch?v=..." value="${esc(myLink)}"><button class="btn">${L('شغّل','Play')}</button></div>
+     ${slug==='link'&&!own?`<p class="note">${L('اللينك ده مش لينك يوتيوب. Netflix والمواقع التانية مش بتسمح تتشغل جوه مواقع تانية.','That is not a YouTube link. Netflix and other sites do not allow playing inside another site.')}</p>`:''}</form>
+   <div class="panel watch-tips"><strong>${L('إزاي تتفرج صح','How to watch well')}</strong><ul><li>${L('شغّل الترجمة الإنجليزية (CC)، مش العربي.','Turn on English subtitles (CC), not Arabic.')}</li><li>${L('وقّف بعد جملة حلوة وقولها بنفس الطريقة.','Pause after a good line and say it the same way.')}</li></ul></div></div>`;
+}
 function renderWatch(){
-  const slug=location.hash.split('/')[1],r=RES.find(x=>YT[x[1]]&&slugOf(x[1])===slug);
+  const slug=location.hash.split('/')[1];
+  if(slug==='random'||slug==='link'||RES.some(x=>CLIPS[x[1]]&&!YT[x[1]]&&slugOf(x[1])===slug))return sceneHTML();
+  const r=RES.find(x=>YT[x[1]]&&slugOf(x[1])===slug);
   const v=$('v-watch');
   if(!r){location.replace('#more');return}
   const id=YT[r[1]],more=RES.filter(x=>x!==r&&x[0]===r[0]&&YT[x[1]]);
@@ -2603,6 +2644,8 @@ function renderWatch(){
 // back bar: on screens you go into (a book, a player, the test) a back button stays at the top
 let navCount=0;
 window.addEventListener('hashchange',()=>navCount++);
+document.addEventListener('click',e=>{const a=e.target.closest('[data-again]');if(a&&a.getAttribute('href')===location.hash){e.preventDefault();renderWatch()}});
+document.addEventListener('submit',e=>{if(e.target.id!=='myLinkForm')return;e.preventDefault();myLink=$('myLinkIn').value.trim();store.set('fr-mylink',myLink);if(location.hash==='#watch/link')renderWatch();else location.hash='#watch/link'});
 const PARENT={read:h=>h.includes('/')?'#read':'#more',watch:()=>'#more',test:()=>'#today'};
 function drawBackbar(v){const b=$('backbar');b.hidden=!PARENT[v];if(!b.hidden)$('backBtn').textContent=L('→ رجوع','← Back')}
 $('backBtn').addEventListener('click',()=>{const v=curView();if(navCount>0){navCount-=2;history.back()}else location.hash=PARENT[v](location.hash)});
@@ -2688,10 +2731,12 @@ function coach(msg,mood='happy',ms=2600){
   c.innerHTML=mascot(mood,64)+`<p>${msg}</p>`;c.className='coach on';clearTimeout(coachT);coachT=setTimeout(()=>c.classList.remove('on'),ms);
 }
 function addXP(n,{silent=false,mood='cheer',msg=''}={}){
+  if(xp.d!==today())xp={t:xp.t||0,d:today(),n:0};
   const before=xp.n;xp={t:(xp.t||0)+n,d:today(),n:before+n};store.set('fr-xp',xp);
   if(before<XP_GOAL&&xp.n>=XP_GOAL){coach(L(`خلصت هدف النهارده: ${XP_GOAL} نقطة! 🎉`,`Daily goal done: ${XP_GOAL} XP! 🎉`),'cheer',3800);confetti()}
   else if(!silent)coach(`<b class="en">+${n} XP</b> ${msg||tx(pickOne(CHEER))}`,mood);
-  const chip=document.querySelector('[data-xp]');if(chip)chip.textContent=xp.n;
+  document.querySelectorAll('[data-xp]').forEach(c=>c.textContent=xp.n);document.querySelectorAll('[data-xpt]').forEach(c=>c.textContent=xp.t+' XP');
+  const bar=document.querySelector('.xpbar');if(bar){bar.firstElementChild.style.width=Math.min(1,xp.n/XP_GOAL)*100+'%';bar.setAttribute('aria-valuenow',Math.min(xp.n,XP_GOAL))}
 }
 const oops=()=>coach(tx(pickOne(OOPS)),'oops');
 // greeting card on Today: Bobo, the daily goal ring and the streak
@@ -2701,8 +2746,8 @@ function greetHTML(streak){
   const say=p>=1?L('خلصت هدف النهارده. أي حاجة زيادة بونص!','Daily goal done. Anything more is a bonus!'):xp.n?L(`فاضلك ${XP_GOAL-xp.n} نقطة على هدف النهارده.`,`${XP_GOAL-xp.n} XP to today's goal.`):L('يلا نبدأ؟ كل تمرين بيديك نقط.','Ready? Every exercise earns XP.');
   return `<div class="greet panel">${mascot(p>=1?'cheer':xp.n?'happy':'wave',96)}
     <div class="greet-t"><strong>${hi}</strong><p>${say}</p>
-      <div class="greet-stats"><span class="chip-xp"><b class="en" data-xp>${xp.n}</b>/<span class="en">${XP_GOAL}</span> XP</span><span class="chip-fire">🔥 <b class="en">${streak}</b> ${L('يوم','days')}</span><span class="chip-tot en">${xp.t} XP</span></div>
-      <div class="xpbar"><i style="width:${p*100}%"></i></div></div></div>`;
+      <div class="greet-stats"><span class="chip-xp" dir="ltr"><b data-xp>${xp.n}</b> / ${XP_GOAL} XP</span><span class="chip-fire">🔥 <b class="en">${streak}</b> ${L('يوم','days')}</span><span class="chip-tot">${L('المجموع','Total')} <b class="en" dir="ltr" data-xpt>${xp.t} XP</b></span></div>
+      <div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="${XP_GOAL}" aria-valuenow="${Math.min(xp.n,XP_GOAL)}"><i style="width:${p*100}%"></i></div></div></div>`;
 }
 console.assert(mascot('cheer').includes('m-cheer')&&greetHTML(0).includes('xpbar'),'mascot');
 /* =========================================================
