@@ -535,7 +535,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .book .meta .badge{font:600 12px var(--f-mono);padding:3px 7px;border-radius:6px;min-width:0}
 .book>small{color:var(--muted);font-size:13px;line-height:1.4}
 .book .line{height:5px}
-.reader{max-width:700px;margin:0 auto}
+.reader{max-width:1080px;margin:0 auto}
 .rd-top{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
 .rd-back{font-weight:700;text-decoration:none;white-space:nowrap}
 .rd-ch select{max-width:min(60vw,360px);padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
@@ -651,6 +651,35 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 .bobo-say{display:flex;gap:12px;align-items:center;text-align:start;background:var(--accent-soft);border-radius:18px;padding:10px 14px}
 .bobo-say p{margin:0;font-weight:600;line-height:1.5}
 .t-top{align-items:center}.t-top .mascot{margin-inline-end:6px}
+/* the book */
+.book{--paper:#FBF6EA;--paper-2:#F1E9D6;--paper-ink:#2B2620;position:relative;height:clamp(440px,72vh,760px);margin:8px auto 6px;max-width:560px;
+  background:var(--paper);border-radius:6px 16px 16px 6px;padding:34px 30px 40px;
+  box-shadow:inset 10px 0 18px -14px rgba(0,0,0,.35),3px 0 0 var(--paper-2),6px 1px 0 #E3D9C1,9px 2px 0 #D6CBB0,0 34px 60px -30px rgba(18,25,53,.55)}
+.book.spread{max-width:1080px;border-radius:12px;padding:40px 44px 46px;
+  background:linear-gradient(90deg,var(--paper) 0 calc(50% - 26px),var(--paper-2) calc(50% - 6px),#CFC4A8 50%,var(--paper-2) calc(50% + 6px),var(--paper) calc(50% + 26px));
+  box-shadow:-3px 0 0 var(--paper-2),-6px 1px 0 #E3D9C1,3px 0 0 var(--paper-2),6px 1px 0 #E3D9C1,0 40px 70px -30px rgba(18,25,53,.55)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .book{--paper:#23201B;--paper-2:#1C1A16;--paper-ink:#ECE4D4}}
+:root[data-theme="dark"] .book{--paper:#23201B;--paper-2:#1C1A16;--paper-ink:#ECE4D4}
+.book-pages{position:relative;height:100%;overflow:hidden;perspective:2200px}
+.book .rd-text{position:relative;color:var(--paper-ink);font-size:18px;line-height:1.75;transition:none;will-change:transform}
+.book .rd-text p{margin:0 0 .9em;break-inside:auto;orphans:1;widows:1}
+.book .rd-text p.on{background:rgba(255,216,74,.35)}
+.pg-title{font:700 24px/1.25 'Literata',Georgia,serif;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,.12);break-after:avoid}
+.pg-turn{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:64px;border:0;border-radius:12px;background:rgba(0,0,0,.05);color:var(--paper-ink);font-size:30px;line-height:1;cursor:pointer;opacity:.55;transition:opacity .2s,background .2s}
+.pg-turn:hover{opacity:1;background:rgba(0,0,0,.09)}.pg-turn:disabled{opacity:.15;cursor:default}
+.pg-turn.prev{left:-6px}.pg-turn.next{right:-6px}.pg-turn.end{color:var(--ok)}
+.pg-num{text-align:center;font:600 14px var(--f-mono);color:var(--muted);margin:6px 0 0}
+.pg-copy{position:absolute;top:0;overflow:hidden;background:var(--paper);pointer-events:none}
+.pg-copy .rd-text{position:absolute;top:0;left:0}
+.leaf{position:absolute;top:0;transform-style:preserve-3d;pointer-events:none;z-index:3}
+.leaf .lf,.leaf .lb{position:absolute;top:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;width:100%}
+.leaf .lb{transform:rotateY(180deg)}
+.leaf .lf::after,.leaf .lb::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.18),transparent 30%,transparent 80%,rgba(0,0,0,.08));pointer-events:none}
+.leaf{filter:drop-shadow(0 10px 18px rgba(0,0,0,.18))}
+.hold{z-index:2}
+[data-fin].glow{animation:pulseN 1.6s ease-out infinite;--c:var(--accent)}
+[data-fin].nudge{animation:mwob .45s ease-in-out 2}
+@media (max-width:520px){.book{padding:26px 20px 34px;height:clamp(420px,68vh,640px)}.book .rd-text{font-size:17px}.pg-turn{width:32px;height:52px;font-size:24px}.pg-turn.prev{left:-4px}.pg-turn.next{right:-4px}}
 </style>
 
 <aside class="side">
@@ -1079,8 +1108,8 @@ function say(text,opts={}){
   const all=accentVoices(accent);
   const u=new SpeechSynthesisUtterance(text);u.lang=accentLang(accent);u.rate=rate||(slow?.7:.9);u.pitch=1;
   const top=all.slice(0,Math.min(all.length,3));
-  const v=vary&&top.length?top[Math.floor(Math.random()*top.length)]:all[0];
-  if(v)u.voice=v;
+  const v=opts.voice||(vary&&top.length?top[Math.floor(Math.random()*top.length)]:all[0]);
+  if(v)u.voice=v;if(opts.pitch)u.pitch=opts.pitch;
   // finished, failed or silent too long: settle once, so whoever waits on it is never left hanging
   let settled=false;const fin=ok=>{if(settled)return;settled=true;clearTimeout(w);if(ok)onend&&onend();else opts.onerror&&opts.onerror()};
   const w=setTimeout(()=>{if(!settled){speechSynthesis.cancel();fin(false)}},(text.split(/\s+/).length/(1.8*u.rate)+5)*1000);
@@ -2163,7 +2192,9 @@ $('v-home').addEventListener('click',e=>{
   if(e.target.closest('#heroPlay')){
     // Bobo says hello; his mouth moves while he talks and he cheers at the end
     const m=document.querySelector('#boboHero .mascot');if(!m)return;m.className='mascot m-talk';
-    say("Hi! I'm Bobo. Let's get you talking English!",{onend:()=>{m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},onerror:()=>{m.className='mascot m-wave'}});
+    // Bobo is a he: a man's voice of the chosen accent, or a deeper version of whatever voice exists
+    const mv=accentVoices().find(x=>voiceGender(x)==='m');
+    say("Hi! I'm Bobo. Let's get you talking English!",{voice:mv,pitch:mv?1.05:.7,onend:()=>{m.className='mascot m-cheer';setTimeout(()=>m.className='mascot m-wave',1600)},onerror:()=>{m.className='mascot m-wave'}});
   }
 });
 
@@ -2205,7 +2236,7 @@ function mergeData(loc,cld){
     else if(k==='fr-days')out[k]=[...new Set(b.concat(a))].sort();
     else if(k==='fr-mywords'){const m=new Map(b.map(w=>[w[1],w]));a.forEach(w=>m.set(w[1],w));out[k]=[...m.values()]}
     else if(k==='fr-day')out[k]=a.d===b.d?{d:a.d,done:{...b.done,...a.done}}:later(a,b,'d');
-    else if(k==='fr-read'){const m={...b};for(const s in a){const x=a[s],y=m[s];m[s]=y?{n:x.n||y.n,ch:Math.max(x.ch||0,y.ch||0),done:{...y.done,...x.done}}:x}out[k]=m}
+    else if(k==='fr-read'){const m={...b};for(const s in a){const x=a[s],y=m[s];m[s]=y?{n:x.n||y.n,ch:Math.max(x.ch||0,y.ch||0),pg:(x.ch||0)===(y.ch||0)?Math.max(x.pg||0,y.pg||0):((x.ch||0)>(y.ch||0)?x.pg:y.pg)||0,done:{...y.done,...x.done}}:x}out[k]=m}
     else if(k==='fr-place'||k==='fr-lastTest')out[k]=later(a,b,'date');
     else if(k==='fr-xp')out[k]=a.d===b.d?{t:Math.max(a.t||0,b.t||0),d:a.d,n:Math.max(a.n||0,b.n||0)}:{...later(a,b,'d'),t:Math.max(a.t||0,b.t||0)};
     else if(k==='fr-map')out[k]=later(loc['fr-place'],cld['fr-place'],'date')===loc['fr-place']?a:b; // the map follows the newer test
@@ -2325,7 +2356,7 @@ function rdPlayFrom(i){
   const ps=[...document.querySelectorAll('.rd-text p')];
   if(!rdPlaying||i>=ps.length){rdStop();return}
   ps.forEach(p=>p.classList.toggle('on',+p.dataset.i===i));
-  ps[i].scrollIntoView({block:'center',behavior:motionPref()?'smooth':'auto'});
+  {const k=pageOfPara(i);if(k===pg.i+pg.step)turn(1);else if(k!==pg.i){pg.i=k;showPage()}}
   const ss=sentencesOf(ps[i].querySelector('.t').textContent);let k=0;
   const next=()=>{if(!rdPlaying)return;if(k>=ss.length){rdPlayFrom(i+1);return}say(ss[k++].trim(),{accent:S.accent,rate:.92,onend:next,onerror:rdStop})};
   next();
@@ -2356,11 +2387,78 @@ async function renderRead(){
    <div class="rd-head" dir="ltr"><p class="muted">${esc(meta[1])} · ${esc(meta[2])}</p><h1 class="st en">${esc(c.h)}</h1>
      <div class="row"><button class="btn ghost" id="rdListen">${L('اسمع الفصل','Listen')}</button><span class="muted" style="font-size:14px">${L(`فصل ${ci+1} من ${book.ch.length} · ${bookPct(slug)}٪ من الكتاب`,`Chapter ${ci+1} of ${book.ch.length} · ${bookPct(slug)}% of the book`)}</span></div></div>
    <p class="rd-tip">${L('دوس على أي كلمة: تسمعها وتعرف معناها وتحفظها. دوس ▶ جنب أي فقرة تسمعها.','Tap any word to hear it, see its meaning and save it. Tap ▶ beside a paragraph to hear it.')}</p>
-   <div class="rd-text" dir="ltr" lang="en">${c.p.map((p,i)=>`<p data-i="${i}"><button class="rd-play" data-pi="${i}" aria-label="${L('اسمع الفقرة','Listen to this paragraph')}">▶</button><span class="t">${esc(p)}</span></p>`).join('')}</div>
+   <div class="book" id="book" dir="ltr">
+     <div class="book-pages" id="bookPages">
+       <div class="rd-text" id="flow" lang="en"><h2 class="pg-title">${esc(c.h)}</h2>${c.p.map((p,i)=>`<p data-i="${i}"><button class="rd-play" data-pi="${i}" aria-label="${L('اسمع الفقرة','Listen to this paragraph')}">▶</button><span class="t">${esc(p)}</span></p>`).join('')}</div>
+     </div>
+     <button class="pg-turn prev" id="pgPrev" aria-label="${L('الصفحة اللي فاتت','Previous page')}">‹</button>
+     <button class="pg-turn next" id="pgNext" aria-label="${L('الصفحة اللي بعدها','Next page')}">›</button>
+   </div>
+   <p class="pg-num" id="pgNum" dir="ltr"></p>
    <div class="rd-foot">${ci>0?`<button class="btn ghost" data-go="${ci-1}">${L('الفصل اللي فات','Previous')}</button>`:'<span></span>'}
      <button class="btn" data-go="${ci+1}" data-fin="${ci}">${ci+1<book.ch.length?L('خلصت الفصل، اللي بعده','Done, next chapter'):L('خلصت الكتاب','I finished the book')}</button></div>
   </div><div id="wpop" class="wpop" hidden></div>`;
+  layoutBook(pos.pg||0);document.fonts&&document.fonts.ready.then(()=>{if(curView()==='read')layoutBook(pg.i)});
 }
+/* paged book: CSS columns cut the chapter into pages; one page on phones, two side by side on wide screens.
+   Turning a page flips a "leaf" in 3-D: its front is the page you leave, its back the page you arrive at. */
+let pg={i:0,n:1,step:1,w:0,g:0,h:0,busy:false};
+function layoutBook(keep){
+  const box=$('bookPages'),flow=$('flow');if(!box||!flow)return;
+  // two pages side by side when the reading area is wide enough for two comfortable lines
+  const spread=$('book').parentElement.clientWidth>=820;$('book').classList.toggle('spread',spread);
+  const g=spread?64:40,w=spread?(box.clientWidth-g)/2:box.clientWidth;
+  Object.assign(flow.style,{width:w+'px',height:box.clientHeight+'px',columnWidth:w+'px',columnGap:g+'px'});
+  Object.assign(pg,{w,g,h:box.clientHeight,step:spread?2:1});
+  pg.n=Math.max(1,Math.round((flow.scrollWidth+g)/(w+g)));
+  pg.i=Math.max(0,Math.min(keep||0,pg.n-1));pg.i-=pg.i%pg.step;showPage();
+}
+function showPage(){
+  const flow=$('flow');if(!flow)return;
+  flow.style.transform=`translateX(${-pg.i*(pg.w+pg.g)}px)`;
+  const last=Math.min(pg.n,pg.i+pg.step);
+  $('pgNum').textContent=`${pg.step>1&&last>pg.i+1?`${pg.i+1}–${last}`:pg.i+1} / ${pg.n}`;
+  $('pgPrev').disabled=pg.i<=0;$('pgNext').classList.toggle('end',pg.i+pg.step>=pg.n);
+  // on the last page the "next chapter" button lights up
+  document.querySelector('[data-fin]')?.classList.toggle('glow',pg.i+pg.step>=pg.n);
+  if(readPos[bookSlug]){readPos[bookSlug].pg=pg.i;store.set('fr-read',readPos)}
+}
+// a copy of one page, placed over the left (0) or right (1) side of the open book
+function pageCopy(idx,side){
+  const d=document.createElement('div');d.className='pg-copy';
+  Object.assign(d.style,{left:side*(pg.w+pg.g)+'px',width:pg.w+'px',height:pg.h+'px'});
+  if(idx>=0&&idx<pg.n){const f=$('flow').cloneNode(true);f.removeAttribute('id');f.style.transform=`translateX(${-idx*(pg.w+pg.g)}px)`;d.appendChild(f)}
+  return d;
+}
+function turn(dir){
+  const ni=pg.i+dir*pg.step;
+  if(pg.busy)return;
+  if(ni<0)return;
+  if(ni>=pg.n){const f=document.querySelector('[data-fin]');if(f){f.classList.remove('nudge');void f.offsetWidth;f.classList.add('nudge')}return}
+  const old=pg.i;
+  // the page flip is the point of the book, so it plays unless you switched motion off yourself in the site
+  if(store.get('fr-motion',null)===false){pg.i=ni;showPage();return}
+  const box=$('bookPages'),spread=pg.step>1,R1=spread?1:0,dur=750;
+  // the leaf always hinges on the spine: over the right page in a spread, over the whole page on a phone
+  const leaf=document.createElement('div');leaf.className='leaf';
+  Object.assign(leaf.style,{left:R1*(pg.w+pg.g)+'px',width:pg.w+'px',height:pg.h+'px',transformOrigin:(spread?-pg.g/2:0)+'px 50%'});
+  const front=pageCopy(dir>0?old+pg.step-1:ni+pg.step-1,0),back=pageCopy(spread?(dir>0?ni:old):-1,0);
+  front.classList.add('lf');back.classList.add('lb');front.style.left=back.style.left='0';leaf.append(front,back);
+  // the page that should stay visible until the leaf passes over it
+  const hold=pageCopy(dir>0?old:old+pg.step-1,dir>0?0:R1);hold.classList.add('hold');
+  if(spread||dir<0)box.appendChild(hold);
+  box.appendChild(leaf);pg.busy=true;pg.i=ni;showPage();
+  const a=leaf.animate([{transform:`rotateY(${dir>0?0:-180}deg)`},{transform:`rotateY(${dir>0?-180:0}deg)`}],{duration:dur,easing:'cubic-bezier(.45,.05,.25,1)'});
+  setTimeout(()=>hold.remove(),dur/2);
+  // ends on a timer, not on the animation event: a page in the background never finishes its animations
+  setTimeout(()=>{a.cancel();leaf.remove();hold.remove();pg.busy=false},dur+60);
+}
+// show the page that holds paragraph i (used by read-aloud)
+function pageOfPara(i){const p=document.querySelector(`#flow p[data-i="${i}"]`);if(!p)return pg.i;const k=Math.floor((p.offsetLeft+4)/(pg.w+pg.g));return k-k%pg.step}
+window.addEventListener('resize',()=>{if(curView()==='read'&&$('flow'))layoutBook(pg.i)});
+document.addEventListener('keydown',e=>{if(curView()!=='read'||!$('flow')||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))return;if(e.key==='ArrowRight')turn(1);else if(e.key==='ArrowLeft')turn(-1)});
+{let sx=null,sy=0;document.addEventListener('pointerdown',e=>{if(e.target.closest('#book')){sx=e.clientX;sy=e.clientY}});
+ document.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)turn(dx<0?1:-1)})}
 // the word under the tap, and the sentence it sits in (the sentence becomes the flashcard's example)
 function wordAt(e){
   let node,off;
@@ -2423,14 +2521,16 @@ $('v-read').addEventListener('click',e=>{
   if(e.target.id==='rdListen'){if(rdPlaying){rdStop();return}rdPlaying=true;e.target.textContent=L('وقّف','Stop');const on=document.querySelector('.rd-text p.on');rdPlayFrom(on?+on.dataset.i:0);return}
   if(pl){rdStop();rdPlaying=true;$('rdListen').textContent=L('وقّف','Stop');rdPlayFrom(+pl.dataset.pi);return}
   if(go){const pos=readPos[bookSlug];if(go.dataset.fin!==undefined){if(!pos.done[go.dataset.fin])addXP(15,{msg:L('فصل كامل! برافو.','A whole chapter! Bravo.')});pos.done[go.dataset.fin]=true;if(+go.dataset.go>=book.ch.length){store.set('fr-read',readPos);confetti();location.hash='#read';return}confetti()}
-    pos.ch=+go.dataset.go;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0);return}
+    pos.ch=+go.dataset.go;pos.pg=0;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0);return}
   if(e.target.id==='wpSent'&&rdSel){const s=rdSel;e.target.disabled=true;gTranslate(s.sent,false).then(t=>{if(rdSel===s&&$('wpSentAr'))$('wpSentAr').innerHTML=t?'<span class="wp-sent">'+esc(t.main)+'</span>':L('الترجمة مش متاحة دلوقتي.','Translation is not available right now.')});return}
+  if(e.target.closest('#pgNext')){turn(1);return}
+  if(e.target.closest('#pgPrev')){turn(-1);return}
   if(e.target.id==='wpX'){$('wpop').hidden=true;rdSel=null;return}
   if(e.target.id==='wpSave'&&rdSel){const w=rdSel.w.toLowerCase();if(!myWords.some(c=>c[1].toLowerCase()===w)){myWords.push(['my',w,rdSel.ar,rdSel.sent,rdSel.def||'']);store.set('fr-mywords',myWords)}
     e.target.disabled=true;e.target.textContent=L('اتحفظت في كلماتي','Saved in My words');return}
   if(e.target.closest('.rd-text .t')){const x=wordAt(e);if(x)showWord(x)}
 });
-$('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookSlug].ch=+e.target.value;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0)}});
+$('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookSlug].ch=+e.target.value;readPos[bookSlug].pg=0;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0)}});
 
 /* =========================================================
    watch: a podcast or channel played inside the site
