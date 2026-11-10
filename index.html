@@ -661,7 +661,7 @@ html:not(.motion) :not(.chara):not(.chara *),html:not(.motion) *::before,html:no
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .book{--paper:#23201B;--paper-2:#1C1A16;--paper-ink:#ECE4D4}}
 :root[data-theme="dark"] .book{--paper:#23201B;--paper-2:#1C1A16;--paper-ink:#ECE4D4}
 .book-pages{position:relative;height:100%;overflow:hidden;perspective:2200px}
-.book .rd-text{position:relative;color:var(--paper-ink);font-size:18px;line-height:1.75;transition:none;will-change:transform}
+.book .rd-text{position:relative;color:var(--paper-ink);font-size:18px;line-height:1.75;transition:none}
 .book .rd-text p{margin:0 0 .9em;break-inside:auto;orphans:1;widows:1}
 .book .rd-text p.on{background:rgba(255,216,74,.35)}
 .pg-title{font:700 24px/1.25 'Literata',Georgia,serif;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,.12);break-after:avoid}
@@ -727,6 +727,10 @@ body:has(#v-read:not([hidden]) #book) main .wrap{max-width:1500px}
 @media (max-width:520px){.book{height:clamp(500px,76vh,760px)}.book .rd-text{font-size:18px}}
 .mylink{display:grid;gap:8px}.mylink input{flex:1;min-width:0;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
 .mylink .row{flex-wrap:nowrap}
+/* inside the book: no hover effects and no fades, so the browser repaints a few pixels, not the whole chapter */
+.book .rd-text p{transition:none}.book .rd-play{opacity:.6;transition:none}
+.book .rd-text p:hover .rd-play{opacity:.6}.book .rd-text p.on .rd-play,.book .rd-play:focus-visible{opacity:1}
+.book .rd-text{contain:layout}
 </style>
 
 <aside class="side">
@@ -2466,6 +2470,11 @@ async function renderRead(){
 let pg={i:0,n:1,step:1,w:0,g:0,h:0,busy:false};
 let lastAct=Date.now();['pointerdown','keydown','wheel','touchstart'].forEach(t=>document.addEventListener(t,()=>{lastAct=Date.now()},{passive:true}));
 setInterval(()=>{if(!document.hidden&&curView()==='read'&&$('flow')&&Date.now()-lastAct<120000)progress('readsec',15)},15000);
+let selSaid=0;
+function speakSelection(){const s=String(window.getSelection()||'').replace(/\s+/g,' ').trim();
+  if(s.split(' ').length<2||!window.getSelection().anchorNode?.parentElement?.closest('#flow'))return;
+  selSaid=Date.now();rdStop();say(s,{accent:S.accent,rate:.9});coach(L('بقول اللي حددته 🔊','Reading your selection 🔊'),'talk',1800)}
+['mouseup','touchend'].forEach(t=>document.addEventListener(t,()=>{if(curView()==='read')setTimeout(speakSelection,10)}));
 function layoutBook(keep){
   const box=$('bookPages'),flow=$('flow');if(!box||!flow)return;
   // two pages side by side when the reading area is wide enough for two comfortable lines
@@ -2595,6 +2604,7 @@ $('v-read').addEventListener('click',e=>{
   if(e.target.id==='wpX'){$('wpop').hidden=true;rdSel=null;return}
   if(e.target.id==='wpSave'&&rdSel){const w=rdSel.w.toLowerCase();if(!myWords.some(c=>c[1].toLowerCase()===w)){myWords.push(['my',w,rdSel.ar,rdSel.sent,rdSel.def||'']);store.set('fr-mywords',myWords)}
     e.target.disabled=true;e.target.textContent=L('اتحفظت في كلماتي','Saved in My words');return}
+  if(Date.now()-selSaid<500)return;
   if(e.target.closest('.rd-text .t')){const x=wordAt(e);if(x)showWord(x)}
 });
 $('v-read').addEventListener('change',e=>{if(e.target.id==='rdCh'){readPos[bookSlug].ch=+e.target.value;readPos[bookSlug].pg=0;store.set('fr-read',readPos);renderRead();window.scrollTo(0,0)}});
