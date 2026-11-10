@@ -504,7 +504,8 @@ html:not(.motion) .mpath path{stroke-dashoffset:0}
 
 /* test extras */
 .ctest{font:500 clamp(18px,2.2vw,21px)/2.1 var(--f-display);direction:ltr;text-align:left;background:var(--sunk);border-radius:14px;padding:16px 18px}
-.ctest input{font:inherit;color:var(--accent);background:var(--surface);border:0;border-bottom:2px solid var(--accent);border-radius:4px 4px 0 0;padding:0 2px;margin:0 1px;text-align:left}
+.ctest{word-spacing:.12em}.ctest .cw{white-space:nowrap}
+.ctest input{font:600 1em/1.35 var(--f-body);font-variant-ligatures:none;letter-spacing:.02em;color:var(--ink);background:var(--surface);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:1px 3px;margin:0 2px 0 0;text-align:left;vertical-align:baseline;min-width:2.4ch;box-sizing:content-box;max-width:12ch}
 .ctest input:focus{outline:2px solid var(--accent-soft)}
 .toast{position:fixed;inset-inline:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:auto;max-width:420px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;z-index:20;text-align:center;animation:rise .3s var(--ease)}
 .gbtn{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 14px;font:600 14px var(--f-body);cursor:pointer;transition:transform .15s,border-color .2s}
@@ -1854,11 +1855,12 @@ function renderTest(){
       <div class="yn"><button class="btn big ghost" data-yn="0">${L('لأ / مش كلمة','No / not a word')}</button><button class="btn big" data-yn="1">${L('أيوه، عارفها','Yes, I know it')}</button></div>`;
   }else if(tst.step==='ctest'){
     const txt=CTESTS[tst.cLvl];let gi=0;
-    const html=esc(txt).replace(/([A-Za-z']*)\{([^}]+)\}/g,(m,pre,ans)=>`${pre}<input data-g="${gi++}" size="${ans.length}" maxlength="${ans.length+2}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="missing letters">`);
+    const html=esc(txt).replace(/([A-Za-z']*)\{([^}]+)\}/g,(m,pre,ans)=>`<span class="cw">${pre}<input data-g="${gi++}" style="width:${ans.length+1.4}ch" data-w="${ans.length+1.4}" maxlength="${ans.length+2}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="missing letters"></span>`);
     v.innerHTML=testBar(tst.cAtt.length,3)+`<div class="view stack">
       <p class="muted">${L('كمّل الحروف الناقصة في كل كلمة. لو مش متأكد سيبها فاضية.','Fill in the missing letters of each word. Leave it empty if unsure.')}</p>
       <div class="ctest">${html}</div>
       <button class="btn big wide" id="cDone">${L('التالي','Next')}</button></div>`;
+    v.querySelectorAll('.ctest input').forEach(i=>i.addEventListener('input',()=>{i.style.width=Math.max(+i.dataset.w,i.value.length+1.4)+'ch'}));
     v.querySelector('.ctest input')?.focus();
   }else if(tst.step==='uoe'){
     if(tst.ucur===null){const th=tst.uresp.length?eap(tst.uresp).theta:-0.5;tst.ucur=pickItem(tst.ubank,tst.uused,th);tst.order=shuffle([0,1,2,3])}
